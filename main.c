@@ -76,7 +76,7 @@ int run_proc(vxproc *volatile p)
 	p->cpu->reg[ESP] = 0;
 	p->cpu->eflags = 0;
 	p->cpu->eip = IO_DATA_LEN;
-
+	vxproc_flush(p);
 	return vxproc_run(p);
 }
 
@@ -111,7 +111,9 @@ int main(int argc, const char *const *argv)
 	char * data = malloc(PROG_DATA_LEN);
 	struct Academy_Agent_T * tree_root = academy_add_new_agent(academy, NULL, data, PROG_DATA_LEN);
 	data = malloc(PROG_DATA_LEN);
-	data[PROG_DATA_LEN - 1] = 0xFF;
+	data[0] = 0xC6;
+	data[1] = 0x05;
+	data[6] = 0x49;
 	academy_add_new_agent(academy, tree_root, data, PROG_DATA_LEN);
 
 	vxproc *volatile p = vxproc_alloc();

@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "academy.h"
 
-#define UCB_C 2
+#define UCB_C 1.0
 
 
 struct Academy_Hashtable_Row_T * academy_hashtable_lookup(struct Academy_T * academy, unsigned long hash) {
@@ -52,6 +52,7 @@ struct Academy_T * build_new_academy() {
 	academy->loaded_agent_count = 0;
 	academy->root_agent = NULL;
 	academy->hashtable_len = 1000;
+	academy->max_value = 0;
 	academy->hashtable = malloc(sizeof(struct Academy_Hashtable_Row_T)*academy->hashtable_len);
 	for (long i = 0; i < academy->hashtable_len; i++) {
 		academy->hashtable[i].agent = NULL;
@@ -77,7 +78,7 @@ void academy_prune_node(struct Academy_Agent_T * tree) {
 }
 
 void tree_search_test_prune_from_node(struct Academy_Agent_T * tree) {
-	float threshold = (float)tree->academy->loaded_agent_count/ACADEMY_MAX_LOADED_AGENT_COUNT;
+	float threshold = tree->academy->max_value * ((float)tree->academy->loaded_agent_count/ACADEMY_MAX_LOADED_AGENT_COUNT);
 	for (int i = 0; i < tree->children_count; i++) {
 		if (tree->academy->loaded_agent_count < 0.5*ACADEMY_MAX_LOADED_AGENT_COUNT)
 		{
@@ -289,9 +290,24 @@ struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struc
 	return agent;
 }
 
+#define UPDATE_VAL 0.01
+
+float score_update(float last_score, float score, float score_sum, long games_played)
+{
+	//winner->own_value = (float)winner->own_points/(float)winner->own_games_played;
+	//winner->own_value = (winner->own_value * (1 - UPDATE_VAL)) + (winner_points * UPDATE_VAL);
+	if (score > last_score)
+		return score;
+	else
+		return last_score;
+}
+
 void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_points, struct Academy_Agent_T * looser, float looser_points) {
 	struct Academy_Agent_T * winner_child = winner;
 	struct Academy_Agent_T * looser_child = looser;
+
+	if (winner_points > winner->academy->max_value)
+		winner->academy->max_value = winner_points;
 
 	/* Find the common ancestor of the winner and looser. */
 
@@ -320,7 +336,7 @@ void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_poin
 	if (winner == winner_child) {
 		winner->own_games_played++;
 		winner->own_points += winner_points;
-		winner->own_value = (float)winner->own_points/(float)winner->own_games_played;
+		winner->own_value = score_update(winner->own_value, winner_points, winner->own_points, winner->own_games_played);
 	}
 	else {
 		// Identify child
@@ -330,14 +346,15 @@ void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_poin
 		}
 		winner->children[i].subtree_games_played++;
 		winner->children[i].subtree_points += winner_points;
-		winner->children[i].subtree_value = (float)winner->children[i].subtree_points/(float)winner->children[i].subtree_games_played;
+		winner->children[i].subtree_value = score_update(winner->children[i].subtree_value, winner_points, winner->children[i].subtree_points, winner->children[i].subtree_games_played);
 	}
 
 	// Looser scores
 	if (looser == looser_child) {
 		looser->own_games_played++;
 		looser->own_points += looser_points;
-		looser->own_value = (float)looser->own_points/(float)looser->own_games_played;
+		looser->own_value = score_update(looser->own_value, looser_points, looser->own_points, looser->own_games_played);
+
 	}
 	else {
 		// Identify child
@@ -347,7 +364,8 @@ void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_poin
 		}
 		looser->children[i].subtree_games_played++;
 		looser->children[i].subtree_points += looser_points;
-		looser->children[i].subtree_value = (float)looser->children[i].subtree_points/(float)looser->children[i].subtree_games_played;
+		looser->children[i].subtree_value = score_update(looser->children[i].subtree_value, looser_points, looser->children[i].subtree_points, looser->children[i].subtree_games_played);
+
 	}
 }
 

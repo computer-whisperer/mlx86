@@ -56,6 +56,8 @@ struct Academy_T {
 	long loaded_agent_count;
 	struct Academy_Hashtable_Row_T * hashtable;
 	long hashtable_len;
+
+	float max_value;
 };
 
 struct Academy_T * build_new_academy();
