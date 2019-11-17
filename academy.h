@@ -2,7 +2,7 @@
 #ifndef ACADEMY_H
 #define ACADEMY_H
 
-#define ACADEMY_MAX_LOADED_AGENT_COUNT 10000
+#define ACADEMY_MAX_LOADED_AGENT_COUNT 100000
 
 enum Academy_Agent_State_T {
 	ACADEMY_AGENT_STATE_EMPTY,
@@ -16,27 +16,29 @@ struct Academy_Agent_Child_T {
 
 	/* Statistics against sibling agents. */
 	float subtree_points;
-	int subtree_games_played;
+	long subtree_games_played;
 	float subtree_value;
 };
 
 struct Academy_Agent_T {
+	long agent_num;
+
 	struct Academy_T * academy;
 	struct Academy_Agent_T * parent;
-	int parent_child_index;
-	int generation;
+	long parent_child_index;
+	long generation;
 
 	int own_and_children_games_played;
 
 	/* Statistics against children agents. */
 	float own_points;
-	int own_games_played;
+	long own_games_played;
 	float own_value;
 
 	struct Academy_Agent_Child_T * children;
-	int children_slots_allocated;
-	int aborted_children_count;
-	int children_count;
+	long children_slots_allocated;
+	long aborted_children_count;
+	long children_count;
 	size_t data_len;
 	char * data;
 	unsigned long data_hash;
@@ -49,11 +51,11 @@ struct Academy_Hashtable_Row_T {
 
 struct Academy_T {
 	struct Academy_Agent_T * root_agent;
-	int agent_count;
-	int duplicates_rejected;
-	int loaded_agent_count;
+	long agent_count;
+	long duplicates_rejected;
+	long loaded_agent_count;
 	struct Academy_Hashtable_Row_T * hashtable;
-	int hashtable_len;
+	long hashtable_len;
 };
 
 struct Academy_T * build_new_academy();

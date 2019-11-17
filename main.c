@@ -193,8 +193,7 @@ int main(int argc, const char *const *argv)
 			printf("Remembering %d agents.\n", academy->loaded_agent_count);
 			printf("Rejected %d duplicate agents.\n", academy->duplicates_rejected);
 			printf("Root value: %f \n", tree_root->own_value);
-			//if (games_played >= 100000000)
-			//	break;
+			printf("Hashtable len: %d \n", academy->hashtable_len);
 		}
 
 		if (games_played > 100000)

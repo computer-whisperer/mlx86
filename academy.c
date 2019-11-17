@@ -11,7 +11,7 @@
 struct Academy_Hashtable_Row_T * academy_hashtable_lookup(struct Academy_T * academy, unsigned long hash) {
 	struct Academy_Hashtable_Row_T * row;
 	// Quadratic probing
-	for (int i = 0; i < academy->hashtable_len; i++) {
+	for (long i = 0; i < academy->hashtable_len; i++) {
 		row = &(academy->hashtable[(i*i + hash)%academy->hashtable_len]);
 		if (!row->agent)
 			return row;
@@ -23,9 +23,9 @@ struct Academy_Hashtable_Row_T * academy_hashtable_lookup(struct Academy_T * aca
 
 struct Academy_Agent_T * academy_add_agent_from_file(struct Academy_T * academy, struct Academy_Agent_T * parent, char * fname) {
 	FILE * f = fopen(fname, "r");
-	int buffer_len = 1000;
+	long buffer_len = 1000;
 	char * buffer = malloc(buffer_len);
-	int i = 0;
+	long i = 0;
 	while (!i || buffer[i-1] != EOF) {
 		buffer[i] = fgetc(f);
 		i++;
@@ -53,7 +53,7 @@ struct Academy_T * build_new_academy() {
 	academy->root_agent = NULL;
 	academy->hashtable_len = 1000;
 	academy->hashtable = malloc(sizeof(struct Academy_Hashtable_Row_T)*academy->hashtable_len);
-	for (int i = 0; i < academy->hashtable_len; i++) {
+	for (long i = 0; i < academy->hashtable_len; i++) {
 		academy->hashtable[i].agent = NULL;
 		academy->hashtable[i].hash = 0;
 	}
@@ -61,7 +61,7 @@ struct Academy_T * build_new_academy() {
 }
 
 void academy_prune_node(struct Academy_Agent_T * tree) {
-	int i;
+	long i;
 	for (i = 0; i < tree->children_count; i++)
 		if (tree->children[i].state == ACADEMY_AGENT_STATE_ALIVE) {
 			academy_prune_node(tree->children[i].agent);
@@ -79,11 +79,15 @@ void academy_prune_node(struct Academy_Agent_T * tree) {
 void tree_search_test_prune_from_node(struct Academy_Agent_T * tree) {
 	float threshold = (float)tree->academy->loaded_agent_count/ACADEMY_MAX_LOADED_AGENT_COUNT;
 	for (int i = 0; i < tree->children_count; i++) {
-		 if (tree->children[i].state == ACADEMY_AGENT_STATE_ALIVE && tree->children[i].subtree_games_played > 100 && tree->children[i].subtree_value < threshold) {
-			 academy_prune_node(tree->children[i].agent);
-			 tree->children[i].state = ACADEMY_AGENT_STATE_UNLOADED;
-			 threshold = (float)tree->academy->loaded_agent_count/ACADEMY_MAX_LOADED_AGENT_COUNT;
-		 }
+		if (tree->academy->loaded_agent_count < 0.5*ACADEMY_MAX_LOADED_AGENT_COUNT)
+		{
+			break;
+		}
+		if (tree->children[i].state == ACADEMY_AGENT_STATE_ALIVE && tree->children[i].subtree_games_played > 100 && tree->children[i].subtree_value < threshold) {
+			academy_prune_node(tree->children[i].agent);
+			tree->children[i].state = ACADEMY_AGENT_STATE_UNLOADED;
+			threshold = (float)tree->academy->loaded_agent_count/ACADEMY_MAX_LOADED_AGENT_COUNT;
+		}
 	}
 }
 
@@ -91,13 +95,13 @@ void tree_search_test_prune_from_node(struct Academy_Agent_T * tree) {
 void academy_get_probability_field(struct Academy_Agent_T * agent, float * probabilities) {
 	// Score all candidates (first is parent)
 
-	probabilities[0] = agent->own_value + UCB_C*sqrt(ceil_log2(agent->own_and_children_games_played) / (float)agent->own_games_played);
-	int i;
+	probabilities[0] = agent->own_value + UCB_C*sqrt(ceil_log2(agent->own_and_children_games_played) / ((float)agent->own_games_played+1));
+	long i;
 	float sum = probabilities[0];
 	for (i = 0; i < agent->children_count; i++) {
 		if (agent->children[i].state == ACADEMY_AGENT_STATE_ALIVE)
 		{
-			probabilities[i+1] = agent->children[i].subtree_value + UCB_C*sqrt(ceil_log2(agent->own_and_children_games_played) / (float)agent->children[i].subtree_games_played);
+			probabilities[i+1] = agent->children[i].subtree_value + UCB_C*sqrt(ceil_log2(agent->own_and_children_games_played) / ((float)agent->children[i].subtree_games_played+1));
 			sum += probabilities[i+1];
 		}
 		else {
@@ -106,7 +110,14 @@ void academy_get_probability_field(struct Academy_Agent_T * agent, float * proba
 	}
 	// normalize
 	for (i = 0; i < agent->children_count+1; i++) {
-		probabilities[i] = probabilities[i]/sum;
+		if (sum > 0)
+		{
+			probabilities[i] = probabilities[i]/sum;
+		}
+		else
+		{
+			probabilities[i] = 1.0/(agent->children_count+1.0);
+		}
 	}
 }
 
@@ -119,7 +130,7 @@ void academy_update_expected_values(struct Academy_Agent_T * agent) {
 void academy_select_matchup_probablistic(struct Academy_T * academy, struct Academy_Agent_T ** agent1, struct Academy_Agent_T ** agent2) {
 	struct Academy_Agent_T * current_agent = academy->root_agent;
 
-	int pass = 0;
+	long pass = 0;
 	while(current_agent) {
 
 		// Randomly check for prunable nodes to keep memory usage sane
@@ -168,7 +179,7 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 
 
 void academy_expand_hashtable(struct Academy_T * academy) {
-	int old_hashtable_len = academy->hashtable_len;
+	long old_hashtable_len = academy->hashtable_len;
 	struct Academy_Hashtable_Row_T * old_hashtable = academy->hashtable;
 
 	// Allocate new table
@@ -176,13 +187,13 @@ void academy_expand_hashtable(struct Academy_T * academy) {
 	academy->hashtable = malloc(sizeof(struct Academy_Hashtable_Row_T) * academy->hashtable_len);
 
 	// Clear new table
-	for (int i = 0; i < academy->hashtable_len; i++) {
+	for (long i = 0; i < academy->hashtable_len; i++) {
 		academy->hashtable[i].hash = 0;
 		academy->hashtable[i].agent = NULL;
 	}
 
 	// Move in all old data
-	for (int i = 0; i < old_hashtable_len; i++) {
+	for (long i = 0; i < old_hashtable_len; i++) {
 		if (old_hashtable[i].agent) {
 			struct Academy_Hashtable_Row_T * row = academy_hashtable_lookup(academy, old_hashtable[i].hash);
 			if (!row) {
@@ -198,7 +209,7 @@ void academy_expand_hashtable(struct Academy_T * academy) {
 }
 
 struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * parent, char * data, size_t data_len) {
-
+	static agents_created = 0;
 	// Hash and check for duplicate agents first
 	unsigned long agent_hash = hash_with_len((unsigned char *) data, data_len);
 	struct Academy_Hashtable_Row_T * row = academy_hashtable_lookup(academy, agent_hash);
@@ -223,6 +234,8 @@ struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struc
 
 	struct Academy_Agent_T * agent = malloc(sizeof(struct Academy_Agent_T));
 
+	agent->agent_num = agents_created++;
+
 	row->agent = agent;
 	row->hash = agent_hash;
 
@@ -234,12 +247,12 @@ struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struc
 			parent->children_slots_allocated *= 2;
 			parent->children = realloc(parent->children, sizeof(struct Academy_Agent_Child_T)*parent->children_slots_allocated);
 		}
-		int index = parent->children_count++;
+		long index = parent->children_count++;
 
 		parent->children[index].agent = agent;
-		parent->children[index].subtree_games_played = 1;
+		parent->children[index].subtree_games_played = 0;
 		parent->children[index].subtree_points = 0;
-		parent->children[index].subtree_value = (float)parent->children[index].subtree_points/(float)parent->children[index].subtree_games_played;
+		parent->children[index].subtree_value = 0;
 		parent->children[index].state = ACADEMY_AGENT_STATE_ALIVE;
 		agent->generation = parent->generation + 1;
 		agent->parent_child_index = index;
@@ -257,11 +270,11 @@ struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struc
 	agent->academy = academy;
 	agent->parent = parent;
 
-	agent->own_and_children_games_played = 2;
+	agent->own_and_children_games_played = 0;
 
-	agent->own_games_played = 1;
+	agent->own_games_played = 0;
 	agent->own_points = 0;
-	agent->own_value = (float)agent->own_points/(float)agent->own_games_played;
+	agent->own_value = 0;
 
 	agent->children_count = 0;
 	agent->aborted_children_count = 0;
@@ -282,7 +295,7 @@ void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_poin
 
 	/* Find the common ancestor of the winner and looser. */
 
-	int i;
+	long i;
 
 	while (winner != looser) {
 		struct Academy_Agent_T * next_winner = winner;
@@ -358,6 +371,7 @@ void export_agent_nodes(struct Academy_Agent_T * agent, FILE * fp)
 	fprintf(fp, "<attvalue for=\"2\" value=\"%f\"/>\n", agent->own_value);
 	fprintf(fp, "<attvalue for=\"3\" value=\"%i\"/>\n", subtree_games_played);
 	fprintf(fp, "<attvalue for=\"4\" value=\"%f\"/>\n", subtree_value);
+	fprintf(fp, "<attvalue for=\"5\" value=\"%d\"/>\n", agent->agent_num);
 	fprintf(fp, "</attvalues>\n");
 	fprintf(fp, "</node>\n");
 	for (i = 0; i < agent->children_count; i++)
@@ -398,6 +412,7 @@ void export_academy(struct Academy_T * academy, const char * fname)
     fprintf(fp, "<attribute id=\"2\" title=\"Own Value\" type=\"float\"/>\n");
     fprintf(fp, "<attribute id=\"3\" title=\"Subtree Games Played\" type=\"integer\"/>\n");
     fprintf(fp, "<attribute id=\"4\" title=\"Subtree Value\" type=\"float\"/>\n");
+    fprintf(fp, "<attribute id=\"5\" title=\"Agent Number\" type=\"integer\"/>\n");
     fprintf(fp, "</attributes>\n");
     fprintf(fp, "<nodes>\n");
     export_agent_nodes(academy->root_agent, fp);
