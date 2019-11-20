@@ -37,7 +37,7 @@ struct Academy_Agent_T {
 
 	struct Academy_Agent_Child_T * children;
 	long children_slots_allocated;
-	long aborted_children_count;
+	long pruned_children_count;
 	long children_count;
 	size_t data_len;
 	char * data;
@@ -47,6 +47,7 @@ struct Academy_Agent_T {
 struct Academy_Hashtable_Row_T {
 	struct Academy_Agent_T * agent;
 	unsigned long hash;
+	enum Academy_Agent_State_T state;
 };
 
 struct Academy_T {
@@ -56,6 +57,8 @@ struct Academy_T {
 	long loaded_agent_count;
 	struct Academy_Hashtable_Row_T * hashtable;
 	long hashtable_len;
+	long hashtable_filled_rows;
+	long hashtable_pruned_rows;
 
 	float max_value;
 };
@@ -69,6 +72,11 @@ void academy_prune_node(struct Academy_Agent_T * tree);
 void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T **, struct Academy_Agent_T **);
 
 struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * parent, char * data, size_t data_len);
+
+struct Academy_Hashtable_Row_T * academy_hashtable_lookup(struct Academy_T * academy, unsigned long hash);
+
+void academy_rebuild_hashtable(struct Academy_T * academy);
+void academy_rebuild_agent_children_list(struct Academy_Agent_T * agent);
 
 void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_points, struct Academy_Agent_T * looser, float looser_points);
 

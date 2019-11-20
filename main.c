@@ -13,6 +13,7 @@
 #include <setjmp.h>
 #include "vx32.h"
 #include "args.h"
+#include <time.h>
 
 #include <sys/types.h>
 #include <stdint.h>
@@ -77,7 +78,8 @@ int run_proc(vxproc *volatile p)
 	p->cpu->eflags = 0;
 	p->cpu->eip = IO_DATA_LEN;
 	vxproc_flush(p);
-	return vxproc_run(p);
+	int rc = vxproc_run(p);
+	return rc;
 }
 
 float task_judge_hello_world(unsigned char * data)
@@ -100,8 +102,6 @@ float task_judge_hello_world(unsigned char * data)
 
 int main(int argc, const char *const *argv)
 {
-	progname = argv[0];
-	progpid = getpid();
 
 	vx32_siginit();
 
@@ -109,11 +109,19 @@ int main(int argc, const char *const *argv)
 
 	// Init with two null programs
 	char * data = malloc(PROG_DATA_LEN);
+	memset(data, 0, PROG_DATA_LEN);
 	struct Academy_Agent_T * tree_root = academy_add_new_agent(academy, NULL, data, PROG_DATA_LEN);
 	data = malloc(PROG_DATA_LEN);
-	data[0] = 0xC6;
-	data[1] = 0x05;
-	data[6] = 0x49;
+	memset(data, 0, PROG_DATA_LEN);
+	//data[0] = 0xC6;
+	//data[1] = 0x05;
+	//data[6] = 0x49;
+	//data[0] = 0xEB;
+	//data[1] = 0xFE;
+	//data[99] = 0x5F;
+	//data[173] = 0x7F;
+	//data[335] = 0x8B;
+	data[100] = 0xFF;
 	academy_add_new_agent(academy, tree_root, data, PROG_DATA_LEN);
 
 	vxproc *volatile p = vxproc_alloc();
@@ -156,12 +164,16 @@ int main(int argc, const char *const *argv)
 		memcpy(proc_mem->program_data, node_0->data, node_0->data_len);
 
 		run_proc(p);
+		mem_map = vxmem_map(mem, 0);
+		proc_mem = mem_map->base;
 		score_0 = task_judge_hello_world(proc_mem->io_data);
 
 		memset(proc_mem->io_data, 0, IO_DATA_LEN);
 		memcpy(proc_mem->program_data, node_1->data, node_1->data_len);
 
 		run_proc(p);
+		mem_map = vxmem_map(mem, 0);
+		proc_mem = mem_map->base;
 		score_1 = task_judge_hello_world(proc_mem->io_data);
 
 		if (score_0 >= score_1)
@@ -183,7 +195,7 @@ int main(int argc, const char *const *argv)
 		memcpy(new_data, node_0->data, PROG_DATA_LEN);
 
 		/* Make a random change and introduce a new agent */
-		unsigned char * to_change = new_data + fast_rand()%PROG_DATA_LEN;
+		unsigned char * to_change = new_data + fast_rand()%(PROG_DATA_LEN/100);
 		*to_change = fast_rand()&0xFF;
 
 		academy_add_new_agent(academy, node_0, new_data, PROG_DATA_LEN);
@@ -196,6 +208,7 @@ int main(int argc, const char *const *argv)
 			printf("Rejected %d duplicate agents.\n", academy->duplicates_rejected);
 			printf("Root value: %f \n", tree_root->own_value);
 			printf("Hashtable len: %d \n", academy->hashtable_len);
+			printf("Best score: %f\n", best_score);
 		}
 
 		if (games_played > 100000)
@@ -210,5 +223,4 @@ int main(int argc, const char *const *argv)
 
 		games_played++;
 	}
-	printf("Best score: %f\n", best_score);
 }

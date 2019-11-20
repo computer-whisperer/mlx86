@@ -5,15 +5,166 @@
 #include "utils.h"
 #include "academy.h"
 
-#define UCB_C 1.0
+#define UCB_C 0.01
 
+long academy_node_assert_sanity(struct Academy_Agent_T * agent)
+{
+	long faults = 0;
+
+	// Check academy
+	if (!agent->academy)
+	{
+		printf("Agent is missing it's academy!\n");
+		faults++;
+	}
+
+	// Check data
+	if (!agent->data || (agent->data_len == 0))
+	{
+		printf("Agent is missing it's data!\n");
+		faults++;
+	}
+	else
+	{
+		if (hash_with_len((unsigned char *) agent->data, agent->data_len) != agent->data_hash)
+		{
+			printf("Agent data does not match it's hash!\n");
+			faults++;
+		}
+		struct Academy_Hashtable_Row_T * row = academy_hashtable_lookup(agent->academy, agent->data_hash);
+		if (row->agent != agent)
+		{
+			printf("Hashtable does not map to agent!\n");
+			faults++;
+		}
+	}
+
+	// Check children list
+	long live_count = 0;
+	long pruned_count = 0;
+	long empty_count = 0;
+	long i;
+	for (i = 0; i < agent->children_slots_allocated; i++)
+	{
+		if (agent->children[i].state == ACADEMY_AGENT_STATE_EMPTY)
+		{
+			empty_count++;
+			if (agent->children[i].agent)
+			{
+				printf("This agent should be null.\n");
+				faults++;
+			}
+		}
+		else if (agent->children[i].state == ACADEMY_AGENT_STATE_UNLOADED)
+		{
+			pruned_count++;
+			if (agent->children[i].agent)
+			{
+				printf("This agent should be null.\n");
+				faults++;
+			}
+		}
+		else
+		{
+			live_count++;
+			if (!agent->children[i].agent)
+			{
+				printf("This agent should not be null.\n");
+				faults++;
+			}
+			else
+			{
+				if (agent->children[i].agent->parent != agent)
+				{
+					printf("This child does not know it's parent!!!\n");
+					faults++;
+				}
+				if (agent->children[i].agent->parent_child_index != i)
+				{
+					printf("This child does not know it's parent child index!!!\n");
+					faults++;
+				}
+				faults += academy_node_assert_sanity(agent->children[i].agent);
+			}
+		}
+	}
+	return faults;
+}
+
+void academy_assert_sanity(struct Academy_T * academy)
+{
+	long faults = 0;
+	// Check overall numbers
+	if ((academy->hashtable_filled_rows - academy->hashtable_pruned_rows) != academy->loaded_agent_count)
+	{
+		printf("Bad hashtable or loaded agent count.\n");
+		faults++;
+	}
+
+	// Check hashtable
+	long filled_rows = 0;
+	long empty_rows = 0;
+	long pruned_rows = 0;
+	long i;
+	for (i = 0; i < academy->hashtable_len; i++)
+	{
+		if (academy->hashtable[i].state == ACADEMY_AGENT_STATE_EMPTY)
+		{
+			if (academy->hashtable[i].agent)
+			{
+				faults++;
+				printf("Bad hashtable entry.\n");
+			}
+			empty_rows++;
+		}
+		else if (academy->hashtable[i].state == ACADEMY_AGENT_STATE_UNLOADED)
+		{
+			if (academy->hashtable[i].agent)
+			{
+				faults++;
+				printf("Bad hashtable entry.\n");
+			}
+			pruned_rows++;
+		}
+		else
+		{
+			if (!academy->hashtable[i].agent)
+			{
+				faults++;
+				printf("Bad empty hashtable entry.\n");
+			}
+			filled_rows++;
+		}
+	}
+	if (filled_rows != (academy->hashtable_filled_rows - academy->hashtable_pruned_rows))
+	{
+		faults++;
+		printf("Bad filled row count.\n");
+	}
+	if (pruned_rows != academy->hashtable_pruned_rows)
+	{
+		faults++;
+		printf("Bad filled row count.\n");
+	}
+
+	if (academy->root_agent)
+	{
+		faults += academy_node_assert_sanity(academy->root_agent);
+	}
+
+	if (faults > 0)
+	{
+		printf("Aborting.\n");
+		exit(-1);
+	}
+}
 
 struct Academy_Hashtable_Row_T * academy_hashtable_lookup(struct Academy_T * academy, unsigned long hash) {
 	struct Academy_Hashtable_Row_T * row;
 	// Quadratic probing
 	for (long i = 0; i < academy->hashtable_len; i++) {
 		row = &(academy->hashtable[(i*i + hash)%academy->hashtable_len]);
-		if (!row->agent)
+		if (row->state == ACADEMY_AGENT_STATE_EMPTY)
 			return row;
 		if (row->hash == hash)
 			return row;
@@ -51,25 +202,31 @@ struct Academy_T * build_new_academy() {
 	academy->duplicates_rejected = 0;
 	academy->loaded_agent_count = 0;
 	academy->root_agent = NULL;
+	academy->hashtable = NULL;
 	academy->hashtable_len = 1000;
+	academy->hashtable_pruned_rows = 0;
+	academy->hashtable_filled_rows = 0;
+	academy_rebuild_hashtable(academy);
 	academy->max_value = 0;
-	academy->hashtable = malloc(sizeof(struct Academy_Hashtable_Row_T)*academy->hashtable_len);
-	for (long i = 0; i < academy->hashtable_len; i++) {
-		academy->hashtable[i].agent = NULL;
-		academy->hashtable[i].hash = 0;
-	}
 	return academy;
 }
 
+/* This deletes all node children and the node data. */
 void academy_prune_node(struct Academy_Agent_T * tree) {
 	long i;
 	for (i = 0; i < tree->children_count; i++)
+	{
 		if (tree->children[i].state == ACADEMY_AGENT_STATE_ALIVE) {
 			academy_prune_node(tree->children[i].agent);
-			academy_hashtable_lookup(tree->academy, tree->data_hash)->agent = NULL;
-			free(tree->children[i].agent);
+			struct Academy_Hashtable_Row_T * hashrow = academy_hashtable_lookup(tree->academy, tree->data_hash);
+			hashrow->agent = NULL;
+			hashrow->state = ACADEMY_AGENT_STATE_UNLOADED;
+			tree->academy->hashtable_pruned_rows++;
 			tree->children[i].agent = NULL;
+			tree->children[i].state = ACADEMY_AGENT_STATE_UNLOADED;
+			free(tree->children[i].agent);
 		}
+	}
 	if (tree->data) {
 		free(tree->data);
 		tree->data = NULL;
@@ -79,6 +236,7 @@ void academy_prune_node(struct Academy_Agent_T * tree) {
 
 void tree_search_test_prune_from_node(struct Academy_Agent_T * tree) {
 	float threshold = tree->academy->max_value * ((float)tree->academy->loaded_agent_count/ACADEMY_MAX_LOADED_AGENT_COUNT);
+	int nodes_pruned = 0;
 	for (int i = 0; i < tree->children_count; i++) {
 		if (tree->academy->loaded_agent_count < 0.5*ACADEMY_MAX_LOADED_AGENT_COUNT)
 		{
@@ -88,6 +246,14 @@ void tree_search_test_prune_from_node(struct Academy_Agent_T * tree) {
 			academy_prune_node(tree->children[i].agent);
 			tree->children[i].state = ACADEMY_AGENT_STATE_UNLOADED;
 			threshold = (float)tree->academy->loaded_agent_count/ACADEMY_MAX_LOADED_AGENT_COUNT;
+			nodes_pruned = 1;
+		}
+	}
+	if (nodes_pruned)
+	{
+		if ((tree->children_count - tree->pruned_children_count) < (tree->children_slots_allocated/2))
+		{
+			academy_rebuild_agent_children_list(tree);
 		}
 	}
 }
@@ -131,6 +297,11 @@ void academy_update_expected_values(struct Academy_Agent_T * agent) {
 void academy_select_matchup_probablistic(struct Academy_T * academy, struct Academy_Agent_T ** agent1, struct Academy_Agent_T ** agent2) {
 	struct Academy_Agent_T * current_agent = academy->root_agent;
 
+	if (fast_rand()%1000 == 0)
+	{
+		//academy_assert_sanity(academy);
+	}
+
 	long pass = 0;
 	while(current_agent) {
 
@@ -146,8 +317,22 @@ void academy_select_matchup_probablistic(struct Academy_T * academy, struct Acad
 		int chosen_index;
 		for (chosen_index = 0; chosen_index < current_agent->children_count; chosen_index++) {
 			selector -= scores[chosen_index];
-			if (selector <= 0)
-				break;
+
+
+			if ((selector <= 0))
+			{
+				if ((chosen_index == 0) || (current_agent->children[chosen_index-1].state == ACADEMY_AGENT_STATE_ALIVE))
+				{
+					break;
+				}
+			}
+		}
+
+		if ((chosen_index != 0) && (!current_agent->children[chosen_index-1].agent))
+		{
+			printf("wtf???\n");
+			*((char *) 0) = 1;
+			exit(1);
 		}
 
 		// I select ME!
@@ -160,14 +345,23 @@ void academy_select_matchup_probablistic(struct Academy_T * academy, struct Acad
 			}
 			else {
 				*agent2 = current_agent;
-				return;
+				break;
 			}
 		}
 		else {
 			current_agent->children[chosen_index-1].subtree_games_played++;
 			current_agent = current_agent->children[chosen_index-1].agent;
 		}
+
+
 	}
+	if (!*agent1 || !*agent2)
+	{
+		printf("wtf???\n");
+		*((char *) 0) = 1;
+		exit(1);
+	}
+
 	return;
 }
 
@@ -179,38 +373,84 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 }
 
 
-void academy_expand_hashtable(struct Academy_T * academy) {
+void academy_rebuild_hashtable(struct Academy_T * academy) {
 	long old_hashtable_len = academy->hashtable_len;
 	struct Academy_Hashtable_Row_T * old_hashtable = academy->hashtable;
 
-	// Allocate new table
-	academy->hashtable_len *= 2;
-	academy->hashtable = malloc(sizeof(struct Academy_Hashtable_Row_T) * academy->hashtable_len);
-
-	// Clear new table
-	for (long i = 0; i < academy->hashtable_len; i++) {
-		academy->hashtable[i].hash = 0;
-		academy->hashtable[i].agent = NULL;
+	// Check if we need to resize the table
+	if (academy->hashtable && ((academy->hashtable_filled_rows - academy->hashtable_pruned_rows) > (academy->hashtable_len/2)))
+	{
+		academy->hashtable_len *= 2;
 	}
+
+	// Allocate new table
+	academy->hashtable = malloc(sizeof(struct Academy_Hashtable_Row_T) * academy->hashtable_len);
+	memset(academy->hashtable, 0, academy->hashtable_len * sizeof(struct Academy_Hashtable_Row_T));
+	academy->hashtable_filled_rows = 0;
+	academy->hashtable_pruned_rows = 0;
 
 	// Move in all old data
-	for (long i = 0; i < old_hashtable_len; i++) {
-		if (old_hashtable[i].agent) {
-			struct Academy_Hashtable_Row_T * row = academy_hashtable_lookup(academy, old_hashtable[i].hash);
-			if (!row) {
-				printf("Something went really, really wrong. Consider religion.");
-				exit(1);
+
+	if (old_hashtable)
+	{
+		for (long i = 0; i < old_hashtable_len; i++) {
+			if (old_hashtable[i].agent) {
+				struct Academy_Hashtable_Row_T * row = academy_hashtable_lookup(academy, old_hashtable[i].hash);
+				if (!row) {
+					printf("Something went really, really wrong. Consider religion.");
+					exit(1);
+				}
+				row->agent = old_hashtable[i].agent;
+				row->hash = old_hashtable[i].hash;
+				row->state = old_hashtable[i].state;
+				academy->hashtable_filled_rows++;
 			}
-			row->agent = old_hashtable[i].agent;
-			row->hash = old_hashtable[i].hash;
 		}
+
+		free(old_hashtable);
+	}
+}
+
+void academy_rebuild_agent_children_list(struct Academy_Agent_T * agent)
+{
+	struct Academy_Agent_Child_T * old_children = agent->children;
+	long old_children_count = agent->children_count;
+	long i;
+
+	// Expand array if neccessary
+	if ((agent->children_count - agent->pruned_children_count) > agent->children_slots_allocated/2)
+	{
+		agent->children_slots_allocated *= 2;
 	}
 
-	free(old_hashtable);
+	agent->children = malloc(sizeof(struct Academy_Agent_Child_T) * agent->children_slots_allocated);
+	agent->children_count = 0;
+	agent->pruned_children_count = 0;
+
+	if (old_children)
+	{
+		for (i = 0; i < old_children_count; i++)
+		{
+			if (old_children[i].state == ACADEMY_AGENT_STATE_ALIVE)
+			{
+				memcpy(&(agent->children[agent->children_count]), &old_children[i], sizeof(struct Academy_Agent_Child_T));
+				agent->children[agent->children_count].agent->parent_child_index = agent->children_count;
+				agent->children_count++;
+			}
+		}
+
+		free(old_children);
+	}
+
+	for (i = agent->children_count; i < agent->children_slots_allocated; i++)
+	{
+		agent->children[i].state = ACADEMY_AGENT_STATE_EMPTY;
+		agent->children[i].agent = 0;
+	}
 }
 
 struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * parent, char * data, size_t data_len) {
-	static agents_created = 0;
+	static long agents_created = 0;
 	// Hash and check for duplicate agents first
 	unsigned long agent_hash = hash_with_len((unsigned char *) data, data_len);
 	struct Academy_Hashtable_Row_T * row = academy_hashtable_lookup(academy, agent_hash);
@@ -218,17 +458,16 @@ struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struc
 		printf("The academy's hashtable is completely full!!!\n");
 		exit(1);
 	}
-	if (row->agent) {
+	if (row->state != ACADEMY_AGENT_STATE_EMPTY) {
 		// Busted! The given code is identical to another agent!
-		parent->aborted_children_count++;
 		academy->duplicates_rejected++;
 		free(data);
 		return NULL;
 	}
 
 	// Check if we should expand the academy hashtable
-	if ((float)academy->agent_count/(float)academy->hashtable_len > 0.75) {
-		academy_expand_hashtable(academy);
+	if ((float)academy->hashtable_filled_rows/(float)academy->hashtable_len > 0.75) {
+		academy_rebuild_hashtable(academy);
 		// Need to find row again!
 		row = academy_hashtable_lookup(academy, agent_hash);
 	}
@@ -239,15 +478,15 @@ struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struc
 
 	row->agent = agent;
 	row->hash = agent_hash;
+	row->state = ACADEMY_AGENT_STATE_ALIVE;
 
 	if (parent) {
 		// Add child data to parent
 
-		// Expand parent array if neccessary
 		if (parent->children_slots_allocated == parent->children_count) {
-			parent->children_slots_allocated *= 2;
-			parent->children = realloc(parent->children, sizeof(struct Academy_Agent_Child_T)*parent->children_slots_allocated);
+			academy_rebuild_agent_children_list(parent);
 		}
+
 		long index = parent->children_count++;
 
 		parent->children[index].agent = agent;
@@ -278,15 +517,18 @@ struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struc
 	agent->own_value = 0;
 
 	agent->children_count = 0;
-	agent->aborted_children_count = 0;
+	agent->pruned_children_count = 0;
 	agent->children_slots_allocated = 10;
-	agent->children = malloc(sizeof(struct Academy_Agent_Child_T) * agent->children_slots_allocated);
+	agent->children = NULL;
+	academy_rebuild_agent_children_list(agent);
 	agent->data = data;
 	agent->data_len = data_len;
 	agent->data_hash = agent_hash;
 
 	academy->agent_count++;
 	academy->loaded_agent_count++;
+	academy->hashtable_filled_rows++;
+
 	return agent;
 }
 
@@ -294,12 +536,12 @@ struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struc
 
 float score_update(float last_score, float score, float score_sum, long games_played)
 {
-	//winner->own_value = (float)winner->own_points/(float)winner->own_games_played;
-	//winner->own_value = (winner->own_value * (1 - UPDATE_VAL)) + (winner_points * UPDATE_VAL);
-	if (score > last_score)
-		return score;
-	else
-		return last_score;
+	return score_sum/games_played;
+	//return (last_score * (1 - UPDATE_VAL)) + (score * UPDATE_VAL);
+	//if (score > last_score)
+	//	return score;
+	//else
+	//	return last_score;
 }
 
 void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_points, struct Academy_Agent_T * looser, float looser_points) {
