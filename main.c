@@ -82,11 +82,12 @@ int run_proc(vxproc *volatile p)
 	return rc;
 }
 
+char * goal = "I am mlx86!!!";
 float task_judge_hello_world(unsigned char * data)
 {
   float score = 0;
 
-  char * goal = "I am mlx86!!!";
+  //char * goal = "I am mlx86!!!";
 
   for (int i = 0; i < strlen(goal); i++) {
     int error = goal[i] - data[i];
@@ -94,21 +95,33 @@ float task_judge_hello_world(unsigned char * data)
       error = -error;
     if (error > 50)
       error = 50;
-    score += 1-(((float)error)/50.0);
+    score += 1.0-(((float)error)/50.0);
   }
 
   return score/strlen(goal);
 }
 
+void print_as_hex(unsigned char * data, unsigned int len)
+{
+	unsigned int i;
+	for(i = 0; i < len; i++)
+	{
+		printf("%02x", data[i]);
+	}
+}
+
 int main(int argc, const char *const *argv)
 {
+
+	double start_time = getUnixTime();
+	double last_update = getUnixTime();
 
 	vx32_siginit();
 
 	struct Academy_T * academy = build_new_academy();
 
 	// Init with two null programs
-	char * data = malloc(PROG_DATA_LEN);
+	unsigned char * data = malloc(PROG_DATA_LEN);
 	memset(data, 0, PROG_DATA_LEN);
 	struct Academy_Agent_T * tree_root = academy_add_new_agent(academy, NULL, data, PROG_DATA_LEN);
 	data = malloc(PROG_DATA_LEN);
@@ -136,6 +149,7 @@ int main(int argc, const char *const *argv)
 	int games_played = 0;
 
 	float best_score = 0;
+	unsigned char best_output[10];
 
 	while (1)
 	{
@@ -153,7 +167,7 @@ int main(int argc, const char *const *argv)
 
 			fuck_ctr++;
 
-			if (fuck_ctr > 100)
+			if (fuck_ctr > 1000)
 			{
 				printf("\n\nFuck... \n");
 				exit(1);
@@ -168,6 +182,12 @@ int main(int argc, const char *const *argv)
 		proc_mem = mem_map->base;
 		score_0 = task_judge_hello_world(proc_mem->io_data);
 
+		if (score_0 > best_score)
+		{
+			best_score = score_0;
+			memcpy(best_output, proc_mem->io_data, sizeof(best_output));
+		}
+
 		memset(proc_mem->io_data, 0, IO_DATA_LEN);
 		memcpy(proc_mem->program_data, node_1->data, node_1->data_len);
 
@@ -175,6 +195,12 @@ int main(int argc, const char *const *argv)
 		mem_map = vxmem_map(mem, 0);
 		proc_mem = mem_map->base;
 		score_1 = task_judge_hello_world(proc_mem->io_data);
+
+		if (score_1 > best_score)
+		{
+			best_score = score_1;
+			memcpy(best_output, proc_mem->io_data, sizeof(best_output));
+		}
 
 		if (score_0 >= score_1)
 		{
@@ -188,30 +214,38 @@ int main(int argc, const char *const *argv)
 		}
 		/* Winner has been set to node 0 */
 
-		if (score_0 > best_score)
-			best_score = score_0;
+		// Occasionally make a new node
 
-		unsigned char * new_data = malloc(PROG_DATA_LEN);
-		memcpy(new_data, node_0->data, PROG_DATA_LEN);
+		if (!(games_played % 5))
+		{
+			unsigned char * new_data = malloc(PROG_DATA_LEN);
+			memcpy(new_data, node_0->data, PROG_DATA_LEN);
 
-		/* Make a random change and introduce a new agent */
-		unsigned char * to_change = new_data + fast_rand()%(PROG_DATA_LEN/100);
-		*to_change = fast_rand()&0xFF;
+			/* Make a random change and introduce a new agent */
+			unsigned char * to_change = new_data + fast_rand()%(PROG_DATA_LEN/200);
+			*to_change = fast_rand()&0xFF;
 
-		academy_add_new_agent(academy, node_0, new_data, PROG_DATA_LEN);
-
-		if (!(games_played % 10000)) {
-			printf("\n\nGeneration: %d \n", node_0->generation);
-			printf("Played %d games.\n", games_played);
-			printf("Made %d agents.\n", academy->agent_count);
-			printf("Remembering %d agents.\n", academy->loaded_agent_count);
-			printf("Rejected %d duplicate agents.\n", academy->duplicates_rejected);
-			printf("Root value: %f \n", tree_root->own_value);
-			printf("Hashtable len: %d \n", academy->hashtable_len);
-			printf("Best score: %f\n", best_score);
+			academy_add_new_agent(academy, node_0, new_data, PROG_DATA_LEN);
 		}
 
-		if (games_played > 100000)
+	    if (!((games_played % 100)&&0) && (getUnixTime()-last_update > 0.5)) {
+	        last_update += 0.5;
+			printf("\n\nGeneration: %ld \n", node_0->generation);
+			printf("Played %ld games.\n", games_played);
+			printf("Made %ld agents.\n", academy->agent_count);
+			printf("Remembering %ld agents.\n", academy->loaded_agent_count);
+			printf("Rejected %ld duplicate agents.\n", academy->duplicates_rejected);
+			printf("Root value: %f \n", tree_root->own_value);
+			printf("Hashtable len: %ld \n", academy->hashtable_len);
+			printf("Best score: %f\n", best_score);
+			printf("Best output: ");
+			print_as_hex(best_output, sizeof(goal));
+			printf("\nGoal output: ");
+			print_as_hex(goal, sizeof(goal));
+			putchar('\n');
+		}
+
+		if (games_played > 1000000)
 		{
 			/* Export last candidate. */
 			FILE * fp = fopen("result", "w");
@@ -223,4 +257,5 @@ int main(int argc, const char *const *argv)
 
 		games_played++;
 	}
+	 printf("Finished after %f seconds.\n", (getUnixTime() - start_time));
 }

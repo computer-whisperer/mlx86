@@ -18,6 +18,10 @@ struct Academy_Agent_Child_T {
 	float subtree_points;
 	long subtree_games_played;
 	float subtree_value;
+
+	double subtree_probability;
+
+	long queries_old;
 };
 
 struct Academy_Agent_T {
@@ -28,12 +32,14 @@ struct Academy_Agent_T {
 	long parent_child_index;
 	long generation;
 
-	int own_and_children_games_played;
-
 	/* Statistics against children agents. */
 	float own_points;
 	long own_games_played;
 	float own_value;
+
+	long queries_old;
+
+	double own_probability;
 
 	struct Academy_Agent_Child_T * children;
 	long children_slots_allocated;
@@ -71,7 +77,7 @@ void academy_prune_node(struct Academy_Agent_T * tree);
 
 void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T **, struct Academy_Agent_T **);
 
-struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * parent, char * data, size_t data_len);
+struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * parent, unsigned char * data, size_t data_len);
 
 struct Academy_Hashtable_Row_T * academy_hashtable_lookup(struct Academy_T * academy, unsigned long hash);
 
