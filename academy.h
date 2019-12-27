@@ -2,87 +2,78 @@
 #ifndef ACADEMY_H
 #define ACADEMY_H
 
-#define ACADEMY_MAX_LOADED_AGENT_COUNT 100000
+#define ACADEMY_MAX_AGENT_COUNT 1000000
+#define ACADEMY_CHILDREN_PER_AGENT 100
 
-enum Academy_Agent_State_T {
-	ACADEMY_AGENT_STATE_EMPTY,
-	ACADEMY_AGENT_STATE_ALIVE,
-	ACADEMY_AGENT_STATE_UNLOADED,
+typedef unsigned long ACADEMY_AGENT_ID;
+#define ACADEMY_INVALID_AGENT_ID 0
+
+#define ACADEMY_AGENT_DATA_LEN 10000
+
+enum ACADEMY_HASHTABLE_ROW_STATE_T
+{
+	ACADEMY_HASHTABLE_ROW_STATE_TOMBSTONE,
+	ACADEMY_HASHTABLE_ROW_STATE_EMPTY,
+	ACADEMY_HASHTABLE_ROW_STATE_FULL
 };
 
-struct Academy_Agent_Child_T {
-	struct Academy_Agent_T * agent;
-	enum Academy_Agent_State_T state;
+struct Academy_Hashtable_Row_T
+{
+	enum ACADEMY_HASHTABLE_ROW_STATE_T state;
+	ACADEMY_AGENT_ID agent_id;
+	unsigned long agent_table_index;
+};
 
+struct Academy_Agent_Metadata_T
+{
 	/* Statistics against sibling agents. */
-	float subtree_points;
-	long subtree_games_played;
-	float subtree_value;
-
-	double subtree_probability;
-
-	long queries_old;
+	float points;
+	long games_played;
+	float value;
+	double probability;
 };
 
 struct Academy_Agent_T {
-	long agent_num;
-
+	ACADEMY_AGENT_ID id;
 	struct Academy_T * academy;
-	struct Academy_Agent_T * parent;
-	long parent_child_index;
+	ACADEMY_AGENT_ID parent_id;
+	unsigned long parent_child_index;
 	long generation;
-
-	/* Statistics against children agents. */
-	float own_points;
-	long own_games_played;
-	float own_value;
 
 	long queries_old;
 
-	double own_probability;
+	/* Statistics against children agents. */
+	struct Academy_Agent_Metadata_T own_metadata;
 
-	struct Academy_Agent_Child_T * children;
-	long children_slots_allocated;
-	long pruned_children_count;
-	long children_count;
+	struct Academy_Agent_Metadata_T children_metadata[ACADEMY_CHILDREN_PER_AGENT];
+
+	ACADEMY_AGENT_ID children_ids[ACADEMY_CHILDREN_PER_AGENT];
+
+	unsigned long child_count;
 	size_t data_len;
-	char * data;
-	unsigned long data_hash;
+	unsigned char data[ACADEMY_AGENT_DATA_LEN];
 };
 
-struct Academy_Hashtable_Row_T {
-	struct Academy_Agent_T * agent;
-	unsigned long hash;
-	enum Academy_Agent_State_T state;
-};
-
-struct Academy_T {
-	struct Academy_Agent_T * root_agent;
+struct Academy_T
+{
+	struct Academy_Hashtable_Row_T agent_id_hashtable[ACADEMY_MAX_AGENT_COUNT];
+	unsigned long agent_id_hashtable_max_offset;
+	struct Academy_Agent_T agents[ACADEMY_MAX_AGENT_COUNT];
 	long agent_count;
-	long duplicates_rejected;
-	long loaded_agent_count;
-	struct Academy_Hashtable_Row_T * hashtable;
-	long hashtable_len;
-	long hashtable_filled_rows;
-	long hashtable_pruned_rows;
-
+	ACADEMY_AGENT_ID last_agent_id;
+	ACADEMY_AGENT_ID root_agent_id;
 	float max_value;
 };
 
-struct Academy_T * build_new_academy();
+void build_new_academy(struct Academy_T * academy);
 
-struct Academy_Agent_T * academy_add_agent_from_file(struct Academy_T * academy, struct Academy_Agent_T * parent, char * fname);
+struct Academy_Agent_T * academy_get_agent_from_id(struct Academy_T * academy, ACADEMY_AGENT_ID agent_id);
 
 void academy_prune_node(struct Academy_Agent_T * tree);
 
 void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T **, struct Academy_Agent_T **);
 
-struct Academy_Agent_T * academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * parent, unsigned char * data, size_t data_len);
-
-struct Academy_Hashtable_Row_T * academy_hashtable_lookup(struct Academy_T * academy, unsigned long hash);
-
-void academy_rebuild_hashtable(struct Academy_T * academy);
-void academy_rebuild_agent_children_list(struct Academy_Agent_T * agent);
+void academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * parent, unsigned char * data, size_t data_len);
 
 void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_points, struct Academy_Agent_T * looser, float looser_points);
 

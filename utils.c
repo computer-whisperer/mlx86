@@ -12,7 +12,7 @@ double getUnixTime(void)
 
 // fast random number generated yanked from the internet
 
-unsigned int g_seed;
+unsigned int g_seed = 4819;
 
 // Used to seed the generator.           
 void fast_srand(int seed) {

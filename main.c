@@ -39,27 +39,7 @@ struct ml86_process_memory
 #define V (void*)(uintptr_t)
 
 const char *argv0;
-static const char *progname;
-static pid_t progpid;
 
-
-static void dumpregs(struct vxproc *p)
-{
-	struct vxcpu *c = p->cpu;
-
-	fprintf(stderr, "eax %08x  ecx %08x  edx %08x  ebx %08x\n",
-		c->reg[EAX], c->reg[ECX], c->reg[EDX], c->reg[EBX]);
-	fprintf(stderr, "esp %08x  ebp %08x  esi %08x  edi %08x\n",
-		c->reg[ESP], c->reg[EBP], c->reg[ESI], c->reg[EDI]);
-	fprintf(stderr, "eip %08x  eflags %08x\n",
-		c->eip, c->eflags);
-
-//	for (int i = 0; i < 8; i++) {
-//		int32_t *val = r.xmm[i].i32;
-//		fprintf(stderr, "xmm%d %08x%08x%08x%08x\n",
-//			i, val[3], val[2], val[1], val[0]);
-//	}
-}
 int trace;
 
 #define RET proc->cpu->reg[EAX]
@@ -74,7 +54,6 @@ int run_proc(vxproc *volatile p)
 {
 	// Set up the process's initial register state
 	memset(p->cpu->reg, 0, sizeof(p->cpu->reg));
-	p->cpu->reg[ESP] = 0;
 	p->cpu->eflags = 0;
 	p->cpu->eip = IO_DATA_LEN;
 	vxproc_flush(p);
@@ -83,6 +62,7 @@ int run_proc(vxproc *volatile p)
 }
 
 char * goal = "I am mlx86!!!";
+//char * goal = "Hi";
 float task_judge_hello_world(unsigned char * data)
 {
   float score = 0;
@@ -93,9 +73,9 @@ float task_judge_hello_world(unsigned char * data)
     int error = goal[i] - data[i];
     if (error < 0)
       error = -error;
-    if (error > 50)
-      error = 50;
-    score += 1.0-(((float)error)/50.0);
+    if (error > 5)
+      error = 5;
+    score += 1.0-(((float)error)/5.0);
   }
 
   return score/strlen(goal);
@@ -106,7 +86,7 @@ void print_as_hex(unsigned char * data, unsigned int len)
 	unsigned int i;
 	for(i = 0; i < len; i++)
 	{
-		printf("%02x", data[i]);
+		printf("%02x ", data[i]);
 	}
 }
 
@@ -118,14 +98,15 @@ int main(int argc, const char *const *argv)
 
 	vx32_siginit();
 
-	struct Academy_T * academy = build_new_academy();
+	struct Academy_T * academy = malloc(sizeof(struct Academy_T));
+	build_new_academy(academy);
 
 	// Init with two null programs
-	unsigned char * data = malloc(PROG_DATA_LEN);
-	memset(data, 0, PROG_DATA_LEN);
-	struct Academy_Agent_T * tree_root = academy_add_new_agent(academy, NULL, data, PROG_DATA_LEN);
-	data = malloc(PROG_DATA_LEN);
-	memset(data, 0, PROG_DATA_LEN);
+	unsigned char data[PROG_DATA_LEN];
+	memset(data, 0x90, PROG_DATA_LEN);
+	academy_add_new_agent(academy, NULL, data, PROG_DATA_LEN);
+	struct Academy_Agent_T * tree_root = academy_get_agent_from_id(academy, academy->root_agent_id);
+	memset(data, 0x90, PROG_DATA_LEN);
 	//data[0] = 0xC6;
 	//data[1] = 0x05;
 	//data[6] = 0x49;
@@ -146,10 +127,11 @@ int main(int argc, const char *const *argv)
 	vxmem_setperm(mem, 0, sizeof(struct ml86_process_memory), VXPERM_READ | VXPERM_WRITE | VXPERM_EXEC);
 	p->mem = mem;
 
-	int games_played = 0;
+	unsigned long games_played = 0;
 
 	float best_score = 0;
-	unsigned char best_output[10];
+	unsigned char best_output[50];
+	struct Academy_Agent_T * best_node = NULL;
 
 	while (1)
 	{
@@ -186,6 +168,7 @@ int main(int argc, const char *const *argv)
 		{
 			best_score = score_0;
 			memcpy(best_output, proc_mem->io_data, sizeof(best_output));
+			best_node = node_0;
 		}
 
 		memset(proc_mem->io_data, 0, IO_DATA_LEN);
@@ -200,6 +183,7 @@ int main(int argc, const char *const *argv)
 		{
 			best_score = score_1;
 			memcpy(best_output, proc_mem->io_data, sizeof(best_output));
+			best_node = node_1;
 		}
 
 		if (score_0 >= score_1)
@@ -216,41 +200,42 @@ int main(int argc, const char *const *argv)
 
 		// Occasionally make a new node
 
-		if (!(games_played % 5))
+		if (!(games_played % 3))
 		{
-			unsigned char * new_data = malloc(PROG_DATA_LEN);
-			memcpy(new_data, node_0->data, PROG_DATA_LEN);
+			memcpy(data, node_0->data, PROG_DATA_LEN);
 
 			/* Make a random change and introduce a new agent */
-			unsigned char * to_change = new_data + fast_rand()%(PROG_DATA_LEN/200);
+			unsigned char * to_change = data + fast_rand()%(40);
 			*to_change = fast_rand()&0xFF;
 
-			academy_add_new_agent(academy, node_0, new_data, PROG_DATA_LEN);
+			academy_add_new_agent(academy, node_0, data, PROG_DATA_LEN);
 		}
 
 	    if (!((games_played % 100)&&0) && (getUnixTime()-last_update > 0.5)) {
 	        last_update += 0.5;
 			printf("\n\nGeneration: %ld \n", node_0->generation);
 			printf("Played %ld games.\n", games_played);
-			printf("Made %ld agents.\n", academy->agent_count);
-			printf("Remembering %ld agents.\n", academy->loaded_agent_count);
-			printf("Rejected %ld duplicate agents.\n", academy->duplicates_rejected);
-			printf("Root value: %f \n", tree_root->own_value);
-			printf("Hashtable len: %ld \n", academy->hashtable_len);
+			printf("Made %ld agents.\n", academy->last_agent_id);
+			printf("Remembering %ld agents.\n", academy->agent_count);
+			printf("Root value: %f \n", tree_root->own_metadata.value);
+			printf("Agent ID table max offset: %ld \n", academy->agent_id_hashtable_max_offset);
 			printf("Best score: %f\n", best_score);
 			printf("Best output: ");
-			print_as_hex(best_output, sizeof(goal));
+			print_as_hex(best_output, strlen(goal));
 			printf("\nGoal output: ");
-			print_as_hex(goal, sizeof(goal));
+			print_as_hex((unsigned char *)goal, strlen(goal));
 			putchar('\n');
 		}
 
-		if (games_played > 1000000)
+		if (games_played > 100000)
 		{
 			/* Export last candidate. */
-			FILE * fp = fopen("result", "w");
-			fwrite(node_0->data, node_0->data_len, 1, fp);
-			fclose(fp);
+			if (best_node)
+			{
+				FILE * fp = fopen("result", "w");
+				fwrite(best_node->data, best_node->data_len, 1, fp);
+				fclose(fp);
+			}
 			export_academy(academy, "academy.gexf");
 			break;
 		}
