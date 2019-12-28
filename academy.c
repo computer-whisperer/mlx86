@@ -9,6 +9,11 @@
 
 void academy_update_probabilities(struct Academy_Agent_T * agent);
 
+unsigned long academy_agent_id_hash(ACADEMY_AGENT_ID agent_id)
+{
+	return agent_id*7;
+}
+
 long academy_node_assert_sanity(struct Academy_Agent_T * agent)
 {
 	long faults = 0;
@@ -69,6 +74,36 @@ void academy_assert_sanity(struct Academy_T * academy)
 		faults += academy_node_assert_sanity(agent);
 	}
 
+	// Check hash table
+	unsigned long table_rows_full = 0;
+	for (unsigned long i = 0; i < ACADEMY_MAX_AGENT_COUNT; i++)
+	{
+		if (academy->agent_id_hashtable[i].state == ACADEMY_HASHTABLE_ROW_STATE_FULL)
+		{
+			table_rows_full++;
+			if (academy->agent_id_hashtable[i].agent_id == ACADEMY_INVALID_AGENT_ID)
+			{
+				printf("An invalid agent id was found in a hashtable row that had a FULL state.\n");
+				faults++;
+			}
+			if (academy->agent_id_hashtable[i].agent_table_index >= ACADEMY_MAX_AGENT_COUNT)
+			{
+				printf("An invalid agent table index was found in a hashtable row that had a FULL state.\n");
+				faults++;
+			}
+			if (academy->agents[academy->agent_id_hashtable[i].agent_table_index].id != academy->agent_id_hashtable[i].agent_id)
+			{
+				printf("A hashtable row that was FULL points to a agent with the wrong ID.\n");
+				faults++;
+			}
+		}
+	}
+	if (table_rows_full != academy->agent_count)
+	{
+		printf("The number of filled rows in the hashtable does not match the number of agents!\n");
+		faults++;
+	}
+
 	if (faults > 0)
 	{
 		printf("Aborting.\n");
@@ -79,7 +114,7 @@ void academy_assert_sanity(struct Academy_T * academy)
 struct Academy_Agent_T * academy_get_agent_from_id(struct Academy_T * academy, ACADEMY_AGENT_ID agent_id)
 {
 	struct Academy_Agent_T * agent = NULL;
-	unsigned long hashtable_index = agent_id % ACADEMY_MAX_AGENT_COUNT;
+	unsigned long hashtable_index = academy_agent_id_hash(agent_id) % ACADEMY_MAX_AGENT_COUNT;
 	unsigned long probing_offset = 0;
 	while (1)
 	{
@@ -144,7 +179,7 @@ void academy_prune_node(struct Academy_Agent_T * agent)
 	ACADEMY_AGENT_ID agent_id = agent->id;
 
 	// Delete this agent from the id hashtable
-	unsigned long hashtable_index = agent_id % ACADEMY_MAX_AGENT_COUNT;
+	unsigned long hashtable_index = academy_agent_id_hash(agent_id) % ACADEMY_MAX_AGENT_COUNT;
 	unsigned long probing_offset = 0;
 	while (1)
 	{
@@ -180,7 +215,7 @@ void academy_prune_node(struct Academy_Agent_T * agent)
 void tree_search_test_prune_from_node(struct Academy_Agent_T * agent)
 {
 	struct Academy_T * academy = agent->academy;
-	float threshold = academy->max_value * ((float)academy->agent_count/ACADEMY_MAX_AGENT_COUNT);
+	float threshold = academy->max_value * ((float)academy->agent_count/ACADEMY_MAX_AGENT_COUNT) + 0.001;
 	int nodes_pruned = 0;
 	for (int i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
@@ -202,7 +237,8 @@ void tree_search_test_prune_from_node(struct Academy_Agent_T * agent)
 	}
 }
 
-void academy_update_probabilities(struct Academy_Agent_T * agent) {
+void academy_update_probabilities(struct Academy_Agent_T * agent)
+{
 	// Score all candidates (first is parent)
 	long i;
 	double sum;
@@ -225,6 +261,10 @@ void academy_update_probabilities(struct Academy_Agent_T * agent) {
 		if (agents[i])
 		{
 			agent->children_metadata[i].probability = agent->children_metadata[i].value;
+		}
+		else
+		{
+			agent->children_metadata[i].probability = 0;
 		}
 	}
 
@@ -317,10 +357,11 @@ void academy_update_probabilities(struct Academy_Agent_T * agent) {
 	}
 }
 
-void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T ** agent1, struct Academy_Agent_T ** agent2) {
+void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T ** agent1, struct Academy_Agent_T ** agent2)
+{
 	struct Academy_Agent_T * current_agent = academy_get_agent_from_id(academy, academy->root_agent_id);
 
-	if (fast_rand()%1000 == 0)
+	if (fast_rand()%100000 == 0)
 	{
 		academy_assert_sanity(academy);
 	}
@@ -330,7 +371,8 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 	struct Academy_Agent_T * least_tried_fork_agent = current_agent;
 	long least_tried_fork_tries = 10000000L;
 
-	while(current_agent) {
+	while(current_agent)
+	{
 
 		if (!isfinite(current_agent->own_metadata.probability))
 		{
@@ -340,8 +382,9 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 
 		// Randomly check for prunable nodes to keep memory usage sane
 		if (fast_rand()%30 == 0 && pass == 0)
+		{
 			tree_search_test_prune_from_node(current_agent);
-
+		}
 		current_agent->queries_old++;
 
 		// Select agent
@@ -357,12 +400,14 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 				least_tried_fork_tries = current_agent->own_metadata.games_played;
 			}
 
-			if (pass == 0) {
+			if (pass == 0)
+			{
 				*agent1 = current_agent;
 				pass = 1;
 				current_agent = least_tried_fork_agent;
 			}
-			else {
+			else
+			{
 				*agent2 = current_agent;
 				return;
 			}
@@ -381,7 +426,12 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 						least_tried_fork_agent = current_agent;
 						least_tried_fork_tries = current_agent->children_metadata[i].games_played;
 					}
-					current_agent = academy_get_agent_from_id(academy, current_agent->children_ids[i]);
+					struct Academy_Agent_T * next_agent = academy_get_agent_from_id(academy, current_agent->children_ids[i]);
+					if (!next_agent)
+					{
+						printf("This is not right.\n");
+					}
+					current_agent = next_agent;
 					break;
 				}
 			}
@@ -390,7 +440,8 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 	abort();
 }
 
-void academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * parent, unsigned char * data, size_t data_len) {
+void academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * parent, unsigned char * data, size_t data_len)
+{
 	ACADEMY_AGENT_ID agent_id = academy->last_agent_id + 1;
 
 	// Verify that the academy list is not full
@@ -436,7 +487,7 @@ void academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * 
 	// Insert into the Robin Hood table
 
 	struct Academy_Agent_T * agent = NULL;
-	unsigned long hashtable_index = agent_id % ACADEMY_MAX_AGENT_COUNT;
+	unsigned long hashtable_index = academy_agent_id_hash(agent_id) % ACADEMY_MAX_AGENT_COUNT;
 	unsigned long probing_offset = 0;
 
 	unsigned long hashtable_index_for_new_agent;
@@ -445,14 +496,14 @@ void academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * 
 	unsigned long currently_relocating_agent_table_index = ACADEMY_MAX_AGENT_COUNT;
 	while (1)
 	{
-		if ((academy->agent_id_hashtable[hashtable_index].state == ACADEMY_HASHTABLE_ROW_STATE_EMPTY) || (probing_offset > academy->agent_id_hashtable_max_offset))
+		if (academy->agent_id_hashtable[hashtable_index].state == ACADEMY_HASHTABLE_ROW_STATE_EMPTY)
 		{
 			break;
 		}
 
 		/* Calculate the probing offset for the currently selected hashtable entry. */
 
-		unsigned long selected_row_preferred_hashtable_index = academy->agent_id_hashtable[hashtable_index].agent_id % ACADEMY_MAX_AGENT_COUNT;
+		unsigned long selected_row_preferred_hashtable_index = academy_agent_id_hash(academy->agent_id_hashtable[hashtable_index].agent_id) % ACADEMY_MAX_AGENT_COUNT;
 		unsigned long selected_row_offset = (hashtable_index + ACADEMY_MAX_AGENT_COUNT - selected_row_preferred_hashtable_index)%ACADEMY_MAX_AGENT_COUNT;
 
 		if (selected_row_offset < probing_offset)
@@ -580,7 +631,8 @@ void academy_agent_metadata_update_for_new_game(struct Academy_Agent_Metadata_T 
 	//	metadata->value = points_gained;
 }
 
-void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_points, struct Academy_Agent_T * looser, float looser_points) {
+void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_points, struct Academy_Agent_T * looser, float looser_points)
+{
 	struct Academy_Agent_T * winner_child = winner;
 	struct Academy_Agent_T * looser_child = looser;
 	struct Academy_T * academy = winner->academy;

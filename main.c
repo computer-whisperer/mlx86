@@ -227,7 +227,7 @@ int main(int argc, const char *const *argv)
 			putchar('\n');
 		}
 
-		if (games_played > 100000)
+		if (games_played > 10000000)
 		{
 			/* Export last candidate. */
 			if (best_node)
@@ -236,7 +236,7 @@ int main(int argc, const char *const *argv)
 				fwrite(best_node->data, best_node->data_len, 1, fp);
 				fclose(fp);
 			}
-			export_academy(academy, "academy.gexf");
+			//export_academy(academy, "academy.gexf");
 			break;
 		}
 
