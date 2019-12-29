@@ -15,7 +15,7 @@ double getUnixTime(void)
 unsigned int g_seed = 4819;
 
 // Used to seed the generator.           
-void fast_srand(int seed) {
+void seed_fast_rand(int seed) {
     g_seed = seed;
 }
 

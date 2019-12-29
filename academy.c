@@ -146,6 +146,8 @@ void build_new_academy(struct Academy_T * academy)
 	academy->last_agent_id = ACADEMY_INVALID_AGENT_ID;
 	academy->root_agent_id = ACADEMY_INVALID_AGENT_ID;
 	academy->agent_id_hashtable_max_offset = 0;
+	academy->games_played = 0;
+	academy->should_exit = 0;
 
 	for (long i = 0; i < ACADEMY_MAX_AGENT_COUNT; i++)
 	{
@@ -251,11 +253,6 @@ void academy_update_probabilities(struct Academy_Agent_T * agent)
 
 	// Start with agent value
 	agent->own_metadata.probability = agent->own_metadata.value;
-	// Do not allow own agent if all children exist
-	if (agent->child_count >= ACADEMY_CHILDREN_PER_AGENT)
-	{
-		agent->own_metadata.probability = 0;
-	}
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
 		if (agents[i])
@@ -288,6 +285,11 @@ void academy_update_probabilities(struct Academy_Agent_T * agent)
 		}
 	}
 
+	if (sum == 0)
+	{
+		sum = 1;
+	}
+
 	// Normalize
 	agent->own_metadata.probability = agent->own_metadata.probability/sum;
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
@@ -305,6 +307,16 @@ void academy_update_probabilities(struct Academy_Agent_T * agent)
 		if (agents[i])
 		{
 			agent->children_metadata[i].probability += UCB_C*sqrt(ceil_log2(agent->queries_old+1) / ((double)agent->children_metadata[i].games_played+1));
+		}
+	}
+
+	// Get sum
+	sum = agent->own_metadata.probability;
+	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
+	{
+		if (agents[i])
+		{
+			sum += agent->children_metadata[i].probability;
 		}
 	}
 
@@ -343,6 +355,11 @@ void academy_update_probabilities(struct Academy_Agent_T * agent)
 		abort();
 	}
 
+	if (sum == 0)
+	{
+		sum = 1;
+	}
+
 	// Normalize
 	agent->own_metadata.probability = agent->own_metadata.probability/sum;
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
@@ -357,7 +374,7 @@ void academy_update_probabilities(struct Academy_Agent_T * agent)
 	}
 }
 
-void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T ** agent1, struct Academy_Agent_T ** agent2)
+void academy_select_matchup(struct Academy_T * academy, ACADEMY_AGENT_ID * agent_0_id, ACADEMY_AGENT_ID * agent_1_id)
 {
 	struct Academy_Agent_T * current_agent = academy_get_agent_from_id(academy, academy->root_agent_id);
 
@@ -371,6 +388,8 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 	struct Academy_Agent_T * least_tried_fork_agent = current_agent;
 	long least_tried_fork_tries = 10000000L;
 
+	unsigned long fuck_ctr = 0;
+
 	while(current_agent)
 	{
 
@@ -380,11 +399,7 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 			abort();
 		}
 
-		// Randomly check for prunable nodes to keep memory usage sane
-		if (fast_rand()%30 == 0 && pass == 0)
-		{
-			tree_search_test_prune_from_node(current_agent);
-		}
+
 		current_agent->queries_old++;
 
 		// Select agent
@@ -402,13 +417,13 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 
 			if (pass == 0)
 			{
-				*agent1 = current_agent;
+				*agent_0_id = current_agent->id;
 				pass = 1;
 				current_agent = least_tried_fork_agent;
 			}
 			else
 			{
-				*agent2 = current_agent;
+				*agent_1_id = current_agent->id;
 				return;
 			}
 		}
@@ -436,12 +451,27 @@ void academy_select_matchup(struct Academy_T * academy, struct Academy_Agent_T *
 				}
 			}
 		}
+		fuck_ctr++;
+		if (fuck_ctr > 1000)
+		{
+			printf("Fuck from academy...\n");
+			abort();
+		}
 	}
+	printf("Doom...\n");
 	abort();
 }
 
-void academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * parent, unsigned char * data, size_t data_len)
+void academy_add_new_agent(struct Academy_T * academy, ACADEMY_AGENT_ID parent_id, unsigned char * data, size_t data_len)
 {
+	struct Academy_Agent_T * parent = academy_get_agent_from_id(academy, parent_id);
+
+	// Randomly check for prunable nodes to keep memory usage sane
+	if (fast_rand()%30 == 0 && parent)
+	{
+		tree_search_test_prune_from_node(parent);
+	}
+
 	ACADEMY_AGENT_ID agent_id = academy->last_agent_id + 1;
 
 	// Verify that the academy list is not full
@@ -453,8 +483,8 @@ void academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * 
 	// First verify that the parent has an available slot
 	unsigned long parent_child_index = ACADEMY_CHILDREN_PER_AGENT;
 	unsigned long generation = 0;
-	unsigned long parent_id = ACADEMY_INVALID_AGENT_ID;
-	if (parent) {
+	if (parent)
+	{
 		// Add child data to parent
 
 		for (parent_child_index = 0; parent_child_index < ACADEMY_CHILDREN_PER_AGENT; parent_child_index++)
@@ -474,7 +504,6 @@ void academy_add_new_agent(struct Academy_T * academy, struct Academy_Agent_T * 
 
 		parent->children_ids[parent_child_index] = agent_id;
 		generation = parent->generation + 1;
-		parent_id = parent->id;
 	}
 	else {
 		academy->root_agent_id = agent_id;
@@ -631,14 +660,17 @@ void academy_agent_metadata_update_for_new_game(struct Academy_Agent_Metadata_T 
 	//	metadata->value = points_gained;
 }
 
-void academy_report_agent_win(struct Academy_Agent_T * winner, float winner_points, struct Academy_Agent_T * looser, float looser_points)
+void academy_report_agent_win(struct Academy_T * academy, ACADEMY_AGENT_ID winner_id, float winner_points, ACADEMY_AGENT_ID looser_id, float looser_points)
 {
+	struct Academy_Agent_T * winner = academy_get_agent_from_id(academy, winner_id);
+	struct Academy_Agent_T * looser = academy_get_agent_from_id(academy, looser_id);
 	struct Academy_Agent_T * winner_child = winner;
 	struct Academy_Agent_T * looser_child = looser;
-	struct Academy_T * academy = winner->academy;
 
 	if (winner_points > winner->academy->max_value)
 		winner->academy->max_value = winner_points;
+
+	academy->games_played++;
 
 	/* Find the common ancestor of the winner and looser. */
 

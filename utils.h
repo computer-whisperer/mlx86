@@ -4,7 +4,7 @@
 #define FAST_RAND_MAX 32767
 
 double getUnixTime(void);
-void fast_srand(int seed);
+void seed_fast_rand(int seed);
 int fast_rand(void);
 int fast_rand_seeded(int m_seed);
 unsigned long hash(unsigned char *str);
