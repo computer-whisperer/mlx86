@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <stdint.h>
 #include <assert.h>
 #include <unistd.h>
 #include <errno.h>
@@ -12,25 +13,19 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <setjmp.h>
-#include "vx32.h"
-#include "args.h"
 #include <time.h>
 #include <semaphore.h>
 #include <sys/mman.h>
 #include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <fcntl.h>
 
-#include <sys/types.h>
-#include <stdint.h>
 
 #include "vx32impl.h"
-
+#include "vx32.h"
+#include "args.h"
 #include "academy.h"
 #include "utils.h"
 
-#define NUM_PROCESS_PROCESSES 8
+#define NUM_PROCESS_PROCESSES 4
 
 #define IO_DATA_LEN VXPAGESIZE
 #define PROG_DATA_LEN VXPAGESIZE
@@ -101,6 +96,7 @@ void print_as_hex(unsigned char * data, unsigned int len)
 
 struct SharedVars_T
 {
+	sem_t academy_precheck_sems[NUM_PROCESS_PROCESSES];
 	sem_t academy_write_sems[NUM_PROCESS_PROCESSES];
 	unsigned long maintenance_process_state;
 	unsigned long maintenance_process_counter;
@@ -124,9 +120,12 @@ struct Add_Game_Request_T
 	ACADEMY_AGENT_ID looser_id;
 	float winner_score;
 	float looser_score;
+	ACADEMY_AGENT_ID fork_parent_id;
+	ACADEMY_AGENT_ID winner_ancestor_id;
+	ACADEMY_AGENT_ID looser_ancestor_id;
 };
 
-void maintenance_process(int add_game_request_pipes[NUM_PROCESS_PROCESSES], int add_agent_request_pipes[NUM_PROCESS_PROCESSES], sem_t academy_write_sems[NUM_PROCESS_PROCESSES])
+void maintenance_process(int add_game_request_pipes[NUM_PROCESS_PROCESSES], int add_agent_request_pipes[NUM_PROCESS_PROCESSES])
 {
 	printf("Maintenance process started.\n");
 	sharedvars->maintenance_process_counter = 0;
@@ -167,7 +166,15 @@ void maintenance_process(int add_game_request_pipes[NUM_PROCESS_PROCESSES], int 
 		{
 			for (int i = 0; i < NUM_PROCESS_PROCESSES; i++)
 			{
-				sem_wait(&(academy_write_sems[i]));
+				sem_wait(&(sharedvars->academy_precheck_sems[i]));
+			}
+			for (int i = 0; i < NUM_PROCESS_PROCESSES; i++)
+			{
+				sem_wait(&(sharedvars->academy_write_sems[i]));
+			}
+			for (int i = 0; i < NUM_PROCESS_PROCESSES; i++)
+			{
+				sem_post(&(sharedvars->academy_precheck_sems[i]));
 			}
 			while (1)
 			{
@@ -190,7 +197,7 @@ void maintenance_process(int add_game_request_pipes[NUM_PROCESS_PROCESSES], int 
 						int len = read(add_game_request_pipes[i], &req, sizeof(req));
 						if (len == sizeof(req))
 						{
-							academy_report_agent_win(academy, req.winner_id, req.winner_score, req.looser_id, req.looser_score);
+							academy_report_agent_win(academy, req.winner_id, req.winner_score, req.looser_id, req.looser_score, req.fork_parent_id, req.winner_ancestor_id, req.looser_ancestor_id);
 						}
 						else
 						{
@@ -215,7 +222,7 @@ void maintenance_process(int add_game_request_pipes[NUM_PROCESS_PROCESSES], int 
 			}
 			for (int i = 0; i < NUM_PROCESS_PROCESSES; i++)
 			{
-				sem_post(&(academy_write_sems[i]));
+				sem_post(&(sharedvars->academy_write_sems[i]));
 			}
 			//printf("Finished a batch!\n");
 		}
@@ -229,7 +236,7 @@ void maintenance_process(int add_game_request_pipes[NUM_PROCESS_PROCESSES], int 
 	printf("Maintenance process ended.\n");
 }
 
-void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agent_request_pipe, sem_t * academy_write_sem)
+void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agent_request_pipe)
 {
 	printf("Execution process %d started.\n", exec_proc_id);
 	sharedvars->execution_process_counters[exec_proc_id] = 0;
@@ -248,8 +255,11 @@ void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agen
 
 	while (1)
 	{
+		ACADEMY_AGENT_ID node_fork_id = ACADEMY_INVALID_AGENT_ID;
 		ACADEMY_AGENT_ID node_0_id = ACADEMY_INVALID_AGENT_ID;
+		ACADEMY_AGENT_ID node_0_ancestor_id = ACADEMY_INVALID_AGENT_ID;
 		ACADEMY_AGENT_ID node_1_id = ACADEMY_INVALID_AGENT_ID;
+		ACADEMY_AGENT_ID node_1_ancestor_id = ACADEMY_INVALID_AGENT_ID;
 		struct Academy_Agent_T * node_0 = NULL;
 		struct Academy_Agent_T * node_1 = NULL;
 		float score_0 = 0;
@@ -258,16 +268,18 @@ void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agen
 		sharedvars->execution_process_states[exec_proc_id] = 0;
 
 		int fuck_ctr = 0;
-		sem_wait(academy_write_sem);
+		sem_wait(&(sharedvars->academy_precheck_sems[exec_proc_id]));
+		sem_wait(&(sharedvars->academy_write_sems[exec_proc_id]));
+		sem_post(&(sharedvars->academy_precheck_sems[exec_proc_id]));
 
 		sharedvars->execution_process_states[exec_proc_id] = 1;
 
 		while (node_0_id == node_1_id)
 		{
 			if (process_games_played %2)
-				academy_select_matchup(academy, &node_0_id, &node_1_id);
+				academy_select_matchup(academy, &node_0_id, &node_1_id, &node_fork_id, &node_0_ancestor_id, &node_1_ancestor_id);
 			else
-				academy_select_matchup(academy, &node_1_id, &node_0_id);
+				academy_select_matchup(academy, &node_1_id, &node_0_id, &node_fork_id, &node_1_ancestor_id, &node_0_ancestor_id);
 
 			fuck_ctr++;
 
@@ -286,7 +298,7 @@ void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agen
 
 		memset(proc_mem->io_data, 0, IO_DATA_LEN);
 		memcpy(proc_mem->program_data, node_0->data, node_0->data_len);
-		sem_post(academy_write_sem);
+		sem_post(&(sharedvars->academy_write_sems[exec_proc_id]));
 
 		sharedvars->execution_process_states[exec_proc_id] = 4;
 
@@ -322,6 +334,10 @@ void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agen
 			node_0_id = node_1_id;
 			score_1 = third_score;
 			node_1_id = third_id;
+
+			third_id = node_0_ancestor_id;
+			node_0_ancestor_id = node_1_ancestor_id;
+			node_1_ancestor_id = third_id;
 		}
 
 		sharedvars->execution_process_states[exec_proc_id] = 8;
@@ -332,6 +348,9 @@ void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agen
 		new_g_request.winner_score = score_0;
 		new_g_request.looser_id = node_1_id;
 		new_g_request.looser_score = score_1;
+		new_g_request.winner_ancestor_id = node_0_ancestor_id;
+		new_g_request.looser_ancestor_id = node_1_ancestor_id;
+		new_g_request.fork_parent_id = node_fork_id;
 		write(add_game_request_pipe, &new_g_request, sizeof(new_g_request));
 
 		sharedvars->execution_process_states[exec_proc_id] = 9;
@@ -340,7 +359,9 @@ void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agen
 		if (!(process_games_played % 3))
 		{
 			sharedvars->execution_process_states[exec_proc_id] = 10;
-			sem_wait(academy_write_sem);
+			sem_wait(&(sharedvars->academy_precheck_sems[exec_proc_id]));
+			sem_wait(&(sharedvars->academy_write_sems[exec_proc_id]));
+			sem_post(&(sharedvars->academy_precheck_sems[exec_proc_id]));
 			node_0 = academy_get_agent_from_id(academy, node_0_id);
 			if (node_0)
 			{
@@ -359,7 +380,7 @@ void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agen
 			{
 				printf("This sucks!\n");
 			}
-			sem_post(academy_write_sem);
+			sem_post(&(sharedvars->academy_write_sems[exec_proc_id]));
 
 			sharedvars->execution_process_states[exec_proc_id] = 12;
 		}
@@ -441,6 +462,7 @@ int main(int argc, const char *const *argv)
 	// Create semaphores
 	for (int i = 0; i < NUM_PROCESS_PROCESSES; i++)
 	{
+		sem_init(&(sharedvars->academy_precheck_sems[i]), 1, 1);
 		sem_init(&(sharedvars->academy_write_sems[i]), 1, 1);
 	}
 	// Fork execution processes
@@ -452,7 +474,7 @@ int main(int argc, const char *const *argv)
 		{
 			// Nudge rng
 			seed_fast_rand(i);
-			execution_process(i, add_game_request_pipes[i][1], add_agent_request_pipes[i][1], &(sharedvars->academy_write_sems[i]));
+			execution_process(i, add_game_request_pipes[i][1], add_agent_request_pipes[i][1]);
 			return 0;
 		}
 	}
@@ -467,7 +489,7 @@ int main(int argc, const char *const *argv)
 			add_agent_request_read_pipes[i] = add_agent_request_pipes[i][0];
 			add_game_request_read_pipes[i] = add_game_request_pipes[i][0];
 		}
-		maintenance_process(add_game_request_read_pipes, add_agent_request_read_pipes, sharedvars->academy_write_sems);
+		maintenance_process(add_game_request_read_pipes, add_agent_request_read_pipes);
 		return 0;
 	}
 	// Reporting process

@@ -235,7 +235,7 @@ void tree_search_test_prune_from_node(struct Academy_Agent_T * agent)
 	}
 	if (nodes_pruned)
 	{
-		academy_update_probabilities(agent);
+		agent->probability_is_dirty = 1;
 	}
 }
 
@@ -245,6 +245,9 @@ void academy_update_probabilities(struct Academy_Agent_T * agent)
 	long i;
 	double sum;
 
+	double own_probability;
+	double child_probability[ACADEMY_CHILDREN_PER_AGENT];
+
 	struct Academy_Agent_T * agents[ACADEMY_CHILDREN_PER_AGENT];
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
@@ -252,36 +255,36 @@ void academy_update_probabilities(struct Academy_Agent_T * agent)
 	}
 
 	// Start with agent value
-	agent->own_metadata.probability = agent->own_metadata.value;
+	own_probability = agent->own_metadata.value;
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
 		if (agents[i])
 		{
-			agent->children_metadata[i].probability = agent->children_metadata[i].value;
+			child_probability[i] = agent->children_metadata[i].value;
 		}
 		else
 		{
-			agent->children_metadata[i].probability = 0;
+			child_probability[i] = 0;
 		}
 	}
 
 	// Raise to powers
-	agent->own_metadata.probability = pow(agent->own_metadata.probability, 10);
+	own_probability = pow(own_probability, 10);
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
 		if (agents[i])
 		{
-			agent->children_metadata[i].probability = pow(agent->children_metadata[i].probability, 10);
+			child_probability[i] = pow(child_probability[i], 10);
 		}
 	}
 
 	// Get sum
-	sum = agent->own_metadata.probability;
+	sum = own_probability;
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
 		if (agents[i])
 		{
-			sum += agent->children_metadata[i].probability;
+			sum += child_probability[i];
 		}
 	}
 
@@ -291,44 +294,44 @@ void academy_update_probabilities(struct Academy_Agent_T * agent)
 	}
 
 	// Normalize
-	agent->own_metadata.probability = agent->own_metadata.probability/sum;
+	own_probability = own_probability/sum;
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
 		if (agents[i])
 		{
-			agent->children_metadata[i].probability = agent->children_metadata[i].probability/sum;
+			child_probability[i] = child_probability[i]/sum;
 		}
 	}
 
 	// Add UCB
-	agent->own_metadata.probability += UCB_C*sqrt(ceil_log2(agent->queries_old+1) / ((double)agent->own_metadata.games_played+1));
+	own_probability += UCB_C*sqrt(ceil_log2(agent->queries_old+1) / ((double)agent->own_metadata.games_played+1));
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
 		if (agents[i])
 		{
-			agent->children_metadata[i].probability += UCB_C*sqrt(ceil_log2(agent->queries_old+1) / ((double)agent->children_metadata[i].games_played+1));
+			child_probability[i] += UCB_C*sqrt(ceil_log2(agent->queries_old+1) / ((double)agent->children_metadata[i].games_played+1));
 		}
 	}
 
 	// Get sum
-	sum = agent->own_metadata.probability;
+	sum = own_probability;
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
 		if (agents[i])
 		{
-			sum += agent->children_metadata[i].probability;
+			sum += child_probability[i];
 		}
 	}
 
 	// Set to 1 if values are all null
 	if (sum == 0)
 	{
-		agent->own_metadata.probability = 1;
+		own_probability = 1;
 		for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 		{
 			if (agents[i])
 			{
-				agent->children_metadata[i].probability = 1;
+				child_probability[i] = 1;
 			}
 		}
 	}
@@ -340,16 +343,16 @@ void academy_update_probabilities(struct Academy_Agent_T * agent)
 	}
 
 	// Get sum
-	sum = agent->own_metadata.probability;
+	sum = own_probability;
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
 		if (agents[i])
 		{
-			sum += agent->children_metadata[i].probability;
+			sum += child_probability[i];
 		}
 	}
 
-	if (!isfinite(agent->own_metadata.probability))
+	if (!isfinite(own_probability))
 	{
 		printf("Infinity FTW!!!");
 		abort();
@@ -361,22 +364,31 @@ void academy_update_probabilities(struct Academy_Agent_T * agent)
 	}
 
 	// Normalize
-	agent->own_metadata.probability = agent->own_metadata.probability/sum;
+	own_probability = own_probability/sum;
 	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
 	{
-		agent->children_metadata[i].probability = agent->children_metadata[i].probability/sum;
+		child_probability[i] = child_probability[i]/sum;
 	}
 
-	if (!isfinite(agent->own_metadata.probability))
+	if (!isfinite(own_probability))
 	{
 		printf("Infinity FTW!!!");
 		abort();
 	}
+
+	// Write to shared memory
+	agent->own_metadata.probability = own_probability;
+	for (i = 0; i < ACADEMY_CHILDREN_PER_AGENT; i++)
+	{
+		agent->children_metadata[i].probability = child_probability[i];
+	}
+	agent->probability_is_dirty = 0;
 }
 
-void academy_select_matchup(struct Academy_T * academy, ACADEMY_AGENT_ID * agent_0_id, ACADEMY_AGENT_ID * agent_1_id)
+void academy_select_matchup(struct Academy_T * academy, ACADEMY_AGENT_ID * agent_0_id, ACADEMY_AGENT_ID * agent_1_id, ACADEMY_AGENT_ID * fork_parent_id, ACADEMY_AGENT_ID * agent_0_ancestor_id, ACADEMY_AGENT_ID * agent_1_ancestor_id)
 {
 	struct Academy_Agent_T * current_agent = academy_get_agent_from_id(academy, academy->root_agent_id);
+	struct Academy_Agent_T * next_agent = current_agent;
 
 	if (fast_rand()%100000 == 0)
 	{
@@ -388,7 +400,8 @@ void academy_select_matchup(struct Academy_T * academy, ACADEMY_AGENT_ID * agent
 	struct Academy_Agent_T * least_tried_fork_agent = current_agent;
 	long least_tried_fork_tries = 10000000L;
 
-	unsigned long fuck_ctr = 0;
+	struct Academy_Agent_T * agent_0;
+	struct Academy_Agent_T * agent_1;
 
 	while(current_agent)
 	{
@@ -401,6 +414,12 @@ void academy_select_matchup(struct Academy_T * academy, ACADEMY_AGENT_ID * agent
 
 
 		current_agent->queries_old++;
+
+		// Update probabilities if necessary
+		if (current_agent->probability_is_dirty)
+		{
+			academy_update_probabilities(current_agent);
+		}
 
 		// Select agent
 		double selector = ((double)fast_rand())/FAST_RAND_MAX;
@@ -417,14 +436,16 @@ void academy_select_matchup(struct Academy_T * academy, ACADEMY_AGENT_ID * agent
 
 			if (pass == 0)
 			{
+				agent_0 = current_agent;
 				*agent_0_id = current_agent->id;
 				pass = 1;
-				current_agent = least_tried_fork_agent;
+				next_agent = least_tried_fork_agent;
 			}
 			else
 			{
+				agent_1 = current_agent;
 				*agent_1_id = current_agent->id;
-				return;
+				break;
 			}
 		}
 		else
@@ -441,25 +462,46 @@ void academy_select_matchup(struct Academy_T * academy, ACADEMY_AGENT_ID * agent
 						least_tried_fork_agent = current_agent;
 						least_tried_fork_tries = current_agent->children_metadata[i].games_played;
 					}
-					struct Academy_Agent_T * next_agent = academy_get_agent_from_id(academy, current_agent->children_ids[i]);
-					if (!next_agent)
-					{
-						printf("This is not right.\n");
-					}
-					current_agent = next_agent;
+					next_agent = academy_get_agent_from_id(academy, current_agent->children_ids[i]);
+
 					break;
 				}
 			}
 		}
-		fuck_ctr++;
-		if (fuck_ctr > 1000)
+		if (!next_agent)
 		{
-			printf("Fuck from academy...\n");
-			abort();
+			printf("This is not right.\n");
 		}
+		current_agent = next_agent;
 	}
-	printf("Doom...\n");
-	abort();
+	if (*agent_0_id == ACADEMY_INVALID_AGENT_ID || *agent_1_id == ACADEMY_INVALID_AGENT_ID)
+	{
+		printf("Bad result from select_matchup.\n");
+		abort();
+	}
+
+	struct Academy_Agent_T * agent_0_child = agent_0;
+	struct Academy_Agent_T * agent_1_child = agent_1;
+
+	// Calculate the fork and and ancestor agents
+	while (agent_0 != agent_1) {
+		struct Academy_Agent_T * next_agent_0 = agent_0;
+		struct Academy_Agent_T * next_agent_1 = agent_1;
+		if (agent_0->generation >= agent_1->generation) {
+			next_agent_0 = academy_get_agent_from_id(academy, agent_0->parent_id);
+			agent_0_child = agent_0;
+		}
+		if (agent_0->generation <= agent_1->generation) {
+			next_agent_1 = academy_get_agent_from_id(academy, agent_1->parent_id);
+			agent_1_child = agent_1;
+		}
+		agent_0 = next_agent_0;
+		agent_1 = next_agent_1;
+	}
+
+	*fork_parent_id = agent_0->id;
+	*agent_0_ancestor_id = agent_0_child->id;
+	*agent_1_ancestor_id = agent_1_child->id;
 }
 
 void academy_add_new_agent(struct Academy_T * academy, ACADEMY_AGENT_ID parent_id, unsigned char * data, size_t data_len)
@@ -641,9 +683,9 @@ void academy_add_new_agent(struct Academy_T * academy, ACADEMY_AGENT_ID parent_i
 		parent->children_metadata[parent_child_index].games_played = 0;
 		parent->children_metadata[parent_child_index].points = 0;
 		parent->children_metadata[parent_child_index].value = parent->own_metadata.value;
-		academy_update_probabilities(parent);
+		parent->probability_is_dirty = 1;
 	}
-	academy_update_probabilities(agent);
+	agent->probability_is_dirty = 1;
 
 }
 
@@ -660,59 +702,40 @@ void academy_agent_metadata_update_for_new_game(struct Academy_Agent_Metadata_T 
 	//	metadata->value = points_gained;
 }
 
-void academy_report_agent_win(struct Academy_T * academy, ACADEMY_AGENT_ID winner_id, float winner_points, ACADEMY_AGENT_ID looser_id, float looser_points)
+void academy_report_agent_win(struct Academy_T * academy, ACADEMY_AGENT_ID winner_id, float winner_points, ACADEMY_AGENT_ID looser_id, float looser_points, ACADEMY_AGENT_ID fork_parent_id, ACADEMY_AGENT_ID winner_ancestor_id, ACADEMY_AGENT_ID looser_ancestor_id)
 {
-	struct Academy_Agent_T * winner = academy_get_agent_from_id(academy, winner_id);
-	struct Academy_Agent_T * looser = academy_get_agent_from_id(academy, looser_id);
-	struct Academy_Agent_T * winner_child = winner;
-	struct Academy_Agent_T * looser_child = looser;
+	struct Academy_Agent_T * fork = academy_get_agent_from_id(academy, fork_parent_id);
+	struct Academy_Agent_T * winner_child = academy_get_agent_from_id(academy, winner_ancestor_id);
+	struct Academy_Agent_T * looser_child = academy_get_agent_from_id(academy, looser_ancestor_id);
 
-	if (winner_points > winner->academy->max_value)
-		winner->academy->max_value = winner_points;
+	if (winner_points > academy->max_value)
+		academy->max_value = winner_points;
 
 	academy->games_played++;
-
-	/* Find the common ancestor of the winner and looser. */
-
-	while (winner != looser) {
-		struct Academy_Agent_T * next_winner = winner;
-		struct Academy_Agent_T * next_looser = looser;
-		if (winner->generation >= looser->generation) {
-			next_winner = academy_get_agent_from_id(academy, winner->parent_id);
-			winner_child = winner;
-		}
-		if (winner->generation <= looser->generation) {
-			next_looser = academy_get_agent_from_id(academy, looser->parent_id);
-			looser_child = looser;
-		}
-		winner = next_winner;
-		looser = next_looser;
-	}
-	// Now winner == looser
 
 	// use winner_child and looser_child to figure out where scores go
 
 	// Winner scores
-	if (winner == winner_child)
+	if (fork == winner_child)
 	{
-		academy_agent_metadata_update_for_new_game(&(winner->own_metadata), winner_points);
+		academy_agent_metadata_update_for_new_game(&(fork->own_metadata), winner_points);
 	}
 	else
 	{
-		academy_agent_metadata_update_for_new_game(&(winner->children_metadata[winner_child->parent_child_index]), winner_points);
+		academy_agent_metadata_update_for_new_game(&(fork->children_metadata[winner_child->parent_child_index]), winner_points);
 	}
 
 	// Looser scores
-	if (looser == looser_child)
+	if (fork == looser_child)
 	{
-		academy_agent_metadata_update_for_new_game(&(looser->own_metadata), looser_points);
+		academy_agent_metadata_update_for_new_game(&(fork->own_metadata), looser_points);
 	}
 	else
 	{
-		academy_agent_metadata_update_for_new_game(&(looser->children_metadata[looser_child->parent_child_index]), looser_points);
+		academy_agent_metadata_update_for_new_game(&(fork->children_metadata[looser_child->parent_child_index]), looser_points);
 	}
 
-	academy_update_probabilities(winner);
+	fork->probability_is_dirty = 1;
 }
 
 void export_agent_nodes(struct Academy_Agent_T * agent, FILE * fp)

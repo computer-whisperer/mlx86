@@ -43,6 +43,8 @@ struct Academy_Agent_T {
 
 	long queries_old;
 
+	unsigned char probability_is_dirty;
+
 	/* Statistics against children agents. */
 	struct Academy_Agent_Metadata_T own_metadata;
 
@@ -72,11 +74,11 @@ void build_new_academy(struct Academy_T * academy);
 
 struct Academy_Agent_T * academy_get_agent_from_id(struct Academy_T * academy, ACADEMY_AGENT_ID agent_id);
 
-void academy_select_matchup(struct Academy_T * academy, ACADEMY_AGENT_ID * agent0_id, ACADEMY_AGENT_ID * agent1_id);
+void academy_select_matchup(struct Academy_T * academy, ACADEMY_AGENT_ID * agent0_id, ACADEMY_AGENT_ID * agent1_id, ACADEMY_AGENT_ID * fork_parent_id, ACADEMY_AGENT_ID * agent_0_ancestor_id, ACADEMY_AGENT_ID * agent_1_ancestor_id);
 
 void academy_add_new_agent(struct Academy_T * academy, ACADEMY_AGENT_ID parent_id, unsigned char * data, size_t data_len);
 
-void academy_report_agent_win(struct Academy_T * academy, ACADEMY_AGENT_ID winner_id, float winner_points, ACADEMY_AGENT_ID looser_id, float looser_points);
+void academy_report_agent_win(struct Academy_T * academy, ACADEMY_AGENT_ID winner_id, float winner_points, ACADEMY_AGENT_ID looser_id, float looser_points, ACADEMY_AGENT_ID fork_parent_id, ACADEMY_AGENT_ID winner_ancestor_id, ACADEMY_AGENT_ID looser_ancestor_id);
 
 void export_academy(struct Academy_T * academy, const char * fname);
 
