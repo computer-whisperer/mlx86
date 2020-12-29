@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <src/solvers/academy/academy.h>
 #include "utils.h"
-#include "academy.h"
 
-#define UCB_C 0.01
+#define UCB_C 0.001
 
 void academy_update_probabilities(struct Academy_Agent_T * agent);
 
@@ -508,11 +508,7 @@ void academy_add_new_agent(struct Academy_T * academy, ACADEMY_AGENT_ID parent_i
 {
 	struct Academy_Agent_T * parent = academy_get_agent_from_id(academy, parent_id);
 
-	// Randomly check for prunable nodes to keep memory usage sane
-	if (fast_rand()%30 == 0 && parent)
-	{
-		tree_search_test_prune_from_node(parent);
-	}
+
 
 	ACADEMY_AGENT_ID agent_id = academy->last_agent_id + 1;
 
@@ -661,7 +657,7 @@ void academy_add_new_agent(struct Academy_T * academy, ACADEMY_AGENT_ID parent_i
 	}
 	else
 	{
-		agent->own_metadata.value = 0.5;
+		agent->own_metadata.value = 0.0;
 	}
 
 	agent->child_count = 0;

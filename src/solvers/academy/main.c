@@ -1,3 +1,4 @@
+
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,81 +19,13 @@
 #include <sys/mman.h>
 #include <sys/types.h>
 
-
-#include "vx32impl.h"
-#include "vx32.h"
-#include "args.h"
-#include "academy.h"
+#include <src/solvers/academy/academy.h>
 #include "utils.h"
 
-#define NUM_PROCESS_PROCESSES 4
+#define NUM_PROCESS_PROCESSES 2
 
-#define IO_DATA_LEN VXPAGESIZE
-#define PROG_DATA_LEN VXPAGESIZE
-
-struct ml86_process_memory
-{
-	unsigned char io_data[IO_DATA_LEN];
-	unsigned char program_data[PROG_DATA_LEN];
-};
-
-#define VXC_MAXNAMLEN 255
-
-#define	VXC_FD_CLOEXEC	1
-
-#define V (void*)(uintptr_t)
-
-const char *argv0;
-
-int trace;
-
-#define RET proc->cpu->reg[EAX]
-#define NUM proc->cpu->reg[EAX]
-#define ARG1 proc->cpu->reg[EDX]
-#define ARG2 proc->cpu->reg[ECX]
-#define ARG3 proc->cpu->reg[EBX]
-#define ARG4 proc->cpu->reg[EDI]
-#define ARG5 proc->cpu->reg[ESI]
-
-int run_proc(vxproc *volatile p)
-{
-	// Set up the process's initial register state
-	memset(p->cpu->reg, 0, sizeof(p->cpu->reg));
-	p->cpu->eflags = 0;
-	p->cpu->eip = IO_DATA_LEN;
-	vxproc_flush(p);
-	int rc = vxproc_run(p);
-	return rc;
-}
-
-char * goal = "I am mlx86!!!";
-//char * goal = "Hi";
-float task_judge_hello_world(unsigned char * data)
-{
-  float score = 0;
-
-  //char * goal = "I am mlx86!!!";
-
-  for (int i = 0; i < strlen(goal); i++) {
-    int error = goal[i] - data[i];
-    if (error < 0)
-      error = -error;
-    if (error > 5)
-      error = 5;
-    score += 1.0-(((float)error)/5.0);
-  }
-
-  return score/strlen(goal);
-}
-
-void print_as_hex(unsigned char * data, unsigned int len)
-{
-	unsigned int i;
-	for(i = 0; i < len; i++)
-	{
-		printf("%02x ", data[i]);
-	}
-}
+#define IO_DATA_LEN 0x1000
+#define PROG_DATA_LEN 0x1000
 
 struct SharedVars_T
 {
@@ -176,6 +109,12 @@ void maintenance_process(int add_game_request_pipes[NUM_PROCESS_PROCESSES], int 
 			{
 				sem_post(&(sharedvars->academy_precheck_sems[i]));
 			}
+			// Randomly check for prunable nodes to keep memory usage sane
+			if (fast_rand()%30 == 0)
+			{
+				struct Academy_Agent_T* agent = academy_get_agent_from_id(academy->root_agent_id)
+				tree_search_test_prune_from_node(agent);
+			}
 			while (1)
 			{
 				FD_ZERO(&set);
@@ -242,28 +181,14 @@ void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agen
 	sharedvars->execution_process_counters[exec_proc_id] = 0;
 	unsigned long process_games_played = 0;
 
-	vx32_siginit();
 
-	vxproc *volatile p = vxproc_alloc();
-	p->allowfp = 1;
-
-	vxmem * mem = vxmem_chunk_new(sizeof(struct ml86_process_memory));
-	vxmmap * mem_map = vxmem_map(mem, 0);
-	struct ml86_process_memory * proc_mem = mem_map->base;
-	vxmem_setperm(mem, 0, sizeof(struct ml86_process_memory), VXPERM_READ | VXPERM_WRITE | VXPERM_EXEC);
-	p->mem = mem;
 
 	while (1)
 	{
-		ACADEMY_AGENT_ID node_fork_id = ACADEMY_INVALID_AGENT_ID;
-		ACADEMY_AGENT_ID node_0_id = ACADEMY_INVALID_AGENT_ID;
-		ACADEMY_AGENT_ID node_0_ancestor_id = ACADEMY_INVALID_AGENT_ID;
-		ACADEMY_AGENT_ID node_1_id = ACADEMY_INVALID_AGENT_ID;
-		ACADEMY_AGENT_ID node_1_ancestor_id = ACADEMY_INVALID_AGENT_ID;
-		struct Academy_Agent_T * node_0 = NULL;
-		struct Academy_Agent_T * node_1 = NULL;
-		float score_0 = 0;
-		float score_1 = 0;
+		ACADEMY_AGENT_ID node_id = ACADEMY_INVALID_AGENT_ID;
+		ACADEMY_AGENT_ID node_ancestor_id = ACADEMY_INVALID_AGENT_ID;
+		struct Academy_Agent_T * node = NULL;
+		float score = 0;
 
 		sharedvars->execution_process_states[exec_proc_id] = 0;
 
@@ -274,83 +199,25 @@ void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agen
 
 		sharedvars->execution_process_states[exec_proc_id] = 1;
 
-		while (node_0_id == node_1_id)
-		{
-			if (process_games_played %2)
-				academy_select_matchup(academy, &node_0_id, &node_1_id, &node_fork_id, &node_0_ancestor_id, &node_1_ancestor_id);
-			else
-				academy_select_matchup(academy, &node_1_id, &node_0_id, &node_fork_id, &node_1_ancestor_id, &node_0_ancestor_id);
+		// academy pick node
 
-			fuck_ctr++;
+		sharedvars->execution_process_states[exec_proc_id] = 2;
 
-			if (fuck_ctr > 1000)
-			{
-				printf("\n\nFuck... \n");
-				exit(1);
-			}
-			sharedvars->execution_process_states[exec_proc_id] = 2;
-		}
+		node = academy_get_agent_from_id(academy, node_id);
 
-		node_0 = academy_get_agent_from_id(academy, node_0_id);
-		node_1 = academy_get_agent_from_id(academy, node_1_id);
+		sem_post(&(sharedvars->academy_write_sems[exec_proc_id]));
 
 		sharedvars->execution_process_states[exec_proc_id] = 3;
 
-		memset(proc_mem->io_data, 0, IO_DATA_LEN);
-		memcpy(proc_mem->program_data, node_0->data, node_0->data_len);
-		sem_post(&(sharedvars->academy_write_sems[exec_proc_id]));
+		// Insert custom trials here
+		score = scalar_trial_hello_world(node->data, node->data_len);
 
 		sharedvars->execution_process_states[exec_proc_id] = 4;
 
-		run_proc(p);
-		sharedvars->execution_process_states[exec_proc_id] = 40;
-		mem_map = vxmem_map(mem, 0);
-		sharedvars->execution_process_states[exec_proc_id] = 41;
-		proc_mem = mem_map->base;
-		sharedvars->execution_process_states[exec_proc_id] = 42;
-		score_0 = task_judge_hello_world(proc_mem->io_data);
-
-		sharedvars->execution_process_states[exec_proc_id] = 5;
-
-		memset(proc_mem->io_data, 0, IO_DATA_LEN);
-		memcpy(proc_mem->program_data, node_1->data, node_1->data_len);
-
-		sharedvars->execution_process_states[exec_proc_id] = 6;
-
-		run_proc(p);
-		mem_map = vxmem_map(mem, 0);
-		proc_mem = mem_map->base;
-		score_1 = task_judge_hello_world(proc_mem->io_data);
-
-		sharedvars->execution_process_states[exec_proc_id] = 7;
-
-		if (score_1 > score_0)
-		{
-			float third_score;
-			ACADEMY_AGENT_ID third_id;
-			third_score = score_0;
-			third_id = node_0_id;
-			score_0 = score_1;
-			node_0_id = node_1_id;
-			score_1 = third_score;
-			node_1_id = third_id;
-
-			third_id = node_0_ancestor_id;
-			node_0_ancestor_id = node_1_ancestor_id;
-			node_1_ancestor_id = third_id;
-		}
-
-		sharedvars->execution_process_states[exec_proc_id] = 8;
-
 		/* Winner has been set to node 0 */
 		struct Add_Game_Request_T new_g_request;
-		new_g_request.winner_id = node_0_id;
-		new_g_request.winner_score = score_0;
-		new_g_request.looser_id = node_1_id;
-		new_g_request.looser_score = score_1;
-		new_g_request.winner_ancestor_id = node_0_ancestor_id;
-		new_g_request.looser_ancestor_id = node_1_ancestor_id;
-		new_g_request.fork_parent_id = node_fork_id;
+		new_g_request.winner_id = node_id;
+		new_g_request.winner_score = score;
 		write(add_game_request_pipe, &new_g_request, sizeof(new_g_request));
 
 		sharedvars->execution_process_states[exec_proc_id] = 9;
@@ -362,14 +229,14 @@ void execution_process(int exec_proc_id ,int add_game_request_pipe, int add_agen
 			sem_wait(&(sharedvars->academy_precheck_sems[exec_proc_id]));
 			sem_wait(&(sharedvars->academy_write_sems[exec_proc_id]));
 			sem_post(&(sharedvars->academy_precheck_sems[exec_proc_id]));
-			node_0 = academy_get_agent_from_id(academy, node_0_id);
-			if (node_0)
+			node = academy_get_agent_from_id(academy, node_id);
+			if (node)
 			{
 				sharedvars->execution_process_states[exec_proc_id] = 11;
 
 				struct Add_Agent_Request_T new_a_request;
-				new_a_request.parent_id = node_0_id;
-				memcpy(new_a_request.data, node_0->data, PROG_DATA_LEN);
+				new_a_request.parent_id = node_id;
+				memcpy(new_a_request.data, node->data, PROG_DATA_LEN);
 				/* Make a random change and introduce a new agent */
 				unsigned char * to_change = new_a_request.data + fast_rand()%(40);
 				*to_change = fast_rand()&0xFF;
@@ -417,9 +284,9 @@ void status_reporting_process()
 			printf("Execution process %d state: %ld\n", i, sharedvars->execution_process_states[i]);
 		}
 		putchar('\n');
-		if (academy->games_played > 1000000 || academy->should_exit)
+		if (academy->games_played > 10000000 || academy->should_exit)
 		{
-			//export_academy(academy, "academy.gexf");
+			export_academy(academy, "academy2.gexf");
 			break;
 		}
 	}
