@@ -9,6 +9,7 @@
 #include "kvm_executor.h"
 #include "types.h"
 #include <sys/time.h>
+#include <unistd.h>
 #include "signal.h"
 
 /* CR0 bits */
@@ -89,8 +90,12 @@ void vm_init(struct EXECUTOR_DATA_T *vm, size_t mem_size)
 
 	vm->fd = ioctl(vm->sys_fd, KVM_CREATE_VM, 0);
 	if (vm->fd < 0) {
-		perror("KVM_CREATE_VM");
-		exit(1);
+    // Blindly try it again...
+    vm->fd = ioctl(vm->sys_fd, KVM_CREATE_VM, 0);
+    if (vm->fd < 0) {
+      perror("KVM_CREATE_VM");
+      exit(1);
+    }
 	}
 
     if (ioctl(vm->fd, KVM_SET_TSS_ADDR, 0xfffbd000) < 0) {
@@ -104,8 +109,6 @@ void vm_init(struct EXECUTOR_DATA_T *vm, size_t mem_size)
 		exit(1);
 	}
 
-	madvise(vm->mem, mem_size, MADV_MERGEABLE);
-
 	memreg.slot = 0;
 	memreg.flags = 0;
 	memreg.guest_phys_addr = 0;
@@ -115,6 +118,13 @@ void vm_init(struct EXECUTOR_DATA_T *vm, size_t mem_size)
 		perror("KVM_SET_USER_MEMORY_REGION");
                 exit(1);
 	}
+}
+
+void vm_deinit(struct EXECUTOR_DATA_T *vm, size_t mem_size)
+{
+  munmap(vm->mem, mem_size);
+  close(vm->fd);
+  close(vm->sys_fd);
 }
 
 void vcpu_init(struct EXECUTOR_DATA_T *vm, struct kvm_executor_vcpu *vcpu)
@@ -142,10 +152,29 @@ void vcpu_init(struct EXECUTOR_DATA_T *vm, struct kvm_executor_vcpu *vcpu)
 	}
 }
 
+void vcpu_deinit(struct EXECUTOR_DATA_T *vm, struct kvm_executor_vcpu *vcpu)
+{
+  int vcpu_mmap_size = ioctl(vm->sys_fd, KVM_GET_VCPU_MMAP_SIZE, 0);
+  if (vcpu_mmap_size <= 0) {
+		perror("KVM_GET_VCPU_MMAP_SIZE");
+                exit(1);
+	}
+
+  munmap(vcpu->kvm_run, vcpu_mmap_size);
+  
+  close(vm->sys_fd);
+}
+
 void executor_init(struct EXECUTOR_DATA_T * executor_data, size_t memory_size)
 {
 	vm_init(executor_data, memory_size);
 	vcpu_init(executor_data, executor_data->vcpus);
+}
+
+void executor_deinit(struct EXECUTOR_DATA_T * executor_data, size_t memory_size)
+{
+  vcpu_deinit(executor_data, executor_data->vcpus);
+  vm_deinit(executor_data, memory_size);
 }
 
 char did_alarm = 0;
@@ -370,9 +399,4 @@ int executor_execute(struct EXECUTOR_DATA_T * executor_data, U64 ip)
 
 
 	return did_alarm;
-}
-
-void executor_reset(struct EXECUTOR_DATA_T * executor_data)
-{
-
 }

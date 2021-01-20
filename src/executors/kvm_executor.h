@@ -19,6 +19,8 @@ struct EXECUTOR_DATA_T
 
 void executor_init(struct EXECUTOR_DATA_T * executor_data, size_t memory_size);
 
+void executor_deinit(struct EXECUTOR_DATA_T * executor_data, size_t memory_size);
+
 int executor_execute(struct EXECUTOR_DATA_T * executor_data, U64 ip);
 
 #define EXECUTOR_PROCESS_MEM(executor_data) (executor_data)->mem

@@ -529,24 +529,31 @@ int request_action(U32 sockfd, SC2APIProtocol__Action * action)
     sc2_apiprotocol__response__free_unpacked(resp, NULL);
     return ret;
 }
-
 static U32 sockfd = 0;
+void starcraft2_init_sc2(void)
+{
+  sockfd = start_sc2();
+
+  if (create_game(sockfd))
+  {
+    printf("Problems with creating a game.\n");
+  }
+
+  if (join_game(sockfd))
+  {
+    printf("Problems with joining a game.\n");
+  }
+}
+
+void starcraft2_deinit_sc2(void)
+{
+  shutdown_sc2(sockfd);
+  stop_sc2();
+}
+
 void starcraft2_run_build(struct StarCraft2BuildStep * build, U32 num_build_steps)
 {
-	if (sockfd == 0)
-	{
-		sockfd = start_sc2();
 
-	    if (create_game(sockfd))
-	    {
-	    	printf("Problems with creating a game.\n");
-	    }
-
-	    if (join_game(sockfd))
-	    {
-	    	printf("Problems with joining a game.\n");
-	    }
-	}
 	restart_game(sockfd);
 
 	U32 build_step = 0;

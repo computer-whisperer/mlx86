@@ -10,13 +10,12 @@
 #include <sys/wait.h>
 
 #include "problems/problems.h"
+#include "solvers/solvers.h"
 #include "types.h"
 #include "utils.h"
 
 #define NUM_PROCESSES 10
-#define NUM_NEIGHBORS 3
 
-#define CYCLE_LEN 100000
 
 struct reporting_mem_t
 {
@@ -31,57 +30,24 @@ struct sync_mem_t
 	U8 data[0x1000];
 };
 
-static volatile int keepRunning = 1;
+const struct ParallelTempering_Hyperparameters_T parallel_tempering_default_hyperparameters = {
+	1000000, // U32 cycle_len;
+	10, // U32 recheck_rate;
+	10000.0, // F64 score_diff_multiplier;
+	10, // U32 neighbor_post_rate;
+	100, // U32 neighbor_poll_rate;
+	10, // U32 neighbor_poll_chance;
+	10000.0, //F64 score_diff_neighbor_multiplier
+	10 // U32 num_neighbors;
+};
 
-void intHandler(int dummy) {
-    keepRunning = 0;
-}
-
-
-void status_reporting_process(struct Problem_T * problem, struct reporting_mem_t * reporting_mem, struct sync_mem_t * sync_mem) {
-	double start_time = getUnixTime();
-
-	double prev_time = getUnixTime();
-	U64 prev_tests_run = 0;
-
-	signal(SIGINT, intHandler);
-	while(keepRunning)
-	{
-		sleep(1);
-		sem_wait(&(sync_mem->sem));
-		sem_wait(&(reporting_mem->sem));
-
-		double curr_time = getUnixTime();
-
-
-		putchar('\n');
-		printf("Time: %d\n", (U32)(curr_time - start_time));
-
-		printf("Test rate: %f\n", (reporting_mem->tests_run - prev_tests_run)/(curr_time - prev_time));
-		printf("Games played: %d\n", reporting_mem->tests_run);
-
-	    printf("Score: %f\n", sync_mem->score);
-	    printf("Data:\n");
-	    problem->data_pretty_printer(problem, sync_mem->data);
-	    if (sync_mem->score > 0.99999)
-	    {
-	    	keepRunning = 0;
-	    }
-		prev_time = curr_time;
-		prev_tests_run = reporting_mem->tests_run;
-
-		sem_post(&(sync_mem->sem));
-		sem_post(&(reporting_mem->sem));
-		putchar('\n');
-
-
-	}
-	printf("Finished after %f seconds.\n", (getUnixTime() - start_time));
-}
-
-
-void tempering_process(struct Problem_T * problem, struct sync_mem_t * our_sync, struct sync_mem_t * neighbor_syncs[NUM_NEIGHBORS], U8* should_exit, struct reporting_mem_t * reporting_mem)
+void tempering_process(struct Problem_T * problem, const struct ParallelTempering_Hyperparameters_T * hyperparameters, struct sync_mem_t * our_sync, struct sync_mem_t ** neighbor_syncs, U8* should_exit, struct reporting_mem_t * reporting_mem)
 {
+  if (problem->trial_initializer)
+  {
+    problem->trial_initializer(problem);
+  }
+  
 	U8 * data = malloc(problem->data_len);
 	U8 * data_b = malloc(problem->data_len);
 	problem->data_initializer(problem, data);
@@ -93,12 +59,16 @@ void tempering_process(struct Problem_T * problem, struct sync_mem_t * our_sync,
 
 	U64 total_iterations = 0;
 
-	U32 i = fast_rand()%CYCLE_LEN;
+	U32 i = fast_rand()%hyperparameters->cycle_len;
 
 	while(!(*should_exit))
 	{
-	    while (i < CYCLE_LEN)
+	    while (i < hyperparameters->cycle_len)
 	    {
+        if (*should_exit)
+        {
+          break;
+        }
 	    	// Copy data to data_b and modify it
 	    	memcpy(data_b, data, problem->data_len);
 
@@ -108,7 +78,9 @@ void tempering_process(struct Problem_T * problem, struct sync_mem_t * our_sync,
 	    		sem_wait(&(reporting_mem->sem));
 	    		reporting_mem->tests_run += 10;
 	    		sem_post(&(reporting_mem->sem));
-
+	    	}
+		    if ((i%hyperparameters->recheck_rate) == 0)
+		    {
 				// Average prev score with new run
 				current_score_total += problem->scalar_trial(problem, data);
 				current_score_count += 1;
@@ -128,8 +100,8 @@ void tempering_process(struct Problem_T * problem, struct sync_mem_t * our_sync,
 	    		does_pass = 1;
 	    	}
 	    	else {
-	    		float t = (float)CYCLE_LEN/(float)(i);
-	    		float p = exp((float)((new_score - current_score)*10000.0)/t);
+	    		float t = (float)hyperparameters->cycle_len/(float)(i);
+	    		float p = exp((float)((new_score - current_score)*hyperparameters->score_diff_multiplier)/t);
 	        	does_pass = fast_rand() < (32767.0 * p);
 	        }
 		    if (does_pass) {
@@ -146,7 +118,7 @@ void tempering_process(struct Problem_T * problem, struct sync_mem_t * our_sync,
 				data = t;
 	        }
 
-	    	if ((i%100) == 0)
+	    	if ((i%hyperparameters->neighbor_post_rate) == 0)
 	    	{
 
 	    		// Save ours to the sync
@@ -156,10 +128,10 @@ void tempering_process(struct Problem_T * problem, struct sync_mem_t * our_sync,
 	    		sem_post(&(our_sync->sem));
 	    	}
 
-	    	if (((i%1000) == 0) && (fast_rand()%10 == 0))
+	    	if (((i%hyperparameters->neighbor_poll_rate) == 0) && ((fast_rand()%hyperparameters->neighbor_poll_chance) == 0))
 	    	{
 				// Sync with neighbors
-	    		for (U8 j = 0; j < NUM_NEIGHBORS; j++)
+	    		for (U8 j = 0; j < hyperparameters->num_neighbors; j++)
 	    		{
 	    			sem_wait(&(neighbor_syncs[j]->sem));
 	    			U8 does_pass = 0;
@@ -170,10 +142,9 @@ void tempering_process(struct Problem_T * problem, struct sync_mem_t * our_sync,
 	    			}
             else
             {
-              //float t = (float)CYCLE_LEN/(float)(i);
-              //float p = exp((float)((current_score - neighbor_syncs[j]->score)*10000.0)/t);
-              //does_pass = fast_rand() > (32767.0 * p);
-              does_pass = 1;
+              float t = (float)hyperparameters->cycle_len/(float)(i);
+              float p = exp((float)((current_score - neighbor_syncs[j]->score)*hyperparameters->score_diff_neighbor_multiplier)/t);
+              does_pass = fast_rand() > (32767.0 * p);
             }
             if (does_pass) {
 	    				// Switch ours with the neighbor's
@@ -191,6 +162,10 @@ void tempering_process(struct Problem_T * problem, struct sync_mem_t * our_sync,
 	    }
 	    i = 0;
 	}
+  if (problem->trial_deinitializer)
+  {
+    problem->trial_deinitializer(problem);
+  }
 }
 
 
@@ -201,7 +176,7 @@ struct shared_data_t
 	struct sync_mem_t sync_mems[NUM_PROCESSES];
 };
 
-U8 * parallel_tempering(struct Problem_T * problem)
+void parallel_tempering(struct Problem_T * problem, const struct ParallelTempering_Hyperparameters_T * hyperparameters, U8 reporting, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out)
 {
 	// Setup process data
 	struct shared_data_t * shared_data = mmap(NULL, sizeof(struct shared_data_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
@@ -225,18 +200,91 @@ U8 * parallel_tempering(struct Problem_T * problem)
 		{
 			// Nudge rng
 			seed_fast_rand(i);
-			set_process_offset(i);
-			struct sync_mem_t * neighbors[NUM_NEIGHBORS];
-			for (U32 j = 0; j <  NUM_NEIGHBORS; j++)
+			set_process_offset(i+1);
+			struct sync_mem_t * neighbors[hyperparameters->num_neighbors];
+			for (U32 j = 0; j <  hyperparameters->num_neighbors; j++)
 			{
 				neighbors[j] = &(shared_data->sync_mems[fast_rand()%NUM_PROCESSES]);
 			}
-			tempering_process(problem, &(shared_data->sync_mems[i]), neighbors, &(shared_data->should_exit), &(shared_data->reporting_mem));
+			tempering_process(problem, hyperparameters, &(shared_data->sync_mems[i]), neighbors, &(shared_data->should_exit), &(shared_data->reporting_mem));
 			exit(0);
 		}
 	}
-	// Reporting process
-	status_reporting_process(problem, &(shared_data->reporting_mem), &(shared_data->sync_mems[0]));
+
+
+	if (reporting)
+	{
+    if (problem->trial_initializer)
+    {
+      problem->trial_initializer(problem);
+    }
+    
+		// Reporting process
+		double start_time = getUnixTime();
+
+		double prev_time = getUnixTime();
+		U64 prev_tests_run = 0;
+		while(1)
+		{
+			sleep(1);
+			sem_wait(&(shared_data->sync_mems[0].sem));
+			sem_wait(&(shared_data->reporting_mem.sem));
+
+			double curr_time = getUnixTime();
+
+
+			putchar('\n');
+			printf("Time: %d\n", (U32)(curr_time - start_time));
+
+			printf("Test rate: %f\n", (shared_data->reporting_mem.tests_run - prev_tests_run)/(curr_time - prev_time));
+			printf("Games played: %d\n", shared_data->reporting_mem.tests_run);
+
+		    printf("Score: %f\n", shared_data->sync_mems[0].score);
+		    printf("Data:\n");
+		    problem->data_pretty_printer(problem, shared_data->sync_mems[0].data);
+		    if (shared_data->sync_mems[0].score >= score_limit)
+		    {
+		    	break;
+		    }
+			prev_time = curr_time;
+			prev_tests_run = shared_data->reporting_mem.tests_run;
+
+			sem_post(&(shared_data->sync_mems[0].sem));
+			sem_post(&(shared_data->reporting_mem.sem));
+			putchar('\n');
+
+
+		}
+    if (problem->trial_deinitializer)
+    {
+      problem->trial_deinitializer(problem);
+    }
+		printf("Finished after %f seconds.\n", (getUnixTime() - start_time));
+	}
+	else
+	{
+		// Wait for conditions to be met
+		while (1)
+		{
+			usleep(1000);
+
+			sem_wait(&(shared_data->sync_mems[0].sem));
+			sem_wait(&(shared_data->reporting_mem.sem));
+			double score = shared_data->sync_mems[0].score;
+			U64 tests_run = shared_data->reporting_mem.tests_run;
+			sem_post(&(shared_data->sync_mems[0].sem));
+			sem_post(&(shared_data->reporting_mem.sem));
+	    	if (score >= score_limit)
+	    	{
+	    		break;
+	    	}
+	    	if (tests_run >= trial_limit)
+	    	{
+	    		break;
+	    	}
+		}
+	}
+
 	// Close all threads
 	shared_data->should_exit = 1;
 	// Wait for subprocesses
@@ -245,7 +293,16 @@ U8 * parallel_tempering(struct Problem_T * problem)
 		waitpid(tempering_pids[i], NULL, 0);
 	}
 
-	U8 * ret = malloc(problem->data_len);
-	memcpy(ret, shared_data->sync_mems[0].data, problem->data_len);
-	return ret;
+  if (data_out)
+  {
+    memcpy(data_out, shared_data->sync_mems[0].data, problem->data_len);
+  }
+  if (score_out)
+  {
+    *score_out = shared_data->sync_mems[0].score;
+  }
+	if (iterations_out)
+  {
+    *iterations_out = shared_data->reporting_mem.tests_run;
+  }
 }

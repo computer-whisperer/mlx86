@@ -9,23 +9,27 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "solvers/solvers.h"
 #include "problems/problems.h"
 #include "types.h"
 #include "utils.h"
 
 
-float best_score;
+const struct SimulatedAnnealing_Hyperparameters_T simulated_annealing_default_hyperparameters = {
+	1000000, // U32 first_cycle_len;
+	10, // U32 recheck_rate;
+	10000.0, // F64 score_diff_multiplier;
+	1.5 // F64 cycle_multiplier
+};
 
-int last_iterations = 0;
-double last_progress_time = 0;
+void report_progress(struct Problem_T * problem, U8 * data, float score, U64 current_cycle, U64 current_iteration, U64 iterations_in_cycle, U64 total_iterations) {
 
-void report_progress(struct Problem_T * problem, U8 * data, float score, int current_cycle, int current_iteration, int iterations_in_cycle, int total_iterations) {
-
-  printf("\033c"); // Clear screen
+	static U64 last_iterations = 0;
+	static double last_progress_time = 0;
+  //printf("\033c"); // Clear screen
   if (current_cycle >= 0)
     printf("Cycle: #%i \n" , current_cycle);
   printf("Current Score = %f \n", score);
-  printf("Best Score = %f \n", best_score);
   printf("Current rate = %d trials/s \n", (int)((total_iterations-last_iterations)/(getUnixTime() - last_progress_time)));
   printf("Iterations = %'i / %'i\n\n", current_iteration, iterations_in_cycle);
   printf("Current data:\n");
@@ -34,9 +38,14 @@ void report_progress(struct Problem_T * problem, U8 * data, float score, int cur
   last_iterations = total_iterations;
 }
 
-
-U8 * simulated_annealing(struct Problem_T * problem)
+void simulated_annealing(struct Problem_T * problem, const struct SimulatedAnnealing_Hyperparameters_T * hyperparams, U8 reporting, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out)
 {
+  if (problem->trial_initializer)
+  {
+    problem->trial_initializer(problem);
+  }
+  
+  
 	U8 * data = malloc(problem->data_len);
 	U8 * data_b = malloc(problem->data_len);
 	problem->data_initializer(problem, data);
@@ -45,16 +54,15 @@ U8 * simulated_annealing(struct Problem_T * problem)
 	float score = problem->scalar_trial(problem, data);
 	float current_score_total = score;
 	int current_score_count = 1;
-	best_score = score;
 
 	double last_update = getUnixTime();
 
 	int last_batch_score = 0;
-	long last_batch_iterations = 0;
+	U64 last_batch_iterations = 0;
 	int batch_num = 0;
 
-	long max_iterations = 1000000;
-	long total_iterations = 0;
+	U64 max_iterations = hyperparams->first_cycle_len;
+	U64 total_tests = 0;
 	while (1) {
 	    long i;
 	    for (i = 0; i < max_iterations; i++)
@@ -63,13 +71,15 @@ U8 * simulated_annealing(struct Problem_T * problem)
 	    	// Copy data to data_b and modify it
 	    	memcpy(data_b, data, problem->data_len);
 
-	    	if ((i%10) == 0)
+	    	if ((i%hyperparams->recheck_rate) == 0)
 	    	{
 
 				// Average prev score with new run
 				current_score_total += problem->scalar_trial(problem, data);
 				current_score_count += 1;
 				score = current_score_total/current_score_count;
+
+				total_tests++;
 	    	}
 
 			/* Make a random change and introduce a new agent */
@@ -77,7 +87,7 @@ U8 * simulated_annealing(struct Problem_T * problem)
 
 	    	// Score run
 	    	float new_score = problem->scalar_trial(problem, data);
-
+	    	total_tests++;
 
 	    	// Simulated annealing to determine if this passes
 	    	int does_pass = 0;
@@ -87,14 +97,10 @@ U8 * simulated_annealing(struct Problem_T * problem)
 	    	}
 	    	else {
 	    		float t = (float)max_iterations/(float)(i);
-	    		float p = exp((float)((new_score - score)*10000.0)/(t));
+	    		float p = exp((float)((new_score - score)*hyperparams->score_diff_multiplier)/(t));
 	        	does_pass = fast_rand() < (32767.0 * p);
 	        }
 		    if (does_pass) {
-			  	if (new_score > best_score)
-			  	{
-				    best_score = new_score;
-			  	}
 				// Keep the new code
 				score = new_score;
 				current_score_total = score;
@@ -107,28 +113,65 @@ U8 * simulated_annealing(struct Problem_T * problem)
 				data_b = data;
 				data = t;
 	        }
-	        if (!(i % 100) && (getUnixTime()-last_update > 0.5)) {
-	            last_update += 0.5;
-	            report_progress(problem, data, score, batch_num, i, max_iterations, total_iterations);
-	        }
-	        total_iterations++;
+	    	if (reporting)
+	    	{
+	    		if (!(i % 10) && (getUnixTime()-last_update > 0.5)) {
+	    			last_update += 0.5;
+	    			report_progress(problem, data, score, batch_num, i, max_iterations, total_tests);
+	    		}
+	    	}
+
+		    if (score >= score_limit)
+		    {
+		    	break;
+		    }
+		    if (total_tests >= trial_limit)
+		    {
+		    	break;
+		    }
+
 	    }
-	    if (score >= 0.9999) {
-	      report_progress(problem, data, score, batch_num, i, max_iterations, total_iterations);
-	      printf("Goal achieved, keep going? (Y/N)");
-	      char buff[10];
-	      gets(buff);
-	      if (buff[0] != 'Y' && buff[0] != 'y')
-	        break;
-	      last_update = getUnixTime();
-	    }
+
+    	if (score >= score_limit)
+    	{
+    		break;
+    	}
+    	if (total_tests >= trial_limit)
+    	{
+    		break;
+    	}
 	    last_batch_score = score;
 	    last_batch_iterations = max_iterations;
-	    max_iterations = max_iterations * 1.5;
+	    max_iterations = max_iterations * hyperparams->cycle_multiplier;
 	    batch_num++;
 	  }
 
+    if (reporting)
+    {
+    	if ((score >= score_limit) || (total_tests >= trial_limit)) {
+    		report_progress(problem, data, score, batch_num, max_iterations, max_iterations, total_tests);
+    		printf("Goal achieved!\n");
+    	}
+    }
 
-	free(data_b);
-	return data;
+
+  if (problem->trial_deinitializer)
+  {
+    problem->trial_deinitializer(problem);
+  }
+
+  if (score_out)
+  {
+    *score_out = score;
+  }
+  if (iterations_out)
+  {
+    *iterations_out = total_tests;
+  }
+  if (data_out)
+  {
+    memcpy(data_out, data, problem->data_len);
+  }
+  free(data);
+  free(data_b);
 }

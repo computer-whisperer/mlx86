@@ -9,6 +9,7 @@
 double getUnixTime(void);
 void seed_fast_rand(int seed);
 int fast_rand(void);
+unsigned int get_fast_rand_seed();
 int fast_rand_seeded(int m_seed);
 double double_norm_rand(double mean, double std_dev);
 double double_uniform_rand(int seed);
@@ -21,4 +22,8 @@ void print_data_as_hex_10wrap(U8 * data, U32 data_len);
 
 void set_process_offset(U8 offset);
 U8 get_process_offset();
+
+U32 qhashmurmur3_32(const void *data, size_t nbytes);
+U8 qhashmurmur3_128(const void *data, size_t nbytes, void *retbuf);
+
 #endif /* UTILS_H */

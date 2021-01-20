@@ -6,6 +6,17 @@
 #include "types.h"
 #include "utils.h"
 
+static void scalar_trial_init(struct Problem_T * problem)
+{
+  starcraft2_init_sc2();
+}
+
+
+static void scalar_trial_deinit(struct Problem_T * problem)
+{
+  starcraft2_deinit_sc2();
+}
+
 float scalar_trial_starcraft2_supplymax(struct Problem_T * problem, U8 * data)
 {
 	starcraft2_run_build((struct StarCraft2BuildStep *)data, problem->data_len/sizeof(struct StarCraft2BuildStep));
@@ -73,6 +84,8 @@ void starcraft2_printbuild(struct Problem_T * problem, U8 * data)
 
 struct Problem_T problem_starcraft2_supplymax =
 {
+  scalar_trial_init,
+  scalar_trial_deinit,
 	scalar_trial_starcraft2_supplymax,
 	starcraft2_scramble,
 	starcraft2_printbuild,

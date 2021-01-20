@@ -3,6 +3,7 @@
 #include "problems/problems.h"
 #include "problems/x86/common.h"
 #include "types.h"
+#include "utils.h"
 
 #define IO_DATA_LEN 0x1000
 #define PROG_DATA_LEN 0x1000
@@ -15,20 +16,22 @@ struct ml86_process_memory
 	unsigned char end_sled[END_SLED_LEN];
 };
 
-static int executor_initialized = 0;
 static struct EXECUTOR_DATA_T executor_data;
 static struct ml86_process_memory * proc_mem;
 
+static void scalar_trial_init(struct Problem_T * problem)
+{
+  executor_init(&executor_data, sizeof(struct ml86_process_memory));
+}
+
+static void scalar_trial_deinit(struct Problem_T * problem)
+{
+  executor_deinit(&executor_data, sizeof(struct ml86_process_memory));
+}
+
 float x86_scalar_trial_simple_meta(struct Problem_T * problem, U8* data)
 {
-
-	if (!executor_initialized)
-	{
-		executor_initialized = 1;
-		executor_init(&executor_data, sizeof(struct ml86_process_memory));
-	}
-
-	proc_mem = EXECUTOR_PROCESS_MEM(&executor_data);
+	proc_mem = (struct ml86_process_memory*)EXECUTOR_PROCESS_MEM(&executor_data);
 	memset(proc_mem->io_data, 0, IO_DATA_LEN);
 	memset(proc_mem->program_data, 0x90, PROG_DATA_LEN);
 	memset(proc_mem->end_sled, 0xf4, END_SLED_LEN);
@@ -41,6 +44,8 @@ float x86_scalar_trial_simple_meta(struct Problem_T * problem, U8* data)
 
 struct Problem_T problem_x86_hello_world =
 {
+  scalar_trial_init,
+  scalar_trial_deinit,
 	x86_scalar_trial_simple_meta,
 	x86_basic_scramble,
 	x86_pretty_print,
@@ -51,6 +56,8 @@ struct Problem_T problem_x86_hello_world =
 
 struct Problem_T problem_x86_nonzero =
 {
+  scalar_trial_init,
+  scalar_trial_deinit,
 	x86_scalar_trial_simple_meta,
 	x86_basic_scramble,
 	x86_pretty_print,

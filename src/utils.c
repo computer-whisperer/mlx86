@@ -20,6 +20,11 @@ void seed_fast_rand(int seed) {
     g_seed = seed;
 }
 
+unsigned int get_fast_rand_seed()
+{
+	return g_seed;
+}
+
 // Compute a pseudorandom integer.
 // Output value in range [0, 32767]
 int fast_rand(void) {
@@ -217,3 +222,208 @@ U8 get_process_offset()
 	return process_offset;
 }
 
+
+
+/**
+ * Get 32-bit Murmur3 hash.
+ *
+ * @param data      source data
+ * @param nbytes    size of data
+ *
+ * @return 32-bit unsigned hash value.
+ *
+ * @code
+ *  uint32_t hashval = qhashmurmur3_32((void*)"hello", 5);
+ * @endcode
+ *
+ * @code
+ *  MurmurHash3 was created by Austin Appleby  in 2008. The initial
+ *  implementation was published in C++ and placed in the public.
+ *    https://sites.google.com/site/murmurhash/
+ *  Seungyoung Kim has ported its implementation into C language
+ *  in 2012 and published it as a part of qLibc component.
+ * @endcode
+ */
+U32 qhashmurmur3_32(const void *data, size_t nbytes) {
+    if (data == NULL || nbytes == 0)
+        return 0;
+
+    const U32 c1 = 0xcc9e2d51;
+    const U32 c2 = 0x1b873593;
+
+    const int nblocks = nbytes / 4;
+    const U32 *blocks = (const U32 *) (data);
+    const U8 *tail = (const U8 *) (data + (nblocks * 4));
+
+    U32 h = 0;
+
+    int i;
+    U32 k;
+    for (i = 0; i < nblocks; i++) {
+        k = blocks[i];
+
+        k *= c1;
+        k = (k << 15) | (k >> (32 - 15));
+        k *= c2;
+
+        h ^= k;
+        h = (h << 13) | (h >> (32 - 13));
+        h = (h * 5) + 0xe6546b64;
+    }
+
+    k = 0;
+    switch (nbytes & 3) {
+        case 3:
+            k ^= tail[2] << 16;
+        case 2:
+            k ^= tail[1] << 8;
+        case 1:
+            k ^= tail[0];
+            k *= c1;
+            k = (k << 15) | (k >> (32 - 15));
+            k *= c2;
+            h ^= k;
+    };
+
+    h ^= nbytes;
+
+    h ^= h >> 16;
+    h *= 0x85ebca6b;
+    h ^= h >> 13;
+    h *= 0xc2b2ae35;
+    h ^= h >> 16;
+
+    return h;
+}
+
+/**
+ * Get 128-bit Murmur3 hash.
+ *
+ * @param data      source data
+ * @param nbytes    size of data
+ * @param retbuf    user buffer. It must be at leat 16-bytes long.
+ *
+ * @return true if successful, otherwise false.
+ *
+ * @code
+ *   // get 128-bit Murmur3 hash.
+ *   unsigned char hash[16];
+ *   qhashmurmur3_128((void*)"hello", 5, hash);
+ *
+ *   // hex encode
+ *   char *ascii = qhex_encode(hash, 16);
+ *   printf("Hex encoded Murmur3: %s\n", ascii);
+ *   free(ascii);
+ * @endcode
+ */
+U8 qhashmurmur3_128(const void *data, size_t nbytes, void *retbuf) {
+    if (data == NULL || nbytes == 0)
+        return 0;
+
+    const U64 c1 = 0x87c37b91114253d5ULL;
+    const U64 c2 = 0x4cf5ad432745937fULL;
+
+    const int nblocks = nbytes / 16;
+    const U64 *blocks = (const U64 *) (data);
+    const U8 *tail = (const U8 *) (data + (nblocks * 16));
+
+    U64 h1 = 0;
+    U64 h2 = 0;
+
+    int i;
+    U64 k1, k2;
+    for (i = 0; i < nblocks; i++) {
+        k1 = blocks[i * 2 + 0];
+        k2 = blocks[i * 2 + 1];
+
+        k1 *= c1;
+        k1 = (k1 << 31) | (k1 >> (64 - 31));
+        k1 *= c2;
+        h1 ^= k1;
+
+        h1 = (h1 << 27) | (h1 >> (64 - 27));
+        h1 += h2;
+        h1 = h1 * 5 + 0x52dce729;
+
+        k2 *= c2;
+        k2 = (k2 << 33) | (k2 >> (64 - 33));
+        k2 *= c1;
+        h2 ^= k2;
+
+        h2 = (h2 << 31) | (h2 >> (64 - 31));
+        h2 += h1;
+        h2 = h2 * 5 + 0x38495ab5;
+    }
+
+    k1 = k2 = 0;
+    switch (nbytes & 15) {
+        case 15:
+            k2 ^= (U64)(tail[14]) << 48;
+        case 14:
+            k2 ^= (U64)(tail[13]) << 40;
+        case 13:
+            k2 ^= (U64)(tail[12]) << 32;
+        case 12:
+            k2 ^= (U64)(tail[11]) << 24;
+        case 11:
+            k2 ^= (U64)(tail[10]) << 16;
+        case 10:
+            k2 ^= (U64)(tail[9]) << 8;
+        case 9:
+            k2 ^= (U64)(tail[8]) << 0;
+            k2 *= c2;
+            k2 = (k2 << 33) | (k2 >> (64 - 33));
+            k2 *= c1;
+            h2 ^= k2;
+
+        case 8:
+            k1 ^= (U64)(tail[7]) << 56;
+        case 7:
+            k1 ^= (U64)(tail[6]) << 48;
+        case 6:
+            k1 ^= (U64)(tail[5]) << 40;
+        case 5:
+            k1 ^= (U64)(tail[4]) << 32;
+        case 4:
+            k1 ^= (U64)(tail[3]) << 24;
+        case 3:
+            k1 ^= (U64)(tail[2]) << 16;
+        case 2:
+            k1 ^= (U64)(tail[1]) << 8;
+        case 1:
+            k1 ^= (U64)(tail[0]) << 0;
+            k1 *= c1;
+            k1 = (k1 << 31) | (k1 >> (64 - 31));
+            k1 *= c2;
+            h1 ^= k1;
+    };
+
+    //----------
+    // finalization
+
+    h1 ^= nbytes;
+    h2 ^= nbytes;
+
+    h1 += h2;
+    h2 += h1;
+
+    h1 ^= h1 >> 33;
+    h1 *= 0xff51afd7ed558ccdULL;
+    h1 ^= h1 >> 33;
+    h1 *= 0xc4ceb9fe1a85ec53ULL;
+    h1 ^= h1 >> 33;
+
+    h2 ^= h2 >> 33;
+    h2 *= 0xff51afd7ed558ccdULL;
+    h2 ^= h2 >> 33;
+    h2 *= 0xc4ceb9fe1a85ec53ULL;
+    h2 ^= h2 >> 33;
+
+    h1 += h2;
+    h2 += h1;
+
+    ((U64 *) retbuf)[0] = h1;
+    ((U64*) retbuf)[1] = h2;
+
+    return 1;
+}

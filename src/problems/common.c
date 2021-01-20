@@ -19,3 +19,8 @@ void text_data_init(struct Problem_T * problem, U8 * data)
 {
 	memset(data, ' ', problem->data_len);
 }
+
+void hex_pretty_print(struct Problem_T * problem, U8 * data)
+{
+	print_data_as_hex(data, problem->data_len);
+}

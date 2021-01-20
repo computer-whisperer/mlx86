@@ -15,9 +15,19 @@ struct ml86_process_memory
 	unsigned char end_sled[END_SLED_LEN];
 };
 
-static int executor_initialized = 0;
 static struct EXECUTOR_DATA_T executor_data;
 static struct ml86_process_memory * proc_mem;
+
+static void scalar_trial_init(struct Problem_T * problem)
+{
+  executor_init(&executor_data, sizeof(struct ml86_process_memory));
+}
+
+static void scalar_trial_deinit(struct Problem_T * problem)
+{
+  executor_deinit(&executor_data, sizeof(struct ml86_process_memory));
+}
+
 
 struct prog_io
 {
@@ -31,12 +41,6 @@ struct prog_io
 
 float x86_scalar_trial_calculator(struct Problem_T * problem, U8 * data)
 {
-
-	if (!executor_initialized)
-	{
-		executor_initialized = 1;
-		executor_init(&executor_data, sizeof(struct ml86_process_memory));
-	}
 
 	proc_mem = EXECUTOR_PROCESS_MEM(&executor_data);
 	memset(proc_mem->io_data, 0, IO_DATA_LEN);
@@ -94,10 +98,13 @@ float x86_scalar_trial_calculator(struct Problem_T * problem, U8 * data)
 
 struct Problem_T problem_x86_calculator =
 {
+    scalar_trial_init,
+    scalar_trial_deinit,
 	x86_scalar_trial_calculator,
 	x86_basic_scramble,
 	x86_pretty_print,
 	x86_data_init,
-	0x200
+	0x200,
+	NULL
 };
 
