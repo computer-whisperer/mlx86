@@ -17,7 +17,7 @@ static float scalar_trial(struct Problem_T * problem, U8 * data)
 
 static void scramble(struct Problem_T * problem, U8 * data)
 {
-	struct ParallelTempering_Hyperparameters_T * hyperparams = (struct SimulatedAnnealing_Hyperparameters_T *)data;
+	struct ParallelTempering_Hyperparameters_T * hyperparams = (struct ParallelTempering_Hyperparameters_T *)data;
 	U8 kind = fast_rand()%8;
 	double positive_multiplier = (((double)fast_rand())/32767.0) + 1;
 	if (fast_rand()%2)

@@ -1,6 +1,6 @@
 #ifndef SOLVERS_H
 #define SOLVERS_H
-
+#include "reporters/reporter.h"
 #include "problems/problems.h"
 #include "types.h"
 
@@ -27,7 +27,10 @@ struct ParallelTempering_Hyperparameters_T
 extern const struct SimulatedAnnealing_Hyperparameters_T simulated_annealing_default_hyperparameters;
 extern const struct ParallelTempering_Hyperparameters_T parallel_tempering_default_hyperparameters;
 
-void simulated_annealing(struct Problem_T * problem, const struct SimulatedAnnealing_Hyperparameters_T * hyperparameters, U8 reporting, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out);
-void parallel_tempering(struct Problem_T * problem, const struct ParallelTempering_Hyperparameters_T * hyperparameters, U8 reporting, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out);
+void simulated_annealing(struct Problem_T * problem, const struct SimulatedAnnealing_Hyperparameters_T * hyperparameters, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out);
+void parallel_tempering(struct Problem_T * problem, const struct ParallelTempering_Hyperparameters_T * hyperparameters, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out);
+void simple_greedy(struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out);
+void tabu_search(struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out);
+
 
 #endif

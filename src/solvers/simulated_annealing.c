@@ -22,23 +22,7 @@ const struct SimulatedAnnealing_Hyperparameters_T simulated_annealing_default_hy
 	1.5 // F64 cycle_multiplier
 };
 
-void report_progress(struct Problem_T * problem, U8 * data, float score, U64 current_cycle, U64 current_iteration, U64 iterations_in_cycle, U64 total_iterations) {
-
-	static U64 last_iterations = 0;
-	static double last_progress_time = 0;
-  //printf("\033c"); // Clear screen
-  if (current_cycle >= 0)
-    printf("Cycle: #%i \n" , current_cycle);
-  printf("Current Score = %f \n", score);
-  printf("Current rate = %d trials/s \n", (int)((total_iterations-last_iterations)/(getUnixTime() - last_progress_time)));
-  printf("Iterations = %'i / %'i\n\n", current_iteration, iterations_in_cycle);
-  printf("Current data:\n");
-  problem->data_pretty_printer(problem, data);
-  last_progress_time = getUnixTime();
-  last_iterations = total_iterations;
-}
-
-void simulated_annealing(struct Problem_T * problem, const struct SimulatedAnnealing_Hyperparameters_T * hyperparams, U8 reporting, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out)
+void simulated_annealing(struct Problem_T * problem, const struct SimulatedAnnealing_Hyperparameters_T * hyperparams, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out)
 {
   if (problem->trial_initializer)
   {
@@ -55,13 +39,23 @@ void simulated_annealing(struct Problem_T * problem, const struct SimulatedAnnea
 	float current_score_total = score;
 	int current_score_count = 1;
 
-	double last_update = getUnixTime();
-
 	int last_batch_score = 0;
 	U64 last_batch_iterations = 0;
 	int batch_num = 0;
 
 	U64 max_iterations = hyperparams->first_cycle_len;
+
+	if (reporter_mem)
+	{
+		sem_wait(&(reporter_mem->data_sem));
+		memcpy(reporter_mem->current_data, data, problem->data_len);
+		reporter_mem->enable_cycles = 1;
+		reporter_mem->cycle_num = batch_num;
+		reporter_mem->trials_in_cycle = max_iterations;
+		reporter_mem->trials_completed_in_cycle = 0;
+		sem_post(&(reporter_mem->data_sem));
+	}
+
 	U64 total_tests = 0;
 	while (1) {
 	    long i;
@@ -113,12 +107,22 @@ void simulated_annealing(struct Problem_T * problem, const struct SimulatedAnnea
 				data_b = data;
 				data = t;
 	        }
-	    	if (reporting)
+	    	if (reporter_mem)
 	    	{
-	    		if (!(i % 10) && (getUnixTime()-last_update > 0.5)) {
-	    			last_update += 0.5;
-	    			report_progress(problem, data, score, batch_num, i, max_iterations, total_tests);
+	    		if (!(i % 10)) {
+	    			sem_wait(&(reporter_mem->data_sem));
+	    			memcpy(reporter_mem->current_data, data, problem->data_len);
+	    			reporter_mem->enable_cycles = 1;
+	    			reporter_mem->cycle_num = batch_num;
+	    			reporter_mem->trials_in_cycle = max_iterations;
+	    			reporter_mem->trials_completed_in_cycle = i;
+	    			reporter_mem->trials_completed = total_tests;
+	    			sem_post(&(reporter_mem->data_sem));
 	    		}
+		    	if (reporter_mem->abort_solve)
+		    	{
+		    		break;
+		    	}
 	    	}
 
 		    if (score >= score_limit)
@@ -131,6 +135,22 @@ void simulated_annealing(struct Problem_T * problem, const struct SimulatedAnnea
 		    }
 
 	    }
+
+    	if (reporter_mem)
+    	{
+    		sem_wait(&(reporter_mem->data_sem));
+    		memcpy(reporter_mem->current_data, data, problem->data_len);
+    		reporter_mem->enable_cycles = 1;
+    		reporter_mem->cycle_num = batch_num;
+    		reporter_mem->trials_in_cycle = max_iterations;
+    		reporter_mem->trials_completed_in_cycle = i;
+    		reporter_mem->trials_completed = total_tests;
+    		sem_post(&(reporter_mem->data_sem));
+	    	if (reporter_mem->abort_solve)
+	    	{
+	    		break;
+	    	}
+    	}
 
     	if (score >= score_limit)
     	{
@@ -145,14 +165,6 @@ void simulated_annealing(struct Problem_T * problem, const struct SimulatedAnnea
 	    max_iterations = max_iterations * hyperparams->cycle_multiplier;
 	    batch_num++;
 	  }
-
-    if (reporting)
-    {
-    	if ((score >= score_limit) || (total_tests >= trial_limit)) {
-    		report_progress(problem, data, score, batch_num, max_iterations, max_iterations, total_tests);
-    		printf("Goal achieved!\n");
-    	}
-    }
 
 
   if (problem->trial_deinitializer)

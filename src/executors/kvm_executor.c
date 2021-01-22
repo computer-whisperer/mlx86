@@ -10,6 +10,7 @@
 #include "types.h"
 #include <sys/time.h>
 #include <unistd.h>
+#include <errno.h>
 #include "signal.h"
 
 /* CR0 bits */
@@ -303,7 +304,7 @@ int executor_execute(struct EXECUTOR_DATA_T * executor_data, U64 ip)
 	timer.it_value.tv_usec = 0;
 	timer.it_interval.tv_sec = 0;
 	timer.it_interval.tv_usec = 0;
-	if (setitimer(ITIMER_PROF, &timer, NULL))
+	if (setitimer(ITIMER_REAL, &timer, NULL))
 	{
 		printf("here");
 	}
@@ -333,10 +334,21 @@ int executor_execute(struct EXECUTOR_DATA_T * executor_data, U64 ip)
 	else if (executor_data->vcpus->kvm_run->exit_reason == KVM_EXIT_MMIO)
 	{
 		// Looks like we have to clean up after this event
+			U32 prev_addr = executor_data->vcpus->kvm_run->mmio.phys_addr;
 
 			// Briefly re-enter
 			executor_data->vcpus->kvm_run->immediate_exit =1;
-			ioctl(executor_data->vcpus->fd, KVM_RUN, 0);
+			S32 r2 = 0;
+			U32 i;
+			for (i = 0; i < 10; i++)
+			{
+				r2 = ioctl(executor_data->vcpus->fd, KVM_RUN, 0);
+				if (r2 == -1)
+				{
+					break;
+				}
+			}
+			testing_assert("kvm_executor_mmio_clear", i < 10);
 			executor_data->vcpus->kvm_run->immediate_exit =0;
 
 			if (ioctl(executor_data->vcpus->fd, KVM_GET_REGS, &regs) < 0)
