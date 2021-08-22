@@ -14,7 +14,7 @@
 #include "types.h"
 #include "utils.h"
 
-#define NUM_PROCESSES 10
+#define NUM_PROCESSES 60
 
 
 struct reporting_mem_t
@@ -30,9 +30,31 @@ struct sync_mem_t
 	U8 data[0x1000];
 };
 
+struct ParallelTempering_Hyperparameters_T
+{
+	U32 cycle_len;
+	U32 recheck_rate;
+	F64 score_diff_multiplier;
+	U32 neighbor_post_rate;
+	U32 neighbor_poll_rate;
+	U32 neighbor_poll_chance;
+	F64 score_diff_neighbor_multiplier;
+	U32 num_neighbors;
+};
+
 const struct ParallelTempering_Hyperparameters_T parallel_tempering_default_hyperparameters = {
 	1000000, // U32 cycle_len;
 	10, // U32 recheck_rate;
+	10000.0, // F64 score_diff_multiplier;
+	10, // U32 neighbor_post_rate;
+	100, // U32 neighbor_poll_rate;
+	10, // U32 neighbor_poll_chance;
+	10000.0, //F64 score_diff_neighbor_multiplier
+	10 // U32 num_neighbors;
+};
+const struct ParallelTempering_Hyperparameters_T parallel_tempering_slow_hyperparameters = {
+	1000, // U32 cycle_len;
+	100, // U32 recheck_rate;
 	10000.0, // F64 score_diff_multiplier;
 	10, // U32 neighbor_post_rate;
 	100, // U32 neighbor_poll_rate;
@@ -176,8 +198,10 @@ struct shared_data_t
 	struct sync_mem_t sync_mems[NUM_PROCESSES];
 };
 
-void parallel_tempering(struct Problem_T * problem, const struct ParallelTempering_Hyperparameters_T * hyperparameters, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out)
+void parallel_tempering(struct Solver_T * solver, struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out)
 {
+	struct ParallelTempering_Hyperparameters_T * hyperparameters = (struct ParallelTempering_Hyperparameters_T*) solver->hyperparameters;
+
 	// Setup process data
 	struct shared_data_t * shared_data = mmap(NULL, sizeof(struct shared_data_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
@@ -219,23 +243,30 @@ void parallel_tempering(struct Problem_T * problem, const struct ParallelTemperi
 		while(!reporter_mem->abort_solve)
 		{
 			usleep(100000);
-			sem_wait(&(shared_data->reporting_mem.sem));
-			U64 num_tests_run = shared_data->reporting_mem.tests_run;
-			sem_post(&(shared_data->reporting_mem.sem));
-
-			sem_wait(&(shared_data->sync_mems[0].sem));
 			sem_wait(&(reporter_mem->data_sem));
 
-			reporter_mem->trials_completed = num_tests_run;
-		    memcpy(reporter_mem->current_data, shared_data->sync_mems[0].data, problem->data_len);
-
-		    if (shared_data->sync_mems[0].score >= score_limit)
-		    {
-		    	break;
-		    }
-
-			sem_post(&(reporter_mem->data_sem));
+			sem_wait(&(shared_data->sync_mems[0].sem));
+			double score = shared_data->sync_mems[0].score;
+			memcpy(reporter_mem->current_data, shared_data->sync_mems[0].data, problem->data_len);
 			sem_post(&(shared_data->sync_mems[0].sem));
+
+			sem_wait(&(shared_data->reporting_mem.sem));
+			U64 tests_run = shared_data->reporting_mem.tests_run;
+			sem_post(&(shared_data->reporting_mem.sem));
+
+
+			reporter_mem->trials_completed = tests_run;
+	    	sem_post(&(reporter_mem->data_sem));
+
+	    	if (score >= score_limit)
+	    	{
+	    		break;
+	    	}
+
+	    	if (tests_run >= trial_limit)
+	    	{
+	    		break;
+	    	}
 		}
 	}
 	else
@@ -264,6 +295,8 @@ void parallel_tempering(struct Problem_T * problem, const struct ParallelTemperi
 		}
 	}
 
+
+
 	// Close all threads
 	shared_data->should_exit = 1;
 	// Wait for subprocesses
@@ -272,16 +305,25 @@ void parallel_tempering(struct Problem_T * problem, const struct ParallelTemperi
 		waitpid(tempering_pids[i], NULL, 0);
 	}
 
-  if (data_out)
-  {
-    memcpy(data_out, shared_data->sync_mems[0].data, problem->data_len);
-  }
-  if (score_out)
-  {
-    *score_out = shared_data->sync_mems[0].score;
-  }
-	if (iterations_out)
-  {
-    *iterations_out = shared_data->reporting_mem.tests_run;
-  }
+	if (results_out)
+	{
+		results_out->data = malloc(problem->data_len);
+		results_out->score = shared_data->sync_mems[0].score;
+		results_out->trial_count = shared_data->reporting_mem.tests_run;
+		memcpy(results_out->data, shared_data->sync_mems[0].data, problem->data_len);
+	}
 }
+
+struct Solver_T solver_parallel_tempering =
+{
+	parallel_tempering,
+	sizeof(struct ParallelTempering_Hyperparameters_T),
+	&parallel_tempering_default_hyperparameters
+};
+
+struct Solver_T solver_parallel_tempering_slow =
+{
+	parallel_tempering,
+	sizeof(struct ParallelTempering_Hyperparameters_T),
+	&parallel_tempering_slow_hyperparameters
+};

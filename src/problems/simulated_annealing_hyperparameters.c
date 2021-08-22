@@ -8,15 +8,16 @@
 
 static float scalar_trial(struct Problem_T * problem, U8 * data)
 {
-  double score;
-  U32 iterations;
+
+	struct SolverResults_T results;
   // Preserve and reset rng state so everything stays deterministic
   U64 prev_seed = get_fast_rand_seed();
   fast_rand_seeded(4819);
-  simulated_annealing(problem->meta_problem, (struct SimulatedAnnealing_Hyperparameters_T *) data, 0, 1, 10000, NULL, &score, &iterations);
+  simulated_annealing(problem->meta_problem, (struct SimulatedAnnealing_Hyperparameters_T *) data, NULL, 1, 10000, &results);
   // Restore previous rng state
   fast_rand_seeded(prev_seed);
-  return (double)score - (double)iterations/10000.0;
+  free(results.data);
+  return (double)results.score - (double)results.trial_count/1000.0;
 }
 
 static void scramble(struct Problem_T * problem, U8 * data)

@@ -3,6 +3,7 @@
 #include "problems/problems.h"
 #include "types.h"
 #include "utils.h"
+#include "zydis.h"
 #define INS_LEN 10
 
 // All instructions obey modrm
@@ -287,5 +288,8 @@ void x86_basic_scramble(struct Problem_T * problem, U8 * data)
 
 void x86_pretty_print(struct Problem_T * problem, U8 * data)
 {
-	print_data_as_hex(data, problem->data_len);
+	size_t len = problem->data_len;
+	if (len > 0x100)
+		len = 0x100;
+	zydis_print_dissasembly(data, len);
 }

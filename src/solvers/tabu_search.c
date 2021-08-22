@@ -8,10 +8,10 @@
 #include "types.h"
 #include "utils.h"
 
-#define TABU_LEN 100
-#define NEIGHBOR_NUM 1000
+#define TABU_LEN 10
+#define NEIGHBOR_NUM 50
 
-void tabu_search(struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out)
+void tabu_search(struct Solver_T * solver, struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out)
 {
 	if (problem->trial_initializer)
 	{
@@ -76,7 +76,7 @@ void tabu_search(struct Problem_T * problem, struct REPORTER_MEM_T * reporter_me
 	    // C is now the best option, mark it as tabu!
 	    memcpy(data, data_c, problem->data_len);
     	U32 hash = hash_c;
-    	U32 score = score_c;
+    	score = score_c;
     	tabu_list[next_tabu_slot] = hash;
     	next_tabu_slot = (next_tabu_slot+1)%TABU_LEN;
 
@@ -108,19 +108,21 @@ void tabu_search(struct Problem_T * problem, struct REPORTER_MEM_T * reporter_me
 		problem->trial_deinitializer(problem);
 	}
 
-	if (score_out)
+	if (results_out)
 	{
-		*score_out = score;
-	}
-	if (iterations_out)
-	{
-		*iterations_out = total_tests;
-	}
-	if (data_out)
-	{
-		memcpy(data_out, data, problem->data_len);
+		results_out->data = malloc(problem->data_len);
+		memcpy(results_out->data, data, problem->data_len);
+		results_out->score = score;
+		results_out->trial_count = total_tests;
 	}
 	free(data);
 	free(data_b);
 	free(data_c);
 }
+
+struct Solver_T solver_tabu_search =
+{
+	tabu_search,
+	0,
+	NULL
+};

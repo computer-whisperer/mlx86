@@ -4,33 +4,27 @@
 #include "problems/problems.h"
 #include "types.h"
 
-struct SimulatedAnnealing_Hyperparameters_T
+
+struct SolverResults_T
 {
-	U32 first_cycle_len;
-	U32 recheck_rate;
-	F64 score_diff_multiplier;
-	F64 cycle_multiplier;
+	F64 score;
+	U64 trial_count;
+	U8 * data;
 };
 
-struct ParallelTempering_Hyperparameters_T
+struct Solver_T
 {
-	U32 cycle_len;
-	U32 recheck_rate;
-	F64 score_diff_multiplier;
-	U32 neighbor_post_rate;
-	U32 neighbor_poll_rate;
-	U32 neighbor_poll_chance;
-	F64 score_diff_neighbor_multiplier;
-	U32 num_neighbors;
+	void (*solver)(struct Solver_T * solver, struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out);
+	size_t hyperparameters_size;
+	void * hyperparameters;
 };
 
-extern const struct SimulatedAnnealing_Hyperparameters_T simulated_annealing_default_hyperparameters;
-extern const struct ParallelTempering_Hyperparameters_T parallel_tempering_default_hyperparameters;
-
-void simulated_annealing(struct Problem_T * problem, const struct SimulatedAnnealing_Hyperparameters_T * hyperparameters, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out);
-void parallel_tempering(struct Problem_T * problem, const struct ParallelTempering_Hyperparameters_T * hyperparameters, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out);
-void simple_greedy(struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out);
-void tabu_search(struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out);
+extern struct Solver_T solver_simulated_annealing;
+extern struct Solver_T solver_parallel_tempering;
+extern struct Solver_T solver_parallel_tempering_slow;
+extern struct Solver_T solver_simple_greedy;
+extern struct Solver_T solver_tabu_search;
+struct Solver_T * build_solver_hybrid_x86(void * data, size_t data_len);
 
 
 #endif

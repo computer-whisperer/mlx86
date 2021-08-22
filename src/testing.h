@@ -1,9 +1,7 @@
 #include <stddef.h>
 #include "types.h"
+#include "main.h"
 
-#define DO_TESTING
-
-#define DO_TESTING_TESTING
 
 #define TESTING_STARTING_HASH 4829176324
 

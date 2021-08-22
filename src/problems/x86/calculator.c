@@ -4,49 +4,39 @@
 #include "problems/x86/common.h"
 #include <string.h>
 
-#define IO_DATA_LEN 0x1000
-#define PROG_DATA_LEN 0x1000
-#define END_SLED_LEN 0x1000
-
-struct ml86_process_memory
-{
-	unsigned char io_data[IO_DATA_LEN];
-	unsigned char program_data[PROG_DATA_LEN];
-	unsigned char end_sled[END_SLED_LEN];
-};
-
-static struct EXECUTOR_DATA_T executor_data;
-static struct ml86_process_memory * proc_mem;
-
-static void scalar_trial_init(struct Problem_T * problem)
-{
-  executor_init(&executor_data, sizeof(struct ml86_process_memory));
-}
-
-static void scalar_trial_deinit(struct Problem_T * problem)
-{
-  executor_deinit(&executor_data, sizeof(struct ml86_process_memory));
-}
-
-
-struct prog_io
+struct io_data_t
 {
   U8 a;
   U8 b;
   U8 op;
   U8 o;
+  U8 scratch[40];
 };
+
+static struct EXECUTOR_DATA_T executor_data;
+
+static void scalar_trial_init(struct Problem_T * problem)
+{
+  executor_init(&executor_data, sizeof(struct io_data_t), problem->data_len);
+}
+
+static void scalar_trial_deinit(struct Problem_T * problem)
+{
+  executor_deinit(&executor_data);
+}
+
+
+
 
 #define NUM_TESTS 40
 
 float x86_scalar_trial_calculator(struct Problem_T * problem, U8 * data)
 {
+	U8 * program_mem = (struct ml86_process_memory *)EXECUTOR_PROGRAM_MEM(&executor_data);
+	struct io_data_t * io_mem = (struct ml86_process_memory *)EXECUTOR_IO_MEM(&executor_data);
 
-	proc_mem = EXECUTOR_PROCESS_MEM(&executor_data);
-	memset(proc_mem->io_data, 0, IO_DATA_LEN);
-	memset(proc_mem->program_data, 0x90, PROG_DATA_LEN);
-	memset(proc_mem->end_sled, 0xf4, END_SLED_LEN);
-	memcpy(proc_mem->program_data, data, problem->data_len);
+	memset(io_mem, 0, sizeof(struct io_data_t));
+	memcpy(program_mem, data, problem->data_len);
   
   double error = 0;
   
@@ -71,15 +61,14 @@ float x86_scalar_trial_calculator(struct Problem_T * problem, U8 * data)
         o = a / b;
         break;
     }
-    struct prog_io * io = (struct prog_io *)&(proc_mem->io_data);
-    io->a = a;
-    io->b = b;
-    io->op = op;
-    io->o = 0;
-    int did_hang = executor_execute(&executor_data, PROG_DATA_LEN);
+    io_mem->a = a;
+    io_mem->b = b;
+    io_mem->op = op;
+    io_mem->o = 0;
+    int did_hang = executor_execute(&executor_data);
     error += did_hang*0.3;
     
-    double local_error = io->o - o;
+    double local_error = io_mem->o - o;
     if (local_error < 0)
     {
       local_error = -local_error;

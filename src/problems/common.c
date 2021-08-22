@@ -1,4 +1,6 @@
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "problems/problems.h"
 #include "utils.h"
 #include "types.h"

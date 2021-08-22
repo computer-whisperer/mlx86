@@ -8,7 +8,7 @@
 #include "types.h"
 #include "utils.h"
 
-void simple_greedy(struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, U8 * data_out, double * score_out, U32 * iterations_out)
+void simple_greedy(struct Solver_T * solver, struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out)
 {
 	if (problem->trial_initializer)
 	{
@@ -91,18 +91,22 @@ void simple_greedy(struct Problem_T * problem, struct REPORTER_MEM_T * reporter_
 		problem->trial_deinitializer(problem);
 	}
 
-	if (score_out)
+	if (results_out)
 	{
-		*score_out = score;
-	}
-	if (iterations_out)
-	{
-		*iterations_out = total_tests;
-	}
-	if (data_out)
-	{
-		memcpy(data_out, data, problem->data_len);
+		results_out->data = malloc(problem->data_len);
+		memcpy(results_out->data, data, problem->data_len);
+		results_out->score = score;
+		results_out->trial_count = total_tests;
 	}
 	free(data);
 	free(data_b);
+
+
 }
+
+struct Solver_T solver_simple_greedy =
+{
+	simple_greedy,
+	0,
+	NULL
+};

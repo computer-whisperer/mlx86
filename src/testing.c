@@ -6,11 +6,12 @@
 
 #ifndef DO_TESTING
 
-void testing_initialize(){};
+void testing_initialize(void){};
+void testing_deinitialize(void){};
 TESTING_HASH_T testing_add_data_to_hash(TESTING_HASH_T hash, void * data, size_t size){return 0;};
-void testing_assert_determinism(U8 * func_name, TESTING_HASH_T input_hash, TESTING_HASH_T output_hash){};
-void testing_assert(U8 * func_name, value){};
-void testing_test(){};
+U8 testing_assert_determinism(U8 * func_name, TESTING_HASH_T input_hash, TESTING_HASH_T output_hash){return 1;};
+U8 testing_assert(U8 * func_name, U8 value){return value;};
+void testing_test(void){};
 
 #else
 

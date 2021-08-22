@@ -11,7 +11,7 @@
 #include "utils.h"
 #include "testing.h"
 
-#define RETRY_COUNT 10
+#define RETRY_COUNT 5
 
 struct REPORTER_MEM_T * reporter_mem_init(void)
 {
@@ -98,8 +98,8 @@ void init_reporter_process(struct REPORTER_MEM_T * reporter_mem, struct Problem_
 		U64 hours_elapsed = mins_elapsed/60;
 		mins_elapsed -= hours_elapsed;
 		printf("\nTime: %02d:%02d:%02d\n", hours_elapsed, mins_elapsed, secs_elapsed);
-		printf("Test rate: %'d/s\n", (U64)((F64)(reporter_mem_buff.trials_completed - prev_trials_completed)/(curr_unix_time - prev_unix_time)));
-		printf("Games played: %'d\n", reporter_mem_buff.trials_completed);
+		printf("Trial rate: %'d/s\n", (U64)((F64)(reporter_mem_buff.trials_completed - prev_trials_completed)/(curr_unix_time - prev_unix_time)));
+		printf("Trials completed: %'d\n", reporter_mem_buff.trials_completed);
 
 		if (reporter_mem->enable_cycles)
 		{

@@ -3,10 +3,12 @@
 #include "problems/problems.h"
 #include "solvers/solvers.h"
 #include "testing.h"
+#include "zydis.h"
 
 int main(int argc, char * argv[])
 {
 	testing_initialize();
+	zydis_init();
 
 	struct REPORTER_MEM_T * reporter_mem = reporter_mem_init();
 
@@ -15,44 +17,35 @@ int main(int argc, char * argv[])
 	//problem = &problem_hello_world;
 	//problem = &problem_x86_calculator;
 	//problem = &problem_x86_nonzero;
-	problem = &problem_x86_hello_world;
+	//problem = &problem_x86_hello_world;
 	//problem = &problem_starcraft2_supplymax;
-	//problem = &problem_simulated_annealing_hyperparameters;
-    //problem = &problem_parallel_tempering_hyperparameters;
 	//problem->meta_problem = travelling_salesman_new_problem(20, 24);
-	//problem = travelling_salesman_new_problem(255, 24);
+	problem = travelling_salesman_new_problem(100, 10);
+	//problem = new_problem_hybrid_x86_hyperparameters();
 
-	const struct SimulatedAnnealing_Hyperparameters_T simulated_annealing_hyperparams = {
-		1000000, // U32 first_cycle_len;
-		10, // U32 recheck_rate;
-		10000.0, // F64 score_diff_multiplier;
-		1.5 // F64 cycle_multiplier
-	};
+	struct Solver_T * solver;
+	//solver = &solver_parallel_tempering;
+	//solver = &solver_parallel_tempering_slow;
+	solver = &solver_simulated_annealing;
+	//solver = &solver_simple_greedy;
+	//solver = &solver_tabu_search;
+	//solver = &build_solver_hybrid_x86();
+	//U8 buffer[0x1000];
+	//FILE * fp = fopen("tsp_hybrid_x86", "rb");
+	//size_t len = fread(buffer, sizeof(U8), sizeof(buffer), fp);
+	//fclose(fp);
+	//solver = build_solver_hybrid_x86(buffer, len);
 
-	const struct ParallelTempering_Hyperparameters_T parallel_tempering_hyperparameters = {
-		100000, // U32 cycle_len;
-		10, // U32 recheck_rate;
-		10000.0, // F64 score_diff_multiplier;
-		2, // U32 neighbor_post_rate;
-		10, // U32 neighbor_poll_rate;
-		4, // U32 neighbor_poll_chance;
-		10000.0, //F64 score_diff_neighbor_multiplier
-		10 // U32 num_neighbors;
-	};
+	struct SolverResults_T results;
 
-
-	U8 * data = malloc(problem->data_len);
 	init_reporter_process(reporter_mem, problem);
-	//parallel_tempering(problem, &parallel_tempering_hyperparameters, reporter_mem, 1, 1000000, data, NULL, NULL);
-	//simulated_annealing(problem, &simulated_annealing_hyperparams, reporter_mem, 2, simulated_annealing_hyperparams.first_cycle_len, data, NULL, NULL);
-	//simple_greedy(problem, reporter_mem, 2, 10000000, data, NULL, NULL);
-	tabu_search(problem, reporter_mem, 2, 10000000, data, NULL, NULL);
+	solver->solver(solver, problem, reporter_mem, 10, 1000000, &results);
 
 	deinit_reporter_process(reporter_mem);
 
-	//FILE * fp = fopen("best_data", "wb");
-	//fwrite(data, sizeof(U8), problem->data_len, fp);
-	//fclose(fp);
+	FILE * fp = fopen("tsp_hybrid_x86", "wb");
+	fwrite(results.data, sizeof(U8), problem->data_len, fp);
+	fclose(fp);
 
 	return 0;
 }

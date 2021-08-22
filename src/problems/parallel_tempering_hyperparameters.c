@@ -8,11 +8,10 @@
 
 static float scalar_trial(struct Problem_T * problem, U8 * data)
 {
-
-  double score;
-  U32 iterations;
-  parallel_tempering(problem->meta_problem, (struct ParallelTempering_Hyperparameters_T *) data, 0, 1, 10000, NULL, &score, &iterations);
-  return (double)score - (double)iterations/1000.0;
+  struct SolverResults_T results;
+  parallel_tempering(problem->meta_problem, (struct ParallelTempering_Hyperparameters_T *) data, NULL, 1, 10000, &results);
+  free(results.data);
+  return (double)results.score - (double)results.trial_count/1000.0;
 }
 
 static void scramble(struct Problem_T * problem, U8 * data)
