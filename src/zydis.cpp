@@ -30,7 +30,7 @@ void zydis_print_dissasembly(void * data, size_t data_len)
 	ZydisDecodedInstruction instruction;
 	while (offset < data_len)
 	{
-		U8 rc = ZydisDecoderDecodeBuffer(&decoder, data + offset, data_len - offset,
+		U8 rc = ZydisDecoderDecodeBuffer(&decoder, (uint8_t*)data + offset, data_len - offset,
 				&instruction);
 		if (rc)
 		{
@@ -55,7 +55,7 @@ void zydis_print_dissasembly(void * data, size_t data_len)
 	}
 }
 
-void zydis_print_instruction(void * data, size_t data_len, U32 address)
+void zydis_print_instruction(void * data, size_t data_len, uint32_t address)
 {
 	ZydisDecodedInstruction instruction;
 	U8 rc = ZydisDecoderDecodeBuffer(&decoder, data, data_len,

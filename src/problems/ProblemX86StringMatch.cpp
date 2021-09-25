@@ -6,7 +6,7 @@
 #include <cstring>
 #include <utility>
 #include "ProblemX86StringMatch.h"
-#include "kvm_executor.h"
+#include "KVMExecutor.h"
 
 ProblemX86StringMatch::ProblemX86StringMatch(std::string goal_in, size_t code_len) : goal(std::move(goal_in)), Problem(code_len), executor(nullptr)
 {}
@@ -17,8 +17,8 @@ double ProblemX86StringMatch::scalarTrial(U8 *data)
     {
         executor = new KVMExecutor(goal.length(), data_len);
     }
-    U8 * program_mem = executor->program_mem;
-    U8 * io_mem = executor->io_mem;
+    U8 * program_mem = executor->program_memory;
+    U8 * io_mem = executor->io_memory;
 
     memset(io_mem, 0, goal.length());
     memcpy(program_mem, data, data_len);

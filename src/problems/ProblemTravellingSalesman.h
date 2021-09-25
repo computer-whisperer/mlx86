@@ -5,6 +5,7 @@
 #ifndef MLX86_PROBLEMTRAVELLINGSALESMAN_H
 #define MLX86_PROBLEMTRAVELLINGSALESMAN_H
 #include <cstdint>
+#include <Solver.h>
 #include "problem.h"
 
 class ProblemTravellingSalesman: public Problem
@@ -33,6 +34,9 @@ public:
     int seed;
     double x_coords[max_node_count];
     double y_coords[max_node_count];
+
+    static double SolverTest(Solver *solver, int node_count, int solver_iterations, int problem_iterations);
+    static double SolverTest(Solver *solver);
 };
 
 #endif //MLX86_PROBLEMTRAVELLINGSALESMAN_H

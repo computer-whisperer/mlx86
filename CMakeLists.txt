@@ -9,15 +9,15 @@ set(CMAKE_CXX_STANDARD 20)
 
 include(FetchContent)
 
-FetchContent_Declare(
-        AudioFile
-        GIT_REPOSITORY https://github.com/adamstark/AudioFile.git
-        GIT_TAG master
-)
-FetchContent_MakeAvailable(AudioFile)
+#FetchContent_Declare(
+#        AudioFile
+#        GIT_REPOSITORY https://github.com/adamstark/AudioFile.git
+#        GIT_TAG master
+#)
+#FetchContent_MakeAvailable(AudioFile)
 
 include_directories(
-        ${AudioFile_SOURCE_DIR}
+   #     ${AudioFile_SOURCE_DIR}
         src
         src/executors
         src/problems
@@ -44,12 +44,12 @@ set(SOURCES
         src/solvers/SolverTabuSearch.cpp
         src/solvers/SolverHybridX86.cpp
         #src/starcraft2/starcraft2.c
-        src/executors/kvm_executor.cpp
+        src/executors/KVMExecutor.cpp
         src/reporters/cli_reporter.cpp
         src/problems/problem.cpp
         src/problems/ProblemHelloWorld.cpp
         src/problems/ProblemTravellingSalesman.cpp
-        src/problems/problem_audio_regen.cpp
+       # src/problems/problem_audio_regen.cpp
         src/problems/ProblemX86StringMatch.cpp
         #src/problems/starcraft2_supplymax.cpp
      #   src/problems/x86/calculator.cpp

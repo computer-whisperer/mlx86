@@ -121,3 +121,20 @@ void ProblemTravellingSalesman::dataInit(U8 *data) {
         steps[i] = i;
     }
 }
+
+double ProblemTravellingSalesman::SolverTest(Solver *solver, int node_count, int solver_iterations, int problem_iterations) {
+    struct SolverResults_T results{};
+    double score = 0;
+    for (int i = 0; i < problem_iterations; i++)
+    {
+        auto training_problem = new ProblemTravellingSalesman(node_count, i);
+        solver->run(training_problem, nullptr, 1, solver_iterations, &results);
+        free(results.data);
+        score += results.score;
+    }
+    return score/(double)problem_iterations;
+}
+
+double ProblemTravellingSalesman::SolverTest(Solver *solver) {
+    return SolverTest(solver, 20, 100, 2);
+}

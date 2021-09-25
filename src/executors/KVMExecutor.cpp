@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include "zydis.h"
 #include "christian_utils.h"
-#include "kvm_executor.h"
+#include "KVMExecutor.h"
 #include "types.h"
 
 /* CR0 bits */
@@ -27,21 +27,14 @@ thread_local U8 did_interrupt = 0;
 
 void catch_alarm(int sig)
 {
-	signal (sig, catch_alarm);
 	did_alarm = 1;
-}
-
-void catch_stop_signal(int sig)
-{
-	signal (sig, catch_stop_signal);
-	did_interrupt = 1;
 }
 
 thread_local U32 prev_exit_reason = 0;
 
 KVMExecutor::KVMExecutor(size_t io_memory_size_in, size_t program_memory_size_in) :
-io_mem_size(io_memory_size_in),
-program_mem_size(program_memory_size_in)
+        io_mem_size(io_memory_size_in),
+        program_memory_size(program_memory_size_in)
 {
     int api_ver;
     struct kvm_userspace_memory_region memreg{};
@@ -82,9 +75,9 @@ program_mem_size(program_memory_size_in)
     io_mem_real_size = io_sector_num * MEM_SEG_LEN;
 
     // IO memory
-    io_mem = static_cast<U8 *>(mmap(nullptr, io_mem_real_size, PROT_READ | PROT_WRITE,
+    io_memory = static_cast<U8 *>(mmap(nullptr, io_mem_real_size, PROT_READ | PROT_WRITE,
                                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0));
-    if (io_mem == MAP_FAILED) {
+    if (io_memory == MAP_FAILED) {
         perror("mmap io mem");
         exit(1);
     }
@@ -93,19 +86,19 @@ program_mem_size(program_memory_size_in)
     memreg.flags = 0;
     memreg.guest_phys_addr = 0;
     memreg.memory_size = io_mem_real_size;
-    memreg.userspace_addr = (unsigned long)io_mem;
+    memreg.userspace_addr = (unsigned long)io_memory;
     if (ioctl(fd, KVM_SET_USER_MEMORY_REGION, &memreg) < 0) {
         perror("KVM_SET_USER_MEMORY_REGION_A");
         exit(1);
     }
 
-    U32 prog_sector_num = ((program_mem_size + MIN_HALT_TRAP_LEN)/MEM_SEG_LEN)+1;
-    program_mem_real_size = prog_sector_num * MEM_SEG_LEN;
+    U32 prog_sector_num = ((program_memory_size + MIN_HALT_TRAP_LEN) / MEM_SEG_LEN) + 1;
+    program_memory_real_size = prog_sector_num * MEM_SEG_LEN;
 
     // Program Memory
-    program_mem = static_cast<U8 *>(mmap(nullptr, program_mem_real_size, PROT_READ | PROT_WRITE | PROT_EXEC,
+    program_memory = static_cast<U8 *>(mmap(nullptr, program_memory_real_size, PROT_READ | PROT_WRITE | PROT_EXEC,
                                              MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0));
-    if (program_mem == MAP_FAILED) {
+    if (program_memory == MAP_FAILED) {
         perror("mmap program mem");
         exit(1);
     }
@@ -113,20 +106,20 @@ program_mem_size(program_memory_size_in)
     memreg.slot = 1;
     memreg.flags = KVM_MEM_READONLY;
     memreg.guest_phys_addr = PROG_MEM_OFFSET;
-    memreg.memory_size = program_mem_real_size;
-    memreg.userspace_addr = (unsigned long)program_mem;
+    memreg.memory_size = program_memory_real_size;
+    memreg.userspace_addr = (unsigned long)program_memory;
     if (ioctl(fd, KVM_SET_USER_MEMORY_REGION, &memreg) < 0) {
         perror("KVM_SET_USER_MEMORY_REGION_B");
         exit(1);
     }
 
     // Setup HALT trap
-    memset(((U8*)program_mem) + program_mem_size, 0xf4, program_mem_real_size-program_mem_size);
+    memset(((U8*)program_memory) + program_memory_size, 0xf4, program_memory_real_size - program_memory_size);
 
 
     int vcpu_mmap_size;
 
-    fd = ioctl(fd, KVM_CREATE_VCPU, 0);
+    vcpus->fd = ioctl(fd, KVM_CREATE_VCPU, 0);
     if (vcpus->fd < 0) {
         perror("KVM_CREATE_VCPU");
 
@@ -145,9 +138,14 @@ program_mem_size(program_memory_size_in)
         perror("mmap kvm_run");
         exit(1);
     }
+
+    StartWatchdogThread();
 }
 
 KVMExecutor::~KVMExecutor() {
+    should_watchdog_stop = true;
+    watchdog_thread.join();
+
     int vcpu_mmap_size = ioctl(sys_fd, KVM_GET_VCPU_MMAP_SIZE, 0);
     if (vcpu_mmap_size <= 0) {
         perror("KVM_GET_VCPU_MMAP_SIZE");
@@ -158,8 +156,8 @@ KVMExecutor::~KVMExecutor() {
     close(vcpus->fd);
     close(fd);
     close(sys_fd);
-    munmap(program_mem, program_mem_real_size);
-    munmap(io_mem, io_mem_real_size);
+    munmap(program_memory, program_memory_real_size);
+    munmap(io_memory, io_mem_real_size);
 }
 
 bool KVMExecutor::run() {
@@ -249,18 +247,21 @@ bool KVMExecutor::run() {
     did_interrupt = 0;
 
     signal (SIGALRM, catch_alarm);
-    signal (SIGUSR1, catch_stop_signal);
-
 
     prev_exit_reason = vcpus->kvm_run->exit_reason;
 
+    execution_idx++;
+    is_executing = true;
+
     if (ioctl(vcpus->fd, KVM_RUN, 0) < 0)
     {
+        is_executing = false;
         if (!did_alarm)
         {
             throw std::runtime_error("KVM_RUN");
         }
     }
+    is_executing = false;
 
     if (did_interrupt)
     {
@@ -272,13 +273,13 @@ bool KVMExecutor::run() {
 
         U32 offset = regs.rip - PROG_MEM_OFFSET;
         printf("Raw:\n");
-        print_data_as_hex(program_mem + offset, 0x10);
+        print_data_as_hex(program_memory + offset, 0x10);
         printf("Dissasembly:\n");
-        zydis_print_instruction(program_mem + offset, program_mem_size - offset, regs.rip);
+        zydis_print_instruction(program_memory + offset, program_memory_size - offset, regs.rip);
         printf("Code:\n");
-        zydis_print_dissasembly(program_mem, program_mem_size);
+        zydis_print_dissasembly(program_memory, program_memory_size);
         FILE * fp = fopen("debug_data", "wb");
-        fwrite(program_mem, sizeof(U8), program_mem_size, fp);
+        fwrite(program_memory, sizeof(U8), program_memory_size, fp);
         fclose(fp);
 
     }
@@ -379,6 +380,30 @@ bool KVMExecutor::run() {
         printf("Strange VM exit: %d\n", vcpus->kvm_run->exit_reason);
     }
 
-
     return did_alarm;
+}
+
+void KVMExecutor::StartWatchdogThread() {
+    auto target_thread = pthread_self();
+    watchdog_thread = std::thread([this, target_thread]{
+        auto last_execution_idx = execution_idx;
+        int counter = 0;
+        while (!should_watchdog_stop)
+        {
+            usleep(10);
+            if (is_executing && (execution_idx == last_execution_idx))
+            {
+                counter++;
+
+                if (counter > 2)
+                {
+                    pthread_kill(target_thread, SIGALRM);
+                }
+            } else
+            {
+                counter = 0;
+            }
+            last_execution_idx = execution_idx;
+        }
+    });
 }

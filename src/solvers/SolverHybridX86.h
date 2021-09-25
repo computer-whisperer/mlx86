@@ -6,14 +6,19 @@
 #define MLX86_SOLVERHYBRIDX86_H
 #include "Solver.h"
 #include <string>
+#include "KVMExecutor.h"
 
 class SolverHybridX86 : public Solver, Problem
 {
-
+    KVMExecutor* executor;
 public:
     static constexpr size_t max_code_len = 1000;
     uint8_t * code;
     explicit SolverHybridX86(size_t code_len_in);
+    SolverHybridX86(const SolverHybridX86 &other);
+    ~SolverHybridX86() override;
+
+    SolverHybridX86 * Clone() override;
 
     void run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out) override;
 

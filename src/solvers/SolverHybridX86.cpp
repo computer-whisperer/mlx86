@@ -6,22 +6,30 @@
 #include "solvers/Solver.h"
 #include "problems/problem.h"
 #include "reporters/reporter.h"
-#include "executors/executor.h"
+#include "KVMExecutor.h"
 #include "types.h"
 #include "SolverHybridX86.h"
 
 #define MAX_SUB_PROBLEM_DATA 0x1000
 #define SCRATCH_MEM_LEN 0x1000
 
-#define NUM_PROBLEMS_PER_TEST 2
-#define NUM_NODES 20
-
-static thread_local struct EXECUTOR_DATA_T executor_data = {.program_mem=nullptr};
 
 SolverHybridX86::SolverHybridX86(size_t code_len_in):
 Problem((code_len_in < max_code_len)?code_len_in:max_code_len),
-code(nullptr)
+code(nullptr),
+executor(nullptr)
+{}
+
+SolverHybridX86::SolverHybridX86(const SolverHybridX86 &other)
+: Problem(other.data_len), executor(nullptr), code(nullptr) {}
+
+SolverHybridX86::~SolverHybridX86() {
+    delete executor;
+}
+
+SolverHybridX86 * SolverHybridX86::Clone()
 {
+    return new SolverHybridX86(*this);
 }
 
 void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out)
@@ -41,17 +49,17 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 		U8 scratch_mem[SCRATCH_MEM_LEN];
 	};
 
-	if (executor_data.program_mem == nullptr)
+	if (executor == nullptr)
 	{
-	    executor_init(&executor_data, sizeof(struct io_memory_map_t), data_len);
+	    executor = new KVMExecutor(sizeof(struct io_memory_map_t), data_len);
 	}
 
 	// Copy program into vm memory
-	U8 * program_memory = EXECUTOR_PROGRAM_MEM(&executor_data);
+	U8 * program_memory = executor->program_memory;
 	memcpy(program_memory, code, data_len);
 
 	// Setup initial IO memory
-	auto * io_memory = (struct io_memory_map_t *)EXECUTOR_IO_MEM(&executor_data);
+	auto * io_memory = (struct io_memory_map_t *)executor->io_memory;
 	problem->dataInit(io_memory->data);
 
 	U8 * prev_data = static_cast<U8 *>(malloc(problem->data_len));
@@ -87,7 +95,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 		io_memory->score = current_score;
 
 		// Run program
-		int did_hang = executor_execute(&executor_data);
+		int did_hang = executor->run();
 
 		if (did_hang)
 		{
@@ -140,24 +148,13 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 		results_out->trial_count = total_tests;
 	}
 
-	executor_deinit(&executor_data);
-
 	free(prev_data);
 	free(prev_prev_data);
 }
 
 double SolverHybridX86::scalarTrial(U8 *data) {
-    struct SolverResults_T results{};
     code = data;
-    double score = 0;
-    for (int i = 0; i < NUM_PROBLEMS_PER_TEST; i++)
-    {
-        auto training_problem = new ProblemTravellingSalesman(NUM_NODES, i);
-        this->run(training_problem, nullptr, 1, 100, &results);
-        free(results.data);
-        score += results.score/(float)NUM_PROBLEMS_PER_TEST;
-    }
-    return score;
+    return ProblemTravellingSalesman::SolverTest(this);
 }
 
 void SolverHybridX86::scrambler(U8 *data) {

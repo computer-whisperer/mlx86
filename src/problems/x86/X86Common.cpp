@@ -289,7 +289,7 @@ void x86_basic_scramble(uint8_t * data, size_t data_len)
 void x86_pretty_print(uint8_t * data, size_t data_len)
 {
     size_t len = data_len;
-	if (len > 0x100)
-		len = 0x100;
+	if (len > 0x180)
+		len = 0x180;
 	zydis_print_dissasembly(data, len);
 }

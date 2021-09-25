@@ -6,7 +6,7 @@
 #define MLX86_PROBLEMX86STRINGMATCH_H
 #include <string>
 #include <utility>
-#include <kvm_executor.h>
+#include <KVMExecutor.h>
 #include "problem.h"
 
 class ProblemX86StringMatch : public Problem
