@@ -5,67 +5,42 @@
  *      Author: christian
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include "solvers/solvers.h"
-#include "problems/problems.h"
+#include <cstring>
+#include <cmath>
+#include "solvers/Solver.h"
+#include "problems/problem.h"
 #include "types.h"
-#include "utils.h"
+#include "christian_utils.h"
+#include "SolverSimulatedAnnealing.h"
 
-struct SimulatedAnnealing_Hyperparameters_T
+void SolverSimulatedAnnealing::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out)
 {
-	U32 first_cycle_len;
-	U32 recheck_rate;
-	F64 score_diff_multiplier;
-	F64 cycle_multiplier;
-};
-
-const struct SimulatedAnnealing_Hyperparameters_T simulated_annealing_default_hyperparameters = {
-	1000000, // U32 first_cycle_len;
-	10, // U32 recheck_rate;
-	10000.0, // F64 score_diff_multiplier;
-	1.5 // F64 cycle_multiplier
-};
-
-void simulated_annealing(struct Solver_T * solver, struct Problem_T * problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out)
-{
-	struct SimulatedAnnealing_Hyperparameters_T * hyperparams = (struct SimulatedAnnealing_Hyperparameters_T *) solver->hyperparameters;
-	if (problem->trial_initializer)
-	{
-		problem->trial_initializer(problem);
-	}
-  
-  
-	U8 * data = malloc(problem->data_len);
-	U8 * data_b = malloc(problem->data_len);
-	problem->data_initializer(problem, data);
+	U8 * data = static_cast<U8 *>(malloc(problem->data_len));
+	U8 * data_b = static_cast<U8 *>(malloc(problem->data_len));
+	problem->dataInit(data);
 	memcpy(data_b, data, problem->data_len);
 
-	float score = problem->scalar_trial(problem, data);
-	float current_score_total = score;
+	double score = problem->scalarTrial(data);
+	double current_score_total = score;
 	int current_score_count = 1;
 
-	int last_batch_score = 0;
-	U64 last_batch_iterations = 0;
 	int batch_num = 0;
 
-	U64 max_iterations = hyperparams->first_cycle_len;
+	U64 max_iterations = first_cycle_len;
 
 	if (reporter_mem)
 	{
-		sem_wait(&(reporter_mem->data_sem));
+	    reporter_mem->mtx.lock();
 		memcpy(reporter_mem->current_data, data, problem->data_len);
 		reporter_mem->enable_cycles = 1;
 		reporter_mem->cycle_num = batch_num;
 		reporter_mem->trials_in_cycle = max_iterations;
 		reporter_mem->trials_completed_in_cycle = 0;
-		sem_post(&(reporter_mem->data_sem));
+		reporter_mem->mtx.unlock();
 	}
 
 	U64 total_tests = 0;
-	while (1) {
+	while (true) {
 		if (max_iterations > (trial_limit - total_tests))
 		{
 			max_iterations = (trial_limit - total_tests);
@@ -78,11 +53,11 @@ void simulated_annealing(struct Solver_T * solver, struct Problem_T * problem, s
 	    	// Copy data to data_b and modify it
 	    	memcpy(data_b, data, problem->data_len);
 
-	    	if ((i%hyperparams->recheck_rate) == 0)
+	    	if ((i%recheck_rate) == 0)
 	    	{
 
 				// Average prev score with new run
-				current_score_total += problem->scalar_trial(problem, data);
+				current_score_total += problem->scalarTrial(data);
 				current_score_count += 1;
 				score = current_score_total/current_score_count;
 
@@ -90,21 +65,21 @@ void simulated_annealing(struct Solver_T * solver, struct Problem_T * problem, s
 	    	}
 
 			/* Make a random change and introduce a new agent */
-	    	problem->scrambler(problem, data);
+	    	problem->scrambler(data);
 
 	    	// Score run
-	    	float new_score = problem->scalar_trial(problem, data);
+	    	double new_score = problem->scalarTrial(data);
 	    	total_tests++;
 
 	    	// Simulated annealing to determine if this passes
-	    	int does_pass = 0;
+	    	int does_pass;
 	    	if (new_score >= score)
 	    	{
 	    		does_pass = 1;
 	    	}
 	    	else {
-	    		float t = (float)max_iterations/(float)(i);
-	    		float p = exp((float)((new_score - score)*hyperparams->score_diff_multiplier)/(t));
+	    	    double t = (double)max_iterations/(double)(i);
+	    		double p = exp(((new_score - score)*score_diff_multiplier)/(t));
 	        	does_pass = fast_rand() < (32767.0 * p);
 	        }
 		    if (does_pass) {
@@ -123,14 +98,14 @@ void simulated_annealing(struct Solver_T * solver, struct Problem_T * problem, s
 	    	if (reporter_mem)
 	    	{
 	    		if (!(i % 10)) {
-	    			sem_wait(&(reporter_mem->data_sem));
+	    		    reporter_mem->mtx.lock();
 	    			memcpy(reporter_mem->current_data, data, problem->data_len);
 	    			reporter_mem->enable_cycles = 1;
 	    			reporter_mem->cycle_num = batch_num;
 	    			reporter_mem->trials_in_cycle = max_iterations;
 	    			reporter_mem->trials_completed_in_cycle = i;
 	    			reporter_mem->trials_completed = total_tests;
-	    			sem_post(&(reporter_mem->data_sem));
+	    			reporter_mem->mtx.unlock();
 	    		}
 		    	if (reporter_mem->abort_solve)
 		    	{
@@ -151,14 +126,14 @@ void simulated_annealing(struct Solver_T * solver, struct Problem_T * problem, s
 
     	if (reporter_mem)
     	{
-    		sem_wait(&(reporter_mem->data_sem));
+    	    reporter_mem->mtx.lock();
     		memcpy(reporter_mem->current_data, data, problem->data_len);
     		reporter_mem->enable_cycles = 1;
     		reporter_mem->cycle_num = batch_num;
     		reporter_mem->trials_in_cycle = max_iterations;
     		reporter_mem->trials_completed_in_cycle = i;
     		reporter_mem->trials_completed = total_tests;
-    		sem_post(&(reporter_mem->data_sem));
+    		reporter_mem->mtx.unlock();
 	    	if (reporter_mem->abort_solve)
 	    	{
 	    		break;
@@ -173,21 +148,14 @@ void simulated_annealing(struct Solver_T * solver, struct Problem_T * problem, s
     	{
     		break;
     	}
-	    last_batch_score = score;
-	    last_batch_iterations = max_iterations;
-	    max_iterations = max_iterations * hyperparams->cycle_multiplier;
+	    max_iterations = (U64)((double)max_iterations * cycle_multiplier);
 	    batch_num++;
 	  }
 
 
-	if (problem->trial_deinitializer)
-	{
-	problem->trial_deinitializer(problem);
-	}
-
   	if (results_out)
 	{
-		results_out->data = malloc(problem->data_len);
+		results_out->data = static_cast<U8 *>(malloc(problem->data_len));
 		memcpy(results_out->data, data, problem->data_len);
 		results_out->score = score;
 		results_out->trial_count = total_tests;
@@ -195,10 +163,3 @@ void simulated_annealing(struct Solver_T * solver, struct Problem_T * problem, s
 	free(data);
 	free(data_b);
 }
-
-struct Solver_T solver_simulated_annealing =
-{
-	simulated_annealing,
-	sizeof(struct SimulatedAnnealing_Hyperparameters_T),
-	&simulated_annealing_default_hyperparameters
-};

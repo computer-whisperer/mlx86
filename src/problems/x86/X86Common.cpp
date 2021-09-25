@@ -1,8 +1,8 @@
 #include <string.h>
 #include <stdio.h>
-#include "problems/problems.h"
+#include "problems/problem.h"
 #include "types.h"
-#include "utils.h"
+#include "christian_utils.h"
 #include "zydis.h"
 #define INS_LEN 10
 
@@ -140,12 +140,12 @@ U8 get_disp_len(U8 modrm)
 	}
 }
 
-void x86_data_init(struct Problem_T * problem, U8 *data)
+void x86_data_init(uint8_t * data, size_t data_len)
 {
-	memset(data, 0x90, problem->data_len);
+	memset(data, 0x90, data_len);
 }
 
-void x86_basic_scramble(struct Problem_T * problem, U8 * data)
+void x86_basic_scramble(uint8_t * data, size_t data_len)
 {
 	// Build lookup table
 	if (!is_lookup_table_ready)
@@ -159,7 +159,7 @@ void x86_basic_scramble(struct Problem_T * problem, U8 * data)
 	}
 
 	// Assume data is decent x86
-	U32 inst_count = problem->data_len/INS_LEN;
+	U32 inst_count = data_len/INS_LEN;
 	// Pick instruction at random
 	U32 inst_idx = fast_rand()%inst_count;
 	// Disassemble existing instructions
@@ -286,9 +286,9 @@ void x86_basic_scramble(struct Problem_T * problem, U8 * data)
 	}
 }
 
-void x86_pretty_print(struct Problem_T * problem, U8 * data)
+void x86_pretty_print(uint8_t * data, size_t data_len)
 {
-	size_t len = problem->data_len;
+    size_t len = data_len;
 	if (len > 0x100)
 		len = 0x100;
 	zydis_print_dissasembly(data, len);

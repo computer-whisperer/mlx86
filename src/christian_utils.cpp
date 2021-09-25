@@ -1,6 +1,7 @@
-#include <time.h>
-#include "utils.h"
-#include "math.h"
+#include <ctime>
+#include "christian_utils.h"
+#include <cmath>
+#include <cstdio>
 
 double getUnixTime(void)
 {
@@ -325,7 +326,7 @@ U8 qhashmurmur3_128(const void *data, size_t nbytes, void *retbuf) {
 
     const int nblocks = nbytes / 16;
     const U64 *blocks = (const U64 *) (data);
-    const U8 *tail = (const U8 *) (data + (nblocks * 16));
+    const U8 *tail = (const U8 *) ((const U8*)data + (nblocks * 16));
 
     U64 h1 = 0;
     U64 h2 = 0;

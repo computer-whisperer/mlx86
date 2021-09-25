@@ -1,7 +1,7 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef CHRISTIAN_UTILS_H
+#define CHRISTIAN_UTILS_H
 
-#include <stddef.h>
+#include <cstddef>
 #include "types.h"
 
 #define FAST_RAND_MAX 32767

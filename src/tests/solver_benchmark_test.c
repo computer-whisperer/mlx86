@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "problems/problems.h"
-#include "solvers/solvers.h"
+#include "problems/problem.h"
+#include "solvers/Solver.h"
 #include "testing.h"
 
 #define NUM_PROBLEMS_PER_POINT 10

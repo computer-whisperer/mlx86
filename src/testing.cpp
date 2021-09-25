@@ -1,17 +1,17 @@
 #include "testing.h"
-#include "utils.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include "christian_utils.h"
+#include <cstdlib>
+#include <cstdio>
 #include <strings.h>
 
 #ifndef DO_TESTING
 
-void testing_initialize(void){};
-void testing_deinitialize(void){};
+void testing_initialize(){};
+void testing_deinitialize(){};
 TESTING_HASH_T testing_add_data_to_hash(TESTING_HASH_T hash, void * data, size_t size){return 0;};
-U8 testing_assert_determinism(U8 * func_name, TESTING_HASH_T input_hash, TESTING_HASH_T output_hash){return 1;};
-U8 testing_assert(U8 * func_name, U8 value){return value;};
-void testing_test(void){};
+U8 testing_assert_determinism(const char *func_name, TESTING_HASH_T input_hash, TESTING_HASH_T output_hash){return 1;};
+U8 testing_assert(const char * func_name, U8 value){return value;};
+void testing_test(){};
 
 #else
 

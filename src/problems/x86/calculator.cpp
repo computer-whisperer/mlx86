@@ -1,7 +1,7 @@
-#include "problems/problems.h"
+#include "problems/problem.h"
 #include "executors/executor.h"
 #include "utils.h"
-#include "problems/x86/common.h"
+#include "problems/x86/X86Common.h"
 #include <string.h>
 
 struct io_data_t
@@ -26,14 +26,12 @@ static void scalar_trial_deinit(struct Problem_T * problem)
 }
 
 
-
-
 #define NUM_TESTS 40
 
 float x86_scalar_trial_calculator(struct Problem_T * problem, U8 * data)
 {
-	U8 * program_mem = (struct ml86_process_memory *)EXECUTOR_PROGRAM_MEM(&executor_data);
-	struct io_data_t * io_mem = (struct ml86_process_memory *)EXECUTOR_IO_MEM(&executor_data);
+	U8 * program_mem = executor_data.program_mem;
+	struct io_data_t * io_mem = reinterpret_cast<io_data_t *>(executor_data.io_mem);
 
 	memset(io_mem, 0, sizeof(struct io_data_t));
 	memcpy(program_mem, data, problem->data_len);

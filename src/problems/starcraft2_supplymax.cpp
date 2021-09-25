@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "problems/problems.h"
+#include "problems/problem.h"
 #include "starcraft2/starcraft2.h"
 #include "starcraft2/starcraft2_buildspec.h"
 #include "problems/common.h"
@@ -10,7 +10,6 @@ static void scalar_trial_init(struct Problem_T * problem)
 {
   starcraft2_init_sc2();
 }
-
 
 static void scalar_trial_deinit(struct Problem_T * problem)
 {

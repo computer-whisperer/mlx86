@@ -1,9 +1,23 @@
 cmake_minimum_required(VERSION 3.20)
-project(mlx86 C)
+project(mlx86 C CXX ASM)
+set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
+set(CMAKE_CXX_STANDARD 20)
 
-set(CMAKE_C_STANDARD 99)
+#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
+#set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
+#set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
+
+include(FetchContent)
+
+FetchContent_Declare(
+        AudioFile
+        GIT_REPOSITORY https://github.com/adamstark/AudioFile.git
+        GIT_TAG master
+)
+FetchContent_MakeAvailable(AudioFile)
 
 include_directories(
+        ${AudioFile_SOURCE_DIR}
         src
         src/executors
         src/problems
@@ -11,44 +25,47 @@ include_directories(
         src/reporters
         src/solvers
         src/tests
-        src/starcraft2
-        src/starcraft2/proto
-        src/starcraft2/proto/s2clientprotocol
+     #   src/starcraft2
+     #   src/starcraft2/proto
+     #   src/starcraft2/proto/s2clientprotocol
 )
 
 file(GLOB SC2_SRC_FILES src/starcraft2/proto/s2clientprotocol/*.c)
 
 set(SOURCES
-        src/utils.c
-        src/utils.c
-        src/testing.c
-        src/zydis.c
-        src/solvers/parallel_tempering.c
-        src/solvers/simulated_annealing.c
-        src/solvers/simple_greedy.c
-        src/solvers/tabu_search.c
-        src/solvers/hybrid_x86.c
-        src/starcraft2/starcraft2.c
-        src/executors/kvm_executor.c
-        src/reporters/cli_reporter.c
-        src/problems/common.c
-        src/problems/hello_world.c
-        src/problems/travelling_salesman.c
-        src/problems/starcraft2_supplymax.c
-        src/problems/x86/calculator.c
-        src/problems/x86/common.c
-        src/problems/x86/simple_meta.c
-        src/problems/x86/hybrid_x86_hyperparameters.c
-        ${SC2_SRC_FILES}
+        src/christian_utils.cpp
+        src/christian_utils.cpp
+        src/testing.cpp
+        src/zydis.cpp
+        src/solvers/SolverParallelTempering.cpp
+        src/solvers/SolverSimulatedAnnealing.cpp
+        src/solvers/SolverSimpleGreedy.cpp
+        src/solvers/SolverParallelGreedy.cpp
+        src/solvers/SolverTabuSearch.cpp
+        src/solvers/SolverHybridX86.cpp
+        #src/starcraft2/starcraft2.c
+        src/executors/kvm_executor.cpp
+        src/reporters/cli_reporter.cpp
+        src/problems/problem.cpp
+        src/problems/ProblemHelloWorld.cpp
+        src/problems/ProblemTravellingSalesman.cpp
+        src/problems/problem_audio_regen.cpp
+        src/problems/ProblemX86StringMatch.cpp
+        #src/problems/starcraft2_supplymax.cpp
+     #   src/problems/x86/calculator.cpp
+        src/problems/x86/X86Common.cpp
+     #   src/problems/x86/simple_meta.cpp
+      #  src/problems/x86/hybrid_x86_hyperparameters.cpp
+       # ${SC2_SRC_FILES}
         )
 
 
-add_executable(mlx86 src/main.c ${SOURCES})
+add_executable(mlx86 src/main.cpp ${SOURCES})
 add_executable(solver_benchmark_test src/tests/solver_benchmark_test.c ${SOURCES})
 add_executable(testing_test src/tests/testing_test.c ${SOURCES})
 add_executable(executor_test src/tests/executor_test.c ${SOURCES})
 
-set(LIBS_TO_LINK  m pthread protobuf-c rt Zydis)
+set(LIBS_TO_LINK kfr_dft kfr_capi kfr_io m pthread protobuf-c rt Zydis)
 
 target_link_libraries(mlx86 ${LIBS_TO_LINK})
 target_link_libraries(solver_benchmark_test ${LIBS_TO_LINK})

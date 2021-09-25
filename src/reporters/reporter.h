@@ -1,16 +1,16 @@
 #ifndef REPORTER_H
 #define REPORTER_H
-#include <semaphore.h>
-#include "problems/problems.h"
+#include <mutex>
+#include <thread>
+#include "problems/problem.h"
 #include "types.h"
 #include "main.h"
 
 struct REPORTER_MEM_T
 {
-	sem_t data_sem;
+    std::mutex mtx;
 
 	U8 abort_reporter;
-	pid_t reporter_pid;
 
 	U8 abort_solve;
 	U64 trials_completed;
@@ -23,10 +23,12 @@ struct REPORTER_MEM_T
 	U64 cycle_num;
 	U64 trials_in_cycle;
 	U64 trials_completed_in_cycle;
+
+	std::thread t;
 };
 
-struct REPORTER_MEM_T * reporter_mem_init(void);
-void init_reporter_process(struct REPORTER_MEM_T * reporter_mem, struct Problem_T * problem);
+struct REPORTER_MEM_T * reporter_mem_init();
+void init_reporter_process(struct REPORTER_MEM_T * reporter_mem, Problem * problem);
 void deinit_reporter_process(struct REPORTER_MEM_T * reporter_mem);
 
 #endif

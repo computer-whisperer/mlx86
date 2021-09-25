@@ -1,8 +1,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "problems/problems.h"
-#include "solvers/solvers.h"
+#include "problems/problem.h"
+#include "solvers/Solver.h"
 #include "utils.h"
 #include "types.h"
 

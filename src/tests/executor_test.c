@@ -1,7 +1,7 @@
 #include "types.h"
 #include "testing.h"
 #include "executors/executor.h"
-#include "problems/x86/common.h"
+#include "problems/x86/X86Common.h"
 #include "utils.h"
 #include <stdio.h>
 #include <string.h>

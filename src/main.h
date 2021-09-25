@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define MAX_DATA_LEN 0x1000
+#define MAX_DATA_LEN 100000
 
 //#define DO_TESTING
 

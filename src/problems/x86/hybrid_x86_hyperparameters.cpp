@@ -1,8 +1,8 @@
 #include <string.h>
 #include <stdlib.h>
-#include "problems/problems.h"
-#include "solvers/solvers.h"
-#include "problems/x86/common.h"
+#include "problems/problem.h"
+#include "solvers/Solver.h"
+#include "problems/x86/X86Common.h"
 #include "utils.h"
 #include "types.h"
 
@@ -25,7 +25,7 @@ static float scalar_trial(struct Problem_T * problem, U8 * data)
 
 struct Problem_T * new_problem_hybrid_x86_hyperparameters()
 {
-	struct Problem_T * problem = malloc(sizeof(struct Problem_T));
+	struct Problem_T * problem = static_cast<Problem_T *>(malloc(sizeof(struct Problem_T)));
 	problem->trial_initializer = NULL;
 	problem->trial_deinitializer = NULL;
 	problem->scalar_trial = scalar_trial;
