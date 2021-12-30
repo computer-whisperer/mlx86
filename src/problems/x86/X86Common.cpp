@@ -151,7 +151,7 @@ void x86_basic_scramble(uint8_t * data, size_t data_len)
 	if (!is_lookup_table_ready)
 	{
 		memset(known_instructions_by_opcode, 0xFF, sizeof(known_instructions_by_opcode));
-		for (U8 i = 0; i < (sizeof(known_instructions)/sizeof(known_instructions[0])); i++)
+		for (U32 i = 0; i < (sizeof(known_instructions)/sizeof(known_instructions[0])); i++)
 		{
 			known_instructions_by_opcode[known_instructions[i].opcode] = i;
 		}

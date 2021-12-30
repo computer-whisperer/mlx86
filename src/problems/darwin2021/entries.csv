@@ -1,0 +1,556 @@
+Timestamp,Name of Species,Initial Spawning Location,Venomous?,Weapons,Armor,Speed,Forager?,Temperature Tolerance,Name or Pseudonym of Human Player
+2021/09/24 2:58:46 AM MDT,Plankton1,Ocean,Neither,0,0,0,Algae,,Yair
+2021/09/24 2:59:43 AM MDT,Little fish,Ocean,Neither,1,0,1,Algae,,Yair
+2021/09/24 3:01:20 AM MDT,Blue whale,Ocean,Neither,1,9,1,,,Yair
+2021/09/24 3:03:16 AM MDT,Killer whale,Ocean,Neither,9,1,10,,,Yair
+2021/09/24 3:04:32 AM MDT,Pike,Ocean,Neither,2,0,3,,,Yair
+2021/09/24 6:27:30 AM MDT,FastHerbivore,Temperate Forest,Neither,0,0,10,Leaves;Grass,,Razied
+2021/09/24 6:37:18 AM MDT,Garbage Disposal,Human Garbage Dump,Antivenom only,0,10,0,Carrion;Seeds;Detritus;Coconuts;Algae;Lichen,,Charlie
+2021/09/24 6:39:36 AM MDT,Krill1,Benthic,Neither,0,0,2,Detritus,,Charlie
+2021/09/24 6:40:24 AM MDT,Unicorn,Temperate Forest,Antivenom only,0,0,10,Leaves;Grass,,Vanessa
+2021/09/24 6:43:17 AM MDT,Dragon,Tundra,Antivenom only,10,10,10,,Cold (Allows survival in the Tundra),Vanessa
+2021/09/24 6:45:44 AM MDT,Goo,Human Garbage Dump,Neither,0,0,0,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,Vanessa
+2021/09/24 6:49:15 AM MDT,Kraken1,Ocean,Neither,10,10,5,,,Vanessa
+2021/09/24 6:53:09 AM MDT,Direwolf,Tundra,Neither,7,3,5,,Cold (Allows survival in the Tundra),Vanessa
+2021/09/24 7:02:42 AM MDT,Sandworm,Desert,Neither,10,7,8,,Heat (Allows survival in the Desert),Vanessa
+2021/09/24 7:06:21 AM MDT,Basilisk,Temperate Forest,Venom + Antivenom,10,2,2,Leaves,,Vanessa
+2021/09/24 7:13:59 AM MDT,Mooshroom,Grassland,Neither,0,0,5,Grass;Seeds,,Vanessa
+2021/09/24 7:17:17 AM MDT,Snark,Temperate Forest,Neither,0,0,10,Leaves,,Vanessa
+2021/09/24 7:19:10 AM MDT,Boojum,Temperate Forest,Venom + Antivenom,0,0,10,Leaves,,Vanessa
+2021/09/24 11:32:26 AM MDT,Abyssal eel,Benthic,Neither,0,0,10,Carrion;Detritus;Algae,,moridinamael
+2021/09/24 11:35:02 AM MDT,Ankylosaurus,Temperate Forest,Neither,2,10,1,Leaves;Grass,Heat (Allows survival in the Desert),moridinamael
+2021/09/24 11:49:09 AM MDT,Jackrabbit,Grassland,Neither,0,0,10,Leaves;Grass;Seeds,,Anonymous #1
+2021/09/24 1:23:50 PM MDT,Frogger,Human Garbage Dump,Venom + Antivenom,2,0,4,Seeds,,tim
+2021/09/24 1:26:40 PM MDT,Big Oof,Grassland,Antivenom only,10,2,10,Carrion,,Tim
+2021/09/24 1:37:12 PM MDT,Speedy Algivore,Ocean,Neither,0,0,10,Algae,,Fy
+2021/09/24 2:14:30 PM MDT,Terror Whale,Ocean,Venom + Antivenom,10,10,10,Carrion;Detritus;Algae,,supernulperfection
+2021/09/24 2:53:52 PM MDT,Coconutwhale,Ocean,Antivenom only,0,6,4,Coconuts;Algae,,OneLevelHigherThanYou
+2021/09/24 2:59:16 PM MDT,Olchi,Human Garbage Dump,Venom + Antivenom,0,0,4,Carrion;Seeds,,OneLevelHigherThanYou
+2021/09/24 3:06:13 PM MDT,weaponized human,Human Garbage Dump,Antivenom only,10,0,10,,,OneLevelHigherThanYou
+2021/09/24 3:56:01 PM MDT,Timblewinks,Human Garbage Dump,Neither,0,0,2,Seeds;Algae,,Tim
+2021/09/24 4:30:44 PM MDT,RiverShark,Ocean,Antivenom only,10,0,10,Carrion;Detritus;Algae,,Guy Srinivasan
+2021/09/24 4:31:43 PM MDT,VenomousRiverShark,Ocean,Venom + Antivenom,10,0,10,Carrion;Detritus;Algae,,Guy Srinivasan
+2021/09/24 4:35:18 PM MDT,RiverSharkFood,Ocean,Neither,0,4,0,Algae,,Guy Srinivasan
+2021/09/24 4:35:56 PM MDT,AlgaeProbably,Ocean,Neither,0,0,0,Algae,,Guy Srinivasan
+2021/09/24 4:36:38 PM MDT,GrassSeeater,Grassland,Neither,0,0,0,Seeds,,Guy Srinivasan
+2021/09/24 4:37:18 PM MDT,TreeSeeater,Temperate Forest,Neither,0,0,0,Seeds,,Guy Srinivasan
+2021/09/24 4:39:49 PM MDT,SmolFire,Tundra,Neither,2,0,0,Seeds;Lichen,Cold (Allows survival in the Tundra),Guy Srinivasan
+2021/09/24 4:40:32 PM MDT,RockMonkey,Temperate Forest,Antivenom only,0,10,1,Seeds;Coconuts,,Guy Srinivasan
+2021/09/24 4:41:21 PM MDT,Barnacle,Benthic,Antivenom only,0,10,0,Detritus,,Guy Srinivasan
+2021/09/24 4:42:17 PM MDT,DefinitelyJustARock,Grassland,Antivenom only,0,10,1,Grass;Seeds,,Guy Srinivasan
+2021/09/24 5:39:24 PM MDT,Phytoplankton,Ocean,Neither,0,0,0,Algae,,aphyer
+2021/09/24 5:40:02 PM MDT,Desert Viper,Desert,Venom + Antivenom,0,0,10,Carrion,Heat (Allows survival in the Desert),aphyer
+2021/09/24 5:40:30 PM MDT,Rabbit,Human Garbage Dump,Neither,0,0,2,Grass,,aphyer
+2021/09/24 5:40:58 PM MDT,Big CocoCrab,Human Garbage Dump,Neither,0,2,2,Seeds;Coconuts,,aphyer
+2021/09/24 5:41:23 PM MDT,Small CocoCrab,Human Garbage Dump,Neither,0,0,3,Coconuts,,aphyer
+2021/09/24 5:42:32 PM MDT,Venomoth,Rainforest,Venom + Antivenom,0,0,3,Grass,,aphyer
+2021/09/24 5:42:57 PM MDT,Grazing Snake,Rainforest,Venom + Antivenom,0,0,0,Grass,,aphyer
+2021/09/24 5:43:20 PM MDT,Arboreal Grazer,Rainforest,Antivenom only,0,4,0,Grass,,aphyer
+2021/09/24 5:43:42 PM MDT,Jungle Hare,Rainforest,Neither,0,1,4,Grass,,aphyer
+2021/09/24 6:11:55 PM MDT,Megaladon,Ocean,Antivenom only,10,0,10,,,EricF 
+2021/09/24 6:44:22 PM MDT,Krill2,Ocean,Neither,0,4,0,Algae,,EricF 
+2021/09/24 6:45:19 PM MDT,Right whale,Ocean,Neither,5,0,5,,,EricF 
+2021/09/24 7:05:30 PM MDT,Plankton2,Ocean,Neither,0,0,10,Algae,,Krabs
+2021/09/24 7:08:29 PM MDT,Krabs,Ocean,Antivenom only,6,10,1,Carrion;Detritus;Algae,,Plankton
+2021/09/24 7:27:59 PM MDT,Manta Ray,Ocean,Venom + Antivenom,1,0,1,Detritus,,EricF 
+2021/09/24 7:30:07 PM MDT,Electric eel,Ocean,Venom + Antivenom,0,0,4,,,EricF 
+2021/09/24 7:41:47 PM MDT,Cannibal Locust,Grassland,Neither,2,0,1,Seeds,,aphyer
+2021/09/24 7:55:03 PM MDT,Antasvara,Tundra,Antivenom only,0,0,6,Lichen,Cold (Allows survival in the Tundra),Anonymous #2
+2021/09/24 8:37:31 PM MDT,Coconut crab,Human Garbage Dump,Neither,1,0,9,Coconuts,,EricF 
+2021/09/24 8:43:03 PM MDT,Coconut Crabs (tiny),Human Garbage Dump,Neither,3,0,4,Coconuts,,EricF 
+2021/09/24 9:36:26 PM MDT,Sp0r3,Benthic,Neither,0,3,0,Detritus,,CS
+2021/09/24 9:45:27 PM MDT,Arctic Ambusher,Tundra,Neither,2,0,1,,Cold (Allows survival in the Tundra),Sean Hyer
+2021/09/24 9:46:30 PM MDT,Northern Nibbler,Tundra,Neither,0,0,1,Lichen,Cold (Allows survival in the Tundra),Sean Hyer
+2021/09/24 9:52:59 PM MDT,Coconut Cruncher,Human Garbage Dump,Neither,0,10,1,Coconuts,,Sean Hyer
+2021/09/24 9:57:13 PM MDT,Deepwater Devourer,Benthic,Antivenom only,3,0,6,Detritus,,Sean Hyer
+2021/09/24 10:00:45 PM MDT,Algae Eater,Ocean,Neither,0,0,0,Algae,,Sean Hyer
+2021/09/24 10:05:19 PM MDT,Sanguine Scavenger,Ocean,Neither,0,0,10,Carrion,,Sean Hyer
+2021/09/24 10:07:16 PM MDT,Leafy Luncheoner,Temperate Forest,Neither,0,0,1,Leaves,,Sean Hyer
+2021/09/24 10:09:35 PM MDT,Turtling Trencherman,Temperate Forest,Neither,0,10,0,Leaves,,Sean Hyer
+2021/09/24 10:11:21 PM MDT,Arboreal Assailant,Temperate Forest,Venom + Antivenom,1,0,10,Leaves,,Sean Hyer
+2021/09/24 10:12:54 PM MDT,Optimistic Omnivore,Temperate Forest,Antivenom only,4,0,6,Leaves;Grass;Seeds,,Sean Hyer
+2021/09/25 2:02:28 AM MDT,All-eating Leviathan,Human Garbage Dump,Venom + Antivenom,10,10,10,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,Chad
+2021/09/25 2:20:35 AM MDT,Ziarnojad Malutki,Grassland,Neither,0,0,1,Seeds,,MatIsk
+2021/09/25 2:38:24 AM MDT,Smok Wawelski Przezuwacz,Rainforest,Venom + Antivenom,10,10,10,Carrion;Leaves;Grass,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),MatIsk
+2021/09/25 2:43:21 AM MDT,Chybcik ,Ocean,Antivenom only,1,0,10,Detritus;Coconuts;Algae,,MatIsk
+2021/09/25 2:47:32 AM MDT,Porostozer Mamuci,Tundra,Venom + Antivenom,1,10,10,Carrion;Lichen,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),MatIsk
+2021/09/25 2:49:02 AM MDT,Porostozer Malutki,Tundra,Neither,0,0,5,Lichen,Cold (Allows survival in the Tundra),MatIsk
+2021/09/25 2:49:58 AM MDT,Trash Dino,Human Garbage Dump,Venom + Antivenom,3,1,10,Carrion;Grass;Seeds;Detritus,,t1
+2021/09/25 2:51:05 AM MDT,Szaromysik,Temperate Forest,Neither,0,2,4,Leaves;Seeds,,MatIsk
+2021/09/25 2:52:51 AM MDT,Wampirek,Grassland,Antivenom only,2,0,10,,,MatIsk
+2021/09/25 2:57:42 AM MDT,Trash Locust+,Human Garbage Dump,Antivenom only,1,1,10,Grass;Seeds,,t1
+2021/09/25 3:14:16 AM MDT,Empowered Turtle,Grassland,Venom + Antivenom,2,10,8,Leaves;Grass,,Nadia
+2021/09/25 3:20:12 AM MDT,Maverick Goose,Grassland,Neither,4,1,7,Grass,,Alex 
+2021/09/25 4:34:30 AM MDT,ploplo,Ocean,Antivenom only,3,9,6,Algae,Cold (Allows survival in the Tundra),Roger.C
+2021/09/25 5:01:02 AM MDT,Duckofants,Tundra,Antivenom only,2,8,10,Grass,Cold (Allows survival in the Tundra),Xelor
+2021/09/25 5:49:11 AM MDT,Armored Algivore,Ocean,Neither,0,10,0,Algae,,Fy
+2021/09/25 5:49:14 AM MDT,Raburetta,Tundra,Neither,2,1,8,Grass;Algae;Lichen,Cold (Allows survival in the Tundra),Polarlight
+2021/09/25 7:18:39 AM MDT,Garbovorous Mirages,Human Garbage Dump,Neither,0,0,10,Carrion;Seeds,Heat (Allows survival in the Desert),1felX
+2021/09/25 7:19:23 AM MDT,Nyarlathotep,Grassland,Venom + Antivenom,6,2,7,Grass;Coconuts,Heat (Allows survival in the Desert),Jsevillamol
+2021/09/25 8:00:09 AM MDT,Bloade,Ocean,Venom + Antivenom,0,0,0,Detritus;Algae,,ElliotPoe
+2021/09/25 8:15:13 AM MDT,Micropas,Tundra,Neither,0,0,0,Lichen,Cold (Allows survival in the Tundra),Natopot
+2021/09/25 8:27:03 AM MDT,Microblu,Ocean,Neither,1,0,0,Algae,,Natopot
+2021/09/25 8:28:39 AM MDT,Microbet,Benthic,Neither,1,4,0,Detritus,,Natopot
+2021/09/25 8:29:47 AM MDT,Rainmun,Rainforest,Neither,0,4,0,Lichen,,Natopot
+2021/09/25 8:31:21 AM MDT,Bleh,Human Garbage Dump,Antivenom only,6,2,1,Detritus,,Natopot
+2021/09/25 10:06:53 AM MDT,Plage,Ocean,Neither,0,0,10,Algae,,Anonymous #3
+2021/09/25 10:07:45 AM MDT,Robot,Human Garbage Dump,Venom + Antivenom,6,3,7,Carrion,,Anonymous #3
+2021/09/25 10:08:53 AM MDT,Qanon,Desert,Venom + Antivenom,2,0,7,Carrion,Heat (Allows survival in the Desert),Anonymous #3
+2021/09/25 10:10:04 AM MDT,Mango,Temperate Forest,Neither,0,9,5,Leaves,,Anonymous #3
+2021/09/25 10:11:01 AM MDT,Hund,Benthic,Neither,4,2,6,Seeds,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),Anonymous #3
+2021/09/25 10:28:11 AM MDT,Fast Venomous Snake,Temperate Forest,Venom + Antivenom,0,0,10,,,Razied
+2021/09/25 12:34:19 PM MDT,Titus,Desert,Venom + Antivenom,0,6,0,Lichen,Heat (Allows survival in the Desert),Anonymous #4
+2021/09/25 12:40:23 PM MDT,Jtp,Tundra,Venom + Antivenom,0,1,2,Seeds,Cold (Allows survival in the Tundra),Jtp
+2021/09/25 12:51:01 PM MDT,Inquisition,Human Garbage Dump,Venom + Antivenom,10,10,10,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),TwoTone
+2021/09/25 1:21:56 PM MDT,Blitz Leech,Human Garbage Dump,Venom + Antivenom,0,0,10,Carrion;Coconuts,,25Hour
+2021/09/25 1:23:39 PM MDT,Chittering Harvester,Human Garbage Dump,Antivenom only,0,0,1,Algae,,25Hour
+2021/09/25 1:24:29 PM MDT,Boot Nipper,Human Garbage Dump,Antivenom only,0,0,0,Detritus,,25Hour
+2021/09/25 1:25:18 PM MDT,Dirge Bat,Human Garbage Dump,Antivenom only,5,0,5,Grass,,25Hour
+2021/09/25 1:43:07 PM MDT,Shrimp,Ocean,Neither,0,0,0,Algae,,Bezzi
+2021/09/25 2:37:49 PM MDT,Bob,Grassland,Antivenom only,0,0,10,Grass,,Perseus
+2021/09/25 2:45:55 PM MDT,Gelatinous Cube,Human Garbage Dump,Venom + Antivenom,0,0,0,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,Bezzi
+2021/09/25 2:54:22 PM MDT,Sheep,Grassland,Neither,0,0,0,Grass;Seeds,,Bezzi
+2021/09/25 3:01:01 PM MDT,Kraken2,Benthic,Antivenom only,6,5,2,Detritus,,Bezzi
+2021/09/25 3:18:16 PM MDT,Hyena,Desert,Neither,0,1,3,Carrion,Heat (Allows survival in the Desert),Bezzi
+2021/09/25 3:24:00 PM MDT,Slug,Rainforest,Neither,0,0,0,Lichen,,Bezzi
+2021/09/25 3:38:38 PM MDT,Goat,Grassland,Neither,0,0,2,Leaves;Grass;Seeds,,Bezzi
+2021/09/25 4:06:43 PM MDT,Wurm,Desert,Neither,6,6,8,Carrion,Heat (Allows survival in the Desert),Bezzi
+2021/09/25 7:03:25 PM MDT,Flutz,Benthic,Venom + Antivenom,0,0,7,Detritus,,Chris Land
+2021/09/25 7:04:49 PM MDT,Slorp,Ocean,Neither,6,1,6,,,Chris Land
+2021/09/25 7:05:39 PM MDT,Kun,Ocean,Neither,0,1,4,Coconuts;Algae;Lichen,,Chris Land
+2021/09/25 7:07:04 PM MDT,Squish,Grassland,Neither,0,0,3,Grass;Seeds,,Chris Land
+2021/09/25 7:08:06 PM MDT,Rony,Rainforest,Neither,0,0,10,Grass;Seeds,,Chris Land
+2021/09/25 7:09:22 PM MDT,Raincow,Rainforest,Antivenom only,0,10,1,Leaves;Grass;Lichen,,Chris Land
+2021/09/25 7:10:59 PM MDT,River Llama,Ocean,Antivenom only,0,8,3,Detritus;Coconuts;Algae;Lichen,,Chris Land
+2021/09/25 7:12:19 PM MDT,Lary,Human Garbage Dump,Antivenom only,0,4,1,Leaves;Seeds;Algae,,Chris Land
+2021/09/25 7:13:21 PM MDT,Tree Clam,Rainforest,Antivenom only,0,10,1,Lichen,,Chris Land
+2021/09/25 7:14:26 PM MDT,Ivem,Human Garbage Dump,Neither,0,0,0,Carrion;Detritus,,Chris Land
+2021/09/25 7:29:34 PM MDT,gkdemaree-1-fast-shark,Ocean,Antivenom only,10,0,10,,,Grant Demaree
+2021/09/25 7:30:59 PM MDT,gkdemaree-2-fast-ocean-venum,Ocean,Venom + Antivenom,0,0,10,Algae,,Grant Demaree
+2021/09/25 7:34:11 PM MDT,gkdemaree-3-defensive-venum-forager,Ocean,Venom + Antivenom,0,0,0,Algae,,Grant Demaree
+2021/09/25 7:39:01 PM MDT,gkdemaree-4-tiny-slow-fish,Ocean,Neither,0,0,0,Algae,,Grant Demaree
+2021/09/25 7:42:00 PM MDT,gkdemaree-5-small-omnivore-fish,Ocean,Neither,3,0,3,Algae,,Grant Demaree
+2021/09/25 7:44:08 PM MDT,gkdemaree-6-large-omnivore-fish,Ocean,Antivenom only,7,0,7,Algae,,Grant Demaree
+2021/09/25 7:45:31 PM MDT,gkdemaree-7-fast-forager-fish,Ocean,Neither,0,0,10,Algae,,Grant Demaree
+2021/09/25 7:50:01 PM MDT,gkdemaree-8-slow-armored-forager,Ocean,Antivenom only,0,6,0,Algae,,Grant Demaree
+2021/09/25 7:52:39 PM MDT,gkdemaree-9-eater-of-drifting-forager,Ocean,Neither,1,0,1,,,Grant Demaree
+2021/09/25 7:55:35 PM MDT,gkdemaree-10-small-shark,Ocean,Neither,6,0,6,,,Grant Demaree
+2021/09/25 9:55:57 PM MDT,The Fart Brigade,Human Garbage Dump,Venom + Antivenom,0,0,1,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,Taylor G. L.
+2021/09/26 1:56:35 AM MDT,Untielopay,Grassland,Neither,2,0,10,Grass,Heat (Allows survival in the Desert),Anonymous #5
+2021/09/26 2:02:56 AM MDT,Karthosorox,Grassland,Neither,0,8,5,Grass;Seeds,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),Molmu
+2021/09/26 2:49:57 AM MDT,Giant Snake,Rainforest,Venom + Antivenom,7,0,3,,,Rob
+2021/09/26 2:51:01 AM MDT,Tiny Snek,Grassland,Venom + Antivenom,3,0,8,,,Rob
+2021/09/26 2:54:14 AM MDT,Will Die,Rainforest,Neither,10,0,10,,,Rob
+2021/09/26 2:55:55 AM MDT,Rat,Human Garbage Dump,Neither,1,4,8,Coconuts;Algae,,Rob
+2021/09/26 3:03:11 AM MDT,Lazy Stationary Glutton,Human Garbage Dump,Antivenom only,0,10,0,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,Aytihaas
+2021/09/26 3:23:25 AM MDT,Sea Snake,Ocean,Venom + Antivenom,10,0,10,Detritus;Algae,,Aytihaas
+2021/09/26 3:26:22 AM MDT,Fornicacious Krill,Ocean,Neither,0,0,0,Algae,,Aytihaas
+2021/09/26 3:30:16 AM MDT,Desert Carnivore,Desert,Antivenom only,10,0,10,,Heat (Allows survival in the Desert),Aytihaas
+2021/09/26 4:05:43 AM MDT,sc511,Human Garbage Dump,Antivenom only,0,10,0,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,horu
+2021/09/26 4:13:13 AM MDT,dsc511,Desert,Antivenom only,0,10,0,Carrion;Grass;Seeds,Heat (Allows survival in the Desert),horu
+2021/09/26 4:16:43 AM MDT,osc511,Ocean,Antivenom only,0,0,10,Carrion;Algae,,horu
+2021/09/26 4:19:53 AM MDT,op511,Ocean,Antivenom only,1,0,10,Algae,,horu
+2021/09/26 4:21:27 AM MDT,dp511,Desert,Venom + Antivenom,10,0,10,,Heat (Allows survival in the Desert),horu
+2021/09/26 4:24:16 AM MDT,glpp511,Grassland,Venom + Antivenom,10,0,10,Seeds,,horu
+2021/09/26 4:25:15 AM MDT,TFP511,Temperate Forest,Venom + Antivenom,10,0,10,Leaves,,horu
+2021/09/26 4:27:24 AM MDT,Tsc,Tundra,Antivenom only,0,10,0,Carrion;Leaves;Grass;Seeds;Detritus;Lichen,Cold (Allows survival in the Tundra),horu
+2021/09/26 4:28:57 AM MDT,tp511,Tundra,Venom + Antivenom,10,0,10,Lichen,Cold (Allows survival in the Tundra),horu
+2021/09/26 4:30:14 AM MDT,COCONUT511,Human Garbage Dump,Antivenom only,0,0,10,Coconuts,,horu
+2021/09/26 5:16:23 AM MDT,Quartosaurus,Rainforest,Venom + Antivenom,4,2,10,Carrion;Leaves;Seeds;Detritus;Algae;Lichen,Cold (Allows survival in the Tundra),Medokin
+2021/09/26 8:24:18 AM MDT,Zlorg,Tundra,Neither,0,0,4,Detritus,Cold (Allows survival in the Tundra),Jonathan
+2021/09/26 8:33:28 AM MDT,Boop,Rainforest,Venom + Antivenom,3,0,7,,,Jonathan
+2021/09/26 8:34:41 AM MDT,Omnom,Temperate Forest,Neither,0,0,8,Leaves;Grass,,Jonathan
+2021/09/26 8:37:13 AM MDT,Rock Beetle,Desert,Antivenom only,0,10,0,Carrion,Heat (Allows survival in the Desert),Taleuntum
+2021/09/26 8:37:21 AM MDT,Whale,Ocean,Venom + Antivenom,0,10,1,,,Jonathan
+2021/09/26 9:48:27 AM MDT,Gigantic Cockroach,Human Garbage Dump,Antivenom only,0,10,0,Carrion;Leaves;Grass,,Taleuntum
+2021/09/26 10:03:28 AM MDT,Snail-Eating Snail,Human Garbage Dump,Antivenom only,5,0,2,Carrion;Seeds;Detritus,,Taleuntum
+2021/09/26 11:07:28 AM MDT,Human,Grassland,Neither,10,3,5,Leaves;Coconuts,,Alex
+2021/09/26 11:10:31 AM MDT,Ultimate Lifeform ,Temperate Forest,Venom + Antivenom,10,10,10,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),Alex 
+2021/09/26 12:41:52 PM MDT,Grerft,Ocean,Neither,3,6,0,Detritus;Algae,,Konstantin
+2021/09/26 3:08:35 PM MDT,Yellow Krill,Ocean,Antivenom only,0,0,2,Algae,,DaemonicSigil
+2021/09/26 3:46:03 PM MDT,Venomous Snark,Desert,Venom + Antivenom,1,0,3,Carrion,Heat (Allows survival in the Desert),DaemonicSigil
+2021/09/26 3:46:10 PM MDT,Mutant Two-Headed Speed Snail,Human Garbage Dump,Neither,0,0,2,Grass,,DaemonicSigil
+2021/09/26 3:46:25 PM MDT,Seed Beetle,Human Garbage Dump,Neither,0,0,0,Seeds,,DaemonicSigil
+2021/09/26 3:46:32 PM MDT,Lesser Desert Rat,Desert,Neither,0,0,1,Carrion,Heat (Allows survival in the Desert),DaemonicSigil
+2021/09/26 3:46:42 PM MDT,Arctic Slug,Tundra,Neither,0,0,0,Lichen,Cold (Allows survival in the Tundra),DaemonicSigil
+2021/09/26 3:46:55 PM MDT,Morpork Owl,Temperate Forest,Antivenom only,3,0,5,,,DaemonicSigil
+2021/09/26 3:47:04 PM MDT,Green Krill,Ocean,Neither,0,0,2,Algae,,DaemonicSigil
+2021/09/26 3:47:17 PM MDT,Red Krill,Ocean,Neither,0,0,0,Algae,,DaemonicSigil
+2021/09/26 3:47:24 PM MDT,Orange Krill,Ocean,Neither,0,0,1,Algae,,DaemonicSigil
+2021/09/26 4:41:07 PM MDT,Angy Shrimp,Ocean,Neither,1,0,1,Algae,,Persephone 0461
+2021/09/26 4:51:39 PM MDT,25kg Racing Snake,Human Garbage Dump,Venom + Antivenom,2,0,10,Carrion,,Persephone 0461
+2021/09/26 4:54:20 PM MDT,Unpalatable Coconut Crab,Human Garbage Dump,Antivenom only,1,6,1,Coconuts;Lichen,,Persephone 0461
+2021/09/26 5:04:41 PM MDT,Unfortunately Large Cockroach,Tundra,Antivenom only,1,3,4,Carrion;Lichen,Cold (Allows survival in the Tundra),Persephone 0461
+2021/09/26 5:07:15 PM MDT,Micro Swamp Dragon,Human Garbage Dump,Venom + Antivenom,0,0,10,,,Persephone 0461
+2021/09/26 5:07:58 PM MDT,Meta-Algae,Ocean,Neither,0,0,0,Algae,,Persephone 0461
+2021/09/26 5:10:11 PM MDT,Meta-Lichen,Temperate Forest,Neither,0,0,0,Lichen,,Persephone 0461
+2021/09/26 5:14:05 PM MDT,Very Lesser Forest Dragon,Rainforest,Neither,2,0,2,,,Persephone 0461
+2021/09/26 5:15:09 PM MDT,Bofa 0461,Rainforest,Neither,0,0,0,Seeds,,Anonymous #6
+2021/09/26 5:18:32 PM MDT,Sky Shark,Temperate Forest,Neither,6,4,6,,,Jarred Filmer
+2021/09/26 5:19:21 PM MDT,Forest Dragon,Temperate Forest,Venom + Antivenom,10,10,10,,,Jarred Filmer
+2021/09/26 5:20:33 PM MDT,Bofa #0461-B,Temperate Forest,Neither,0,0,0,Seeds,,Persephone 0461
+2021/09/26 5:20:52 PM MDT,Sentient Bio Reactor,Human Garbage Dump,Neither,0,10,0,Carrion,,Jarred Filmer
+2021/09/26 5:21:36 PM MDT,Mecha giraffe,Human Garbage Dump,Neither,0,10,0,Leaves,,Jarred Filmer
+2021/09/26 5:22:20 PM MDT,AI Lawnmower,Human Garbage Dump,Neither,0,10,0,Grass,,Jarred Filmer
+2021/09/26 5:23:41 PM MDT,Hyper fly,Human Garbage Dump,Neither,0,0,10,Seeds,,Jarred Filmer
+2021/09/26 5:24:47 PM MDT,Roomba,Human Garbage Dump,Neither,0,10,1,Detritus,,Jarred Filmer
+2021/09/26 5:25:20 PM MDT,Grease Monkey,Human Garbage Dump,Neither,0,10,1,Coconuts,,Jarred Filmer
+2021/09/26 5:25:59 PM MDT,Nano-krill,Ocean,Venom + Antivenom,0,0,0,Algae,,Jarred Filmer
+2021/09/26 10:37:46 PM MDT,Leuphonim,Ocean,Antivenom only,8,8,6,Carrion,Cold (Allows survival in the Tundra),Gorgan 
+2021/09/26 10:46:33 PM MDT,Wolves,Tundra,Neither,7,1,8,Carrion,Cold (Allows survival in the Tundra),Rufus
+2021/09/27 1:55:45 AM MDT,Gobbledygook,Temperate Forest,Neither,7,3,10,Leaves;Grass;Seeds,Heat (Allows survival in the Desert),FordPrefect
+2021/09/27 3:58:01 AM MDT,Garbage Dump Shai-Hulud,Human Garbage Dump,Venom + Antivenom,10,0,10,Carrion,,Taleuntum
+2021/09/27 5:31:39 AM MDT,Deadly Mickey K,Temperate Forest,Antivenom only,0,0,10,Leaves;Grass;Seeds,Heat (Allows survival in the Desert),Mike Kent
+2021/09/27 5:39:48 AM MDT,Desertio,Desert,Venom + Antivenom,0,1,7,Carrion,Heat (Allows survival in the Desert),Littlest red riding hood
+2021/09/27 5:44:18 AM MDT,Salt Water Crocodiles,Ocean,Antivenom only,10,7,7,Carrion,,JSH
+2021/09/27 5:49:27 AM MDT,Apex Predator,Ocean,Antivenom only,10,0,10,,,JSH
+2021/09/27 6:08:37 AM MDT,lichen,Tundra,Neither,0,0,1,Lichen,Cold (Allows survival in the Tundra),Littlest Red Riding Hood
+2021/09/27 9:46:15 AM MDT,Forest Ape,Rainforest,Antivenom only,5,4,1,Leaves;Grass,,MA
+2021/09/27 9:51:43 AM MDT,Forest Finch,Rainforest,Neither,0,0,3,Leaves,,MA
+2021/09/27 9:53:29 AM MDT,Krill3,Ocean,Neither,0,0,1,Algae,,MA
+2021/09/27 10:17:37 AM MDT,Snail-tooth Grabble,Ocean,Neither,3,0,3,,,Nem
+2021/09/27 10:24:17 AM MDT,Hopsplitter,Grassland,Neither,0,0,10,Grass;Seeds,,Nem
+2021/09/27 10:27:17 AM MDT,Greenglow Bindylow,Ocean,Neither,0,1,1,Algae,,nem
+2021/09/27 11:31:28 AM MDT,1994 Mazda RX7,Tundra,Neither,2,3,0,Lichen,Cold (Allows survival in the Tundra),eschatolocation
+2021/09/27 12:30:08 PM MDT,Salpophore,Benthic,Neither,0,0,0,Detritus,,Theist
+2021/09/27 12:35:26 PM MDT,Cnidophore,Benthic,Venom + Antivenom,0,0,0,Detritus,,Theist
+2021/09/27 12:36:56 PM MDT,Isopoid,Benthic,Antivenom only,0,1,0,Carrion;Detritus,,Theist
+2021/09/27 12:38:18 PM MDT,Fangliphore,Benthic,Antivenom only,2,0,1,Carrion,,Theist
+2021/09/27 12:40:31 PM MDT,Cephalophore,Benthic,Antivenom only,1,1,2,Carrion;Detritus;Algae,,Theist
+2021/09/27 12:43:42 PM MDT,Tachyphore,Benthic,Neither,0,0,10,Detritus;Algae,,Theist
+2021/09/27 12:45:06 PM MDT,Glyptoderm,Benthic,Neither,0,10,1,Detritus;Algae,,Theist
+2021/09/27 1:37:21 PM MDT,Grumpy Jellyfish,Benthic,Antivenom only,1,0,1,Detritus,,Taleuntum
+2021/09/27 6:00:50 PM MDT,Phanpy,Temperate Forest,Neither,0,0,10,Leaves;Grass;Seeds,,alkjash
+2021/09/27 6:01:28 PM MDT,Cutiefly,Temperate Forest,Neither,0,0,0,Seeds,,alkjash
+2021/09/27 6:02:17 PM MDT,Donphan,Temperate Forest,Antivenom only,0,10,0,Leaves;Seeds,,alkjash
+2021/09/27 6:02:49 PM MDT,Pidgeotto,Temperate Forest,Neither,4,0,4,,,alkjash
+2021/09/27 6:03:35 PM MDT,Zigzagoon,Human Garbage Dump,Neither,0,0,10,Carrion;Leaves;Grass;Seeds;Detritus;Algae;Lichen,,alkjash
+2021/09/27 6:04:32 PM MDT,omastar,Benthic,Antivenom only,1,6,1,Detritus,,alkjash
+2021/09/27 6:05:09 PM MDT,Weedle,Grassland,Neither,0,1,0,Grass;Seeds,,alkjash
+2021/09/27 6:06:01 PM MDT,Shellder,Ocean,Neither,0,0,2,Detritus;Algae,,alkjash
+2021/09/27 6:08:39 PM MDT,Deerling,Rainforest,Neither,0,0,3,Leaves;Grass,,alkjash
+2021/09/27 6:09:34 PM MDT,Caterpie,Temperate Forest,Neither,0,0,1,Leaves;Seeds,,alkjash
+2021/09/27 6:34:52 PM MDT,Redneck,Human Garbage Dump,Antivenom only,8,2,4,Grass,,Xanthos395
+2021/09/27 7:58:00 PM MDT,Smallums,Ocean,Neither,0,0,1,Algae,,Burzon
+2021/09/27 8:00:55 PM MDT,Stomporz,Rainforest,Neither,0,8,0,Grass,,Burzon
+2021/09/27 8:06:45 PM MDT,Bitey-the-scary ,Desert,Antivenom only,5,0,6,,Heat (Allows survival in the Desert),Burzon
+2021/09/27 8:10:09 PM MDT,gumbler,Human Garbage Dump,Antivenom only,2,1,5,Seeds;Algae;Lichen,,Burzon
+2021/09/27 8:12:37 PM MDT,Gipgip,Temperate Forest,Neither,0,0,7,Seeds,,Burzon
+2021/09/27 9:50:58 PM MDT,Desert Tortoise1,Desert,Antivenom only,0,10,0,Carrion,Heat (Allows survival in the Desert),Multicore
+2021/09/27 9:51:49 PM MDT,Arctic Fox,Tundra,Neither,1,0,1,,Cold (Allows survival in the Tundra),Multicore
+2021/09/27 9:53:04 PM MDT,Woodland Locust,Temperate Forest,Neither,0,0,0,Seeds,,Multicore
+2021/09/27 9:58:25 PM MDT,Locust Eater Eater,Temperate Forest,Neither,2,0,2,Seeds,,Multicore
+2021/09/27 9:59:49 PM MDT,Lichen Bug,Temperate Forest,Neither,0,0,1,Lichen,,Multicore
+2021/09/27 10:06:30 PM MDT,Anglerfish,Benthic,Neither,3,0,3,Detritus,,Multicore
+2021/09/27 10:08:07 PM MDT,Toxic Squid,Benthic,Venom + Antivenom,0,0,10,Carrion,,Multicore
+2021/09/27 10:14:28 PM MDT,Trash Lobster,Human Garbage Dump,Neither,0,0,1,Algae,,Multicore
+2021/09/27 10:16:54 PM MDT,Anti Predator Flak,Human Garbage Dump,Neither,0,0,0,,,Multicore
+2021/09/27 10:26:34 PM MDT,Adventurous Giraffe,Human Garbage Dump,Antivenom only,0,0,5,Leaves,,Multicore
+2021/09/27 11:45:01 PM MDT,Small Moth,Grassland,Neither,0,0,0,Seeds,,Alex
+2021/09/28 1:18:09 AM MDT,Fox,Temperate Forest,Neither,2,0,7,Carrion;Seeds;Coconuts,,Slooth
+2021/09/28 3:02:12 AM MDT,Cheetah,Rainforest,Antivenom only,10,0,10,,,Linch
+2021/09/28 3:17:48 AM MDT,Elephant,Rainforest,Antivenom only,0,10,0,Leaves;Grass,,Linch
+2021/09/28 3:21:36 AM MDT,Snake,Temperate Forest,Venom + Antivenom,0,0,3,,,Linch
+2021/09/28 5:02:30 AM MDT,Cowlagor,Grassland,Antivenom only,7,3,9,Leaves;Grass;Seeds,Cold (Allows survival in the Tundra),Dave
+2021/09/28 6:19:09 AM MDT,Thread-Nibbler,Human Garbage Dump,Neither,0,0,1,Lichen,,Lambent
+2021/09/28 8:23:38 AM MDT,Carrion Condor,Human Garbage Dump,Neither,0,0,5,Carrion,Heat (Allows survival in the Desert),Lambent
+2021/09/28 8:33:29 AM MDT,Marine Snow Worm,Benthic,Neither,0,0,0,Detritus,,Lambent
+2021/09/28 8:40:44 AM MDT,Scavenger Shrimp,Benthic,Neither,1,2,1,Carrion,,Lambent
+2021/09/28 8:55:55 AM MDT,Squid Kid,Benthic,Neither,4,0,6,,,Lambent
+2021/09/28 8:56:38 AM MDT,CP445957,Human Garbage Dump,Venom + Antivenom,0,0,10,Detritus,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),Anonymous #7
+2021/09/28 8:59:36 AM MDT,Scumsipper,Ocean,Neither,1,0,2,Algae,,Lambent
+2021/09/28 9:17:58 AM MDT,Sapphire Jelly,Ocean,Venom + Antivenom,0,0,3,,,Lambent
+2021/09/28 9:20:14 AM MDT,Emerald Jelly,Ocean,Venom + Antivenom,0,0,1,Algae,,Lambent
+2021/09/28 9:30:36 AM MDT,Armored Nutcracker,Grassland,Antivenom only,1,4,2,Grass;Seeds;Coconuts,,Lambent
+2021/09/28 10:01:08 AM MDT,Bastion,Temperate Forest,Antivenom only,0,10,1,Leaves;Grass,,Lambent
+2021/09/28 10:24:41 AM MDT,fooooley,Ocean,Antivenom only,1,3,6,Carrion;Detritus;Algae,Cold (Allows survival in the Tundra),ron
+2021/09/28 11:01:36 AM MDT,Medium Seedrat,Grassland,Antivenom only,5,0,5,Seeds,,Taleuntum
+2021/09/28 12:55:47 PM MDT,Frostwing Snipper,Tundra,Neither,0,0,10,Seeds;Lichen,Cold (Allows survival in the Tundra),Nem
+2021/09/28 1:01:01 PM MDT,Louse-lion,Tundra,Antivenom only,3,0,2,,Cold (Allows survival in the Tundra),Nem
+2021/09/28 1:17:18 PM MDT,Zooplankton,Ocean,Neither,0,0,0,Algae,,Measure
+2021/09/28 1:17:53 PM MDT,Anchovy,Ocean,Neither,0,0,2,Algae,,Measure
+2021/09/28 1:18:24 PM MDT,Herring,Ocean,Neither,2,0,2,,,Measure
+2021/09/28 1:19:18 PM MDT,Flesh-Eating Clam1,Benthic,Antivenom only,0,10,0,Carrion,,Measure
+2021/09/28 1:19:55 PM MDT,Common Rat,Grassland,Neither,1,0,1,Seeds,,Measure
+2021/09/28 1:20:56 PM MDT,Horned Owl,Grassland,Neither,4,0,4,,,Measure
+2021/09/28 1:21:41 PM MDT,Titanosaur,Temperate Forest,Antivenom only,0,10,1,Leaves,,Measure
+2021/09/28 1:22:47 PM MDT,Grizzly Bear,Temperate Forest,Antivenom only,6,4,6,Seeds,,Measure
+2021/09/28 1:23:25 PM MDT,Murder Hornet,Rainforest,Venom + Antivenom,0,0,6,,,Measure
+2021/09/28 1:24:24 PM MDT,Ironshell Crab,Human Garbage Dump,Antivenom only,0,10,1,Coconuts,,Measure
+2021/09/28 4:58:27 PM MDT,Yonge_Hot,Desert,Neither,5,0,3,Carrion,Heat (Allows survival in the Desert),Yonge
+2021/09/28 4:59:17 PM MDT,Yonge_Cold,Tundra,Neither,1,0,1,Lichen,Cold (Allows survival in the Tundra),Yonge
+2021/09/28 5:00:07 PM MDT,Yonge_Ocean,Ocean,Neither,0,2,1,Algae,,Yonge
+2021/09/28 5:01:08 PM MDT,Yonge_Snake,Grassland,Venom + Antivenom,0,0,8,,,Yonge
+2021/09/28 5:01:59 PM MDT,Yonge_Defense,Temperate Forest,Antivenom only,0,10,1,Grass;Seeds,,Yonge
+2021/09/28 5:02:56 PM MDT,Yonge_Omnivore,Grassland,Antivenom only,5,2,5,Grass,,Yonge
+2021/09/28 5:03:51 PM MDT,Yonge_Slug,Temperate Forest,Neither,0,0,1,Leaves;Seeds,,Yonge
+2021/09/28 5:05:05 PM MDT,Yonge_Vegan,Grassland,Neither,0,0,10,Leaves;Grass;Seeds,,Yonge
+2021/09/28 5:05:46 PM MDT,Yonge_Dump,Human Garbage Dump,Antivenom only,4,2,5,Coconuts,,Yonge
+2021/09/28 5:06:42 PM MDT,Yonge_Rainforest,Rainforest,Antivenom only,6,2,5,Grass,,Yonge
+2021/09/28 9:02:26 PM MDT,Frankenstein,Tundra,Neither,10,10,10,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,Cold (Allows survival in the Tundra),Crackatook
+2021/09/28 9:03:25 PM MDT,Orange-Krill,Tundra,Neither,0,0,3,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,Cold (Allows survival in the Tundra),Crackatook
+2021/09/28 9:07:51 PM MDT,Pittsburgh-Penguins,Tundra,Neither,3,5,5,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,Cold (Allows survival in the Tundra),Crackatook
+2021/09/28 9:09:10 PM MDT,Seals,Tundra,Neither,9,2,6,Carrion;Leaves;Grass;Seeds;Detritus;Algae;Lichen,Cold (Allows survival in the Tundra),Crackatook
+2021/09/28 9:15:37 PM MDT,White-Whales,Tundra,Neither,3,9,10,,Cold (Allows survival in the Tundra),Crackatook
+2021/09/28 9:26:50 PM MDT,Desert-Ants,Desert,Neither,1,0,0,Carrion,Heat (Allows survival in the Desert),Crackatook
+2021/09/28 9:29:56 PM MDT,Desert-Foxes,Desert,Neither,3,0,3,Seeds,Heat (Allows survival in the Desert),Crackatook
+2021/09/28 9:31:45 PM MDT,Desert-Snakes,Desert,Venom + Antivenom,3,0,0,,Heat (Allows survival in the Desert),Crackatook
+2021/09/28 9:34:20 PM MDT,Desert-Lizard,Desert,Neither,2,0,1,Seeds,Heat (Allows survival in the Desert),Crackatook
+2021/09/28 9:36:47 PM MDT,Desert-Coyotes,Desert,Antivenom only,4,0,4,,Heat (Allows survival in the Desert),Crackatook
+2021/09/28 10:11:20 PM MDT,Booyahs,Desert,Neither,2,0,10,Carrion,Heat (Allows survival in the Desert),CK
+2021/09/29 4:27:40 AM MDT,Fodder grass,Rainforest,Neither,1,0,1,Grass,,fodder
+2021/09/29 4:28:12 AM MDT,basic grass fodder,Rainforest,Neither,0,0,0,Grass,,fodder
+2021/09/29 4:29:17 AM MDT,seed fodder,Grassland,Antivenom only,2,0,2,Seeds,,fodder
+2021/09/29 4:30:03 AM MDT,basic seed fodder ,Grassland,Neither,0,0,0,Seeds,,fodder
+2021/09/29 7:21:14 AM MDT,Twangoola,Human Garbage Dump,Venom + Antivenom,1,4,10,Carrion;Seeds;Lichen,,Winter
+2021/09/29 7:23:20 AM MDT,Songalagala,Temperate Forest,Antivenom only,1,1,2,Leaves;Seeds;Lichen,,Winter
+2021/09/29 7:24:32 AM MDT,Tundrus Rex,Tundra,Antivenom only,10,10,2,Carrion;Leaves;Grass;Seeds;Lichen,Cold (Allows survival in the Tundra),Winter
+2021/09/29 7:26:33 AM MDT,Bool,Grassland,Antivenom only,9,3,9,Grass;Seeds;Lichen,,Winter
+2021/09/29 7:29:29 AM MDT,Slebbon,Rainforest,Antivenom only,3,2,7,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,Winter
+2021/09/29 7:31:35 AM MDT,Monstrous Bandersnatch,Temperate Forest,Venom + Antivenom,10,10,10,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,Winter
+2021/09/29 8:15:56 AM MDT,magikarp,Ocean,Neither,1,1,6,Algae,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),toothpaste
+2021/09/29 9:17:55 AM MDT,Predator,Temperate Forest,Neither,1,5,10,Grass;Algae,Cold (Allows survival in the Tundra),Elotroadri
+2021/09/29 9:21:37 AM MDT,Sea Snail,Benthic,Neither,0,1,0,Detritus,,lalaithion
+2021/09/29 9:22:46 AM MDT,Hermit Crab,Benthic,Neither,3,0,2,Carrion,,lalaithion
+2021/09/29 9:24:10 AM MDT,Panther,Rainforest,Neither,10,0,10,,,lalaithion
+2021/09/29 9:27:02 AM MDT,Poisonous Sponge,Ocean,Venom + Antivenom,0,0,0,Algae,,lalaithion
+2021/09/29 9:29:07 AM MDT,Seed Eater Eater Eater,Grassland,Neither,2,0,2,Seeds,,Anonymous #7
+2021/09/29 9:30:33 AM MDT,Crocodile,Rainforest,Neither,3,3,2,,Heat (Allows survival in the Desert),lalaithion
+2021/09/29 9:31:31 AM MDT,Armadillo1,Temperate Forest,Neither,0,5,2,Leaves;Seeds,,lalaithion
+2021/09/29 9:33:05 AM MDT,Bear1,Temperate Forest,Neither,6,1,4,Seeds,,lalaithion
+2021/09/29 9:34:50 AM MDT,Crab,Ocean,Neither,0,4,6,Coconuts;Algae,,lalaithion
+2021/09/29 9:34:54 AM MDT,Trolley,Human Garbage Dump,Antivenom only,4,0,4,,,Anonymous #8
+2021/09/29 9:45:04 AM MDT,Scavenger,Benthic,Neither,0,0,0,Detritus,,Anonymous #8
+2021/09/29 9:46:09 AM MDT,Detritus Eater Eater,Benthic,Neither,1,0,1,,,Anonymous #8
+2021/09/29 9:47:01 AM MDT,Detritus Eater Eater Eater,Benthic,Neither,2,0,2,,,Anonymous #8
+2021/09/29 10:01:47 AM MDT,Leaf Truck,Rainforest,Neither,0,3,0,Leaves,,Anonymous #8
+2021/09/29 11:06:54 AM MDT,speedFish,Ocean,Neither,0,0,10,Algae,,awenonian
+2021/09/29 11:14:31 AM MDT,defenseFish,Ocean,Antivenom only,0,10,0,Algae,,awenonian
+2021/09/29 11:18:46 AM MDT,Roaches,Human Garbage Dump,Antivenom only,1,4,2,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),BaronVonMunchhausen
+2021/09/29 11:38:53 AM MDT,trashSeeds,Human Garbage Dump,Neither,0,1,0,Seeds,,awenonian
+2021/09/29 11:48:16 AM MDT,Smok,Desert,Antivenom only,3,1,6,Carrion;Grass;Seeds;Coconuts,Heat (Allows survival in the Desert),Sancho
+2021/09/29 11:49:52 AM MDT,BottomFeeder,Human Garbage Dump,Antivenom only,0,8,0,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,BaronVonMunchhausen
+2021/09/29 12:14:31 PM MDT,Tinysnek,Rainforest,Venom + Antivenom,0,0,3,Carrion,,littlebubulle
+2021/09/29 12:15:39 PM MDT,Sleepypotat,Grassland,Neither,0,0,1,Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,littlebubulle
+2021/09/29 12:28:23 PM MDT,grass_mouse,Grassland,Neither,0,1,10,Seeds;Lichen,,Will Janzen
+2021/09/29 12:39:49 PM MDT,hoover,Human Garbage Dump,Neither,0,0,10,Carrion;Leaves;Grass;Seeds,,awenonian
+2021/09/29 12:40:05 PM MDT,SpeedDemon,Human Garbage Dump,Neither,0,0,10,Carrion;Leaves;Grass;Seeds,,BaronVonMunchhausen
+2021/09/29 12:54:23 PM MDT,algae_eater,Ocean,Venom + Antivenom,3,2,7,Algae,,Will Janzen
+2021/09/29 1:10:40 PM MDT,Algae Sprinter,Ocean,Antivenom only,0,0,10,Detritus;Algae,,VJ
+2021/09/29 1:12:05 PM MDT,Piranhakeet,Grassland,Neither,1,0,10,Seeds,,Bernhard
+2021/09/29 1:12:32 PM MDT,The Aparatus,Ocean,Antivenom only,1,9,1,Carrion,,VJ
+2021/09/29 1:13:17 PM MDT,Killerspeed,Ocean,Antivenom only,10,0,7,Carrion,,VJ
+2021/09/29 1:14:36 PM MDT,Twinkle Star,Ocean,Venom + Antivenom,0,0,7,,,VJ
+2021/09/29 1:15:42 PM MDT,Boreakeet,Tundra,Neither,1,0,1,Lichen,Cold (Allows survival in the Tundra),Bernhard
+2021/09/29 1:15:48 PM MDT,Rosemary,Ocean,Antivenom only,3,0,3,Algae,,VJ
+2021/09/29 1:16:57 PM MDT,Elephantfish,Benthic,Antivenom only,1,9,1,Detritus,,VJ
+2021/09/29 1:18:20 PM MDT,Spanish Beard,Benthic,Antivenom only,0,10,0,Detritus,,VJ
+2021/09/29 1:19:51 PM MDT,Space Horse,Benthic,Antivenom only,0,10,0,Carrion,,VJ
+2021/09/29 1:20:42 PM MDT,Blood Shark,Benthic,Antivenom only,10,0,4,Detritus,,VJ
+2021/09/29 1:21:21 PM MDT,Space Fiddler,Benthic,Neither,2,0,10,Detritus,,VJ
+2021/09/29 1:37:47 PM MDT,Skitter Critter,Temperate Forest,Venom + Antivenom,0,0,10,Leaves;Grass;Seeds,,Alan Smithee
+2021/09/29 1:40:26 PM MDT,Siolid,Grassland,Antivenom only,0,0,3,Seeds,,Alan Smithee
+2021/09/29 1:48:22 PM MDT,Toxikeet,Grassland,Venom + Antivenom,0,0,10,Seeds,,Bernhard
+2021/09/29 2:25:21 PM MDT,GrasseatyTank,Rainforest,Antivenom only,0,10,1,Grass,,ViktorThink
+2021/09/29 2:28:58 PM MDT,LeavyTanky,Rainforest,Antivenom only,0,10,0,Leaves,,ViktorThink
+2021/09/29 2:29:52 PM MDT,LeavySpeedyTanky,Temperate Forest,Antivenom only,0,10,1,Detritus,,ViktorThink
+2021/09/29 2:30:19 PM MDT,CookieWhite,Ocean,Neither,1,0,3,Algae,,Saran
+2021/09/29 2:31:00 PM MDT,CookieAshimo,Ocean,Antivenom only,1,0,5,,,Saran
+2021/09/29 2:31:16 PM MDT,DetriusSpeedTank,Benthic,Antivenom only,0,10,1,Detritus,,ViktorThink
+2021/09/29 2:31:38 PM MDT,CookiePaladin,Ocean,Neither,9,0,7,Algae,,Saran
+2021/09/29 2:32:02 PM MDT,CarrionSpeedTank,Human Garbage Dump,Antivenom only,0,10,1,Carrion,,ViktorThink
+2021/09/29 2:32:07 PM MDT,CookieRunner,Ocean,Neither,0,1,0,Algae,,Saran
+2021/09/29 2:32:36 PM MDT,SpeedyFeedy,Ocean,Neither,2,0,4,,,ViktorThink
+2021/09/29 2:32:40 PM MDT,CookieEater,Ocean,Neither,0,0,0,Algae,,Saran
+2021/09/29 2:33:08 PM MDT,CookieMaximizer,Ocean,Neither,1,0,1,,,Saran
+2021/09/29 2:33:45 PM MDT,CookieDevourer,Ocean,Venom + Antivenom,1,0,5,Algae,,Saran
+2021/09/29 2:34:20 PM MDT,CookieShroom,Ocean,Neither,6,0,5,,,Saran
+2021/09/29 2:35:11 PM MDT,CookieSzybcik,Ocean,Neither,5,3,10,Algae,,Saran
+2021/09/29 2:35:40 PM MDT,CookieMedoKinematic,Ocean,Venom + Antivenom,3,0,3,Algae,,Saran
+2021/09/29 2:41:39 PM MDT,SpeedySeedy,Temperate Forest,Neither,0,0,2,Seeds,,ViktorThink
+2021/09/29 2:42:11 PM MDT,OceanEaty,Ocean,Neither,2,0,1,,,ViktorThink
+2021/09/29 2:42:59 PM MDT,SeedyEaty,Grassland,Neither,2,0,1,,,ViktorThink
+2021/09/29 2:43:39 PM MDT,SpeedyLichen,Grassland,Neither,1,0,1,Lichen,,ViktorThink
+2021/09/29 2:59:00 PM MDT,Nine-Banded Armadillo,Rainforest,Antivenom only,0,6,1,Leaves;Lichen,,elspood
+2021/09/29 3:00:10 PM MDT,Brown Bear,Temperate Forest,Neither,3,0,6,,,elspood
+2021/09/29 3:01:01 PM MDT,Blue Tang,Ocean,Neither,0,0,2,Algae,,elspood
+2021/09/29 3:16:48 PM MDT,Gypsy Moth,Temperate Forest,Neither,0,0,10,Leaves,,elspood
+2021/09/29 3:17:46 PM MDT,Cockatrice,Desert,Venom + Antivenom,0,0,5,Carrion,Heat (Allows survival in the Desert),elspood
+2021/09/29 3:18:31 PM MDT,Chocolattos,Desert,Antivenom only,1,4,10,Coconuts,Heat (Allows survival in the Desert),Iamnotacivilengineer
+2021/09/29 3:18:37 PM MDT,Robber Crab,Human Garbage Dump,Neither,0,6,1,Seeds;Coconuts,,elspood
+2021/09/29 3:21:25 PM MDT,Grassland Tribble,Grassland,Neither,0,0,0,Seeds,,N054J
+2021/09/29 3:22:23 PM MDT,Forest Tribble2,Temperate Forest,Neither,0,0,0,Seeds,,N054J
+2021/09/29 3:22:52 PM MDT,Wombat,Rainforest,Antivenom only,0,10,1,Grass,,elspood
+2021/09/29 3:23:24 PM MDT,Dump Leaf Blight,Human Garbage Dump,Neither,0,0,0,Leaves,,N054J
+2021/09/29 3:23:57 PM MDT,Flounder,Benthic,Antivenom only,0,6,1,Carrion;Detritus,,elspood
+2021/09/29 3:24:08 PM MDT,Rainforest Leaf Blight,Rainforest,Neither,0,0,0,Leaves,,N054J
+2021/09/29 3:24:50 PM MDT,Lily the Unicorn,Rainforest,Neither,10,0,10,,,elspood
+2021/09/29 3:25:12 PM MDT,Forest Leaf Blight,Temperate Forest,Neither,0,0,0,Leaves,,N054J
+2021/09/29 3:26:07 PM MDT,Grassland Aphid,Grassland,Neither,0,0,0,Grass,,N054J
+2021/09/29 3:26:50 PM MDT,Rainforest Aphid,Rainforest,Neither,0,0,0,Grass,,N054J
+2021/09/29 3:27:30 PM MDT,Dump Aphid,Human Garbage Dump,Neither,0,0,0,Grass,,N054J
+2021/09/29 3:28:13 PM MDT,Beck’s Penguin,Tundra,Neither,1,0,1,Lichen,Cold (Allows survival in the Tundra),N054J
+2021/09/29 3:28:56 PM MDT,J's RLB,Rainforest,Neither,0,0,0,Leaves,,N054J
+2021/09/29 3:32:50 PM MDT,Trash Panda1,Grassland,Neither,1,0,1,Seeds,,elspood
+2021/09/29 4:21:03 PM MDT,You Worm!,Temperate Forest,Neither,0,0,0,Seeds,,Taleuntum
+2021/09/29 4:55:30 PM MDT,abominable_snowman,Tundra,Neither,1,0,2,Seeds;Lichen,Cold (Allows survival in the Tundra),Anonymous #9
+2021/09/29 5:34:01 PM MDT,luden,Rainforest,Venom + Antivenom,8,8,8,Leaves;Grass;Seeds;Algae,Heat (Allows survival in the Desert),Anonymous #9
+2021/09/29 7:03:22 PM MDT,Giant Squid,Benthic,Antivenom only,6,4,6,Detritus,,Yull-Rete
+2021/09/29 7:04:21 PM MDT,Torpedo Jelly,Benthic,Venom + Antivenom,0,0,5,,,Yull-Rete
+2021/09/29 7:05:16 PM MDT,Flesh-Eating Clam2,Ocean,Antivenom only,0,10,0,Carrion,,Yull-Rete
+2021/09/29 7:06:01 PM MDT,Desert Tortoise2,Desert,Antivenom only,0,10,0,Carrion,Heat (Allows survival in the Desert),Yull-Rete
+2021/09/29 7:07:42 PM MDT,Sand Drake,Desert,Neither,6,0,10,,Heat (Allows survival in the Desert),Yull-Rete
+2021/09/29 7:08:49 PM MDT,Trash Slime,Human Garbage Dump,Antivenom only,0,10,0,Detritus,,Yull-Rete
+2021/09/29 7:09:43 PM MDT,Trash Panda2,Human Garbage Dump,Neither,2,1,2,,,Yull-Rete
+2021/09/29 7:10:22 PM MDT,Slime Mold,Human Garbage Dump,Neither,0,0,0,Algae,,Yull-Rete
+2021/09/29 7:11:23 PM MDT,Wolverine,Tundra,Neither,4,2,4,,Cold (Allows survival in the Tundra),Yull-Rete
+2021/09/29 7:12:03 PM MDT,Killer Bunny,Grassland,Antivenom only,6,4,6,Grass,,Yull-Rete
+2021/09/29 7:23:03 PM MDT,slow vulture,Desert,Antivenom only,0,10,10,Carrion,Heat (Allows survival in the Desert),Corm
+2021/09/29 7:25:09 PM MDT,ocean vulture,Ocean,Antivenom only,0,0,10,Carrion,,Corm
+2021/09/29 7:32:14 PM MDT,ocean omnivore,Ocean,Neither,2,0,3,Algae,,Corm
+2021/09/29 7:36:17 PM MDT,benthic bottom feeder,Benthic,Neither,0,0,0,Detritus,,Corm
+2021/09/29 7:45:00 PM MDT,mediocre 1-2-s,Grassland,Neither,1,0,2,Seeds,,Corm
+2021/09/29 7:45:36 PM MDT,mediocre 1-3-s,Temperate Forest,Neither,1,0,3,Seeds,,Corm
+2021/09/29 7:46:38 PM MDT,mediocre 1-3-g,Rainforest,Neither,1,0,3,Grass,,Corm
+2021/09/29 7:48:26 PM MDT,mediocre 2-2-s1,Human Garbage Dump,Neither,2,0,2,Seeds,,Corm
+2021/09/29 7:49:38 PM MDT,mediocre 2-2-s2,Human Garbage Dump,Neither,2,0,2,Seeds,,Corm
+2021/09/29 7:51:08 PM MDT,mediocre 2-2-g,Human Garbage Dump,Neither,2,0,2,Grass,,Corm
+2021/09/29 8:01:26 PM MDT,cg-bird,Grassland,Neither,0,0,5,Seeds;Lichen,Heat (Allows survival in the Desert),Clarence
+2021/09/29 8:02:34 PM MDT,cg-fastbird,Grassland,Neither,0,0,9,Grass;Seeds;Lichen,Heat (Allows survival in the Desert),Clarence
+2021/09/29 8:11:40 PM MDT,cg-wildcat,Desert,Antivenom only,3,1,5,Carrion;Grass;Detritus;Coconuts;Algae;Lichen,Heat (Allows survival in the Desert),Clarence
+2021/09/29 8:13:03 PM MDT,cg-fish,Ocean,Neither,1,1,6,Detritus;Coconuts;Algae,,Clarence
+2021/09/29 8:14:11 PM MDT,cg-fleshfish,Ocean,Neither,1,0,5,Carrion;Detritus;Algae,,Clarence
+2021/09/29 8:15:06 PM MDT,cg-mouse,Tundra,Neither,0,2,7,Grass;Seeds;Lichen,Cold (Allows survival in the Tundra),Clarence
+2021/09/29 8:16:02 PM MDT,cg-whale,Ocean,Antivenom only,2,5,3,Carrion;Detritus;Algae,,Clarence
+2021/09/29 8:20:23 PM MDT,cg-riverfish,Benthic,Neither,1,1,8,Seeds;Detritus;Algae;Lichen,,Clarence
+2021/09/29 9:02:05 PM MDT,Birgus,Rainforest,Antivenom only,2,4,6,Leaves;Seeds;Coconuts;Lichen,,Adele Lopez
+2021/09/29 9:54:08 PM MDT,Dongles,Desert,Antivenom only,6,6,6,Grass;Seeds;Detritus;Coconuts;Lichen,Heat (Allows survival in the Desert),✨
+2021/09/29 10:20:59 PM MDT,Guppy,Ocean,Neither,0,0,0,Algae,,Random guy in NY
+2021/09/29 10:24:35 PM MDT,First Round Predator Distractor,Ocean,Neither,0,0,0,,,Random guy in NY
+2021/09/30 5:14:37 AM MDT,Beauprey,Human Garbage Dump,Neither,0,0,1,Seeds;Lichen,,Luke
+2021/09/30 5:21:25 AM MDT,Beauconut,Human Garbage Dump,Neither,0,0,1,Coconuts,,Luke
+2021/09/30 5:25:04 AM MDT,Beaufish,Ocean,Neither,0,0,1,Algae,,Luke
+2021/09/30 5:28:46 AM MDT,BeauOmni1,Benthic,Antivenom only,1,0,5,Detritus;Algae,,Luke
+2021/09/30 5:30:31 AM MDT,BeauOmni2,Temperate Forest,Antivenom only,5,6,3,Leaves;Grass,,Luke
+2021/09/30 5:32:02 AM MDT,BeauOmni3,Benthic,Antivenom only,2,3,2,Detritus;Algae,,Luke
+2021/09/30 5:34:53 AM MDT,BeaupreyButGrassland,Grassland,Neither,0,0,1,Seeds;Lichen,,Luke
+2021/09/30 5:37:15 AM MDT,BeauOmni2ButRainforest,Rainforest,Antivenom only,5,6,3,Leaves;Grass,Heat (Allows survival in the Desert),Luke
+2021/09/30 6:33:45 AM MDT,Armor Fish,Ocean,Antivenom only,0,4,0,Algae,,Random guy in NY
+2021/09/30 8:36:12 AM MDT,Alaskans,Tundra,Antivenom only,1,10,2,Seeds;Lichen,Cold (Allows survival in the Tundra),Jon Rahoi
+2021/09/30 8:37:28 AM MDT,Groundlings,Ocean,Venom + Antivenom,1,3,2,Algae,,Jon Rahoi
+2021/09/30 8:58:36 AM MDT,Super-Armor Fish,Ocean,Antivenom only,0,10,0,Carrion;Algae,,Random guy in NY
+2021/09/30 9:00:24 AM MDT,Living Garbage Can,Human Garbage Dump,Antivenom only,0,10,0,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,,[NAME REDACTED]
+2021/09/30 9:25:27 AM MDT,Galumphers,Grassland,Antivenom only,3,3,2,Leaves;Grass;Seeds,,Ack
+2021/09/30 9:27:07 AM MDT,Munchers,Temperate Forest,Neither,7,4,4,,,Ack
+2021/09/30 9:27:58 AM MDT,Rocks,Tundra,Venom + Antivenom,3,9,1,Algae;Lichen,Cold (Allows survival in the Tundra),Ack
+2021/09/30 9:28:53 AM MDT,Squidheads,Ocean,Venom + Antivenom,5,3,5,,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),Ack
+2021/09/30 9:29:52 AM MDT,Cubic Carrion Crawlers,Human Garbage Dump,Antivenom only,3,3,7,Carrion;Detritus,,Ack
+2021/09/30 11:09:45 AM MDT,Armored Sloth,Temperate Forest,Antivenom only,0,10,0,Leaves,,Random guy in NY
+2021/09/30 12:17:23 PM MDT,Forest Scorpion,Temperate Forest,Venom + Antivenom,0,0,10,Seeds,,Random guy in NY
+2021/09/30 12:46:26 PM MDT,Bear2,Temperate Forest,Antivenom only,10,0,8,Seeds,,Random guy in NY
+2021/09/30 1:14:39 PM MDT,Billi,Benthic,Neither,1,0,10,Detritus,,Milli
+2021/09/30 1:15:41 PM MDT,Tilli,Benthic,Antivenom only,0,10,0,Carrion;Detritus,,Milli
+2021/09/30 1:16:18 PM MDT,Willi,Benthic,Antivenom only,7,3,2,Detritus,,Milli
+2021/09/30 1:17:00 PM MDT,Killi,Benthic,Neither,0,0,10,Carrion;Detritus,,Milli
+2021/09/30 1:17:42 PM MDT,Chilli,Benthic,Antivenom only,4,6,0,Detritus,,Milli
+2021/09/30 1:18:23 PM MDT,Silli,Benthic,Antivenom only,4,6,2,Detritus,,Milli
+2021/09/30 1:19:19 PM MDT,Xilli,Benthic,Antivenom only,6,4,1,Detritus,,Milli
+2021/09/30 1:21:30 PM MDT,Pilli,Benthic,Venom + Antivenom,0,0,10,Detritus,,Milli
+2021/09/30 1:24:26 PM MDT,Jilli,Ocean,Neither,3,0,1,Algae,,Milli
+2021/09/30 1:26:27 PM MDT,Lilli,Ocean,Venom + Antivenom,0,0,7,Algae,,Milli
+2021/09/30 1:41:33 PM MDT,Cheerless Tidehunters,Ocean,Neither,0,0,0,Carrion;Algae,,phenx
+2021/09/30 1:42:47 PM MDT,Qoxeadian,Ocean,Antivenom only,0,10,0,Carrion;Algae,,phenx
+2021/09/30 1:43:19 PM MDT,Khisesant,Ocean,Neither,1,4,1,Algae,,phenx
+2021/09/30 1:44:05 PM MDT,Bissurus,Ocean,Neither,3,0,2,Algae,,phenx
+2021/09/30 1:44:38 PM MDT,Senuboon,Ocean,Neither,0,1,0,Algae,,phenx
+2021/09/30 1:45:40 PM MDT,Chasnee,Ocean,Antivenom only,2,8,2,Carrion;Algae,,phenx
+2021/09/30 1:46:26 PM MDT,Sleeping Sealions,Ocean,Neither,0,0,0,Detritus;Algae,,phenx
+2021/09/30 1:46:59 PM MDT,Bhuphin,Ocean,Neither,0,2,0,Algae,,phenx
+2021/09/30 1:47:34 PM MDT,The Infinite Depths,Benthic,Antivenom only,2,8,1,Detritus,,phenx
+2021/09/30 1:48:29 PM MDT,The Tideless Depths,Benthic,Antivenom only,6,4,5,Detritus,,phenx
+2021/09/30 2:57:41 PM MDT,Gino Soupprayen,Temperate Forest,Venom + Antivenom,10,10,10,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),Anonymous #10
+2021/09/30 2:59:03 PM MDT,Pristol,Tundra,Neither,0,0,0,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,Heat (Allows survival in the Desert);Cold (Allows survival in the Tundra),Anonymous #10
+2021/09/30 3:01:27 PM MDT,Cordova,Desert,Neither,0,0,0,Carrion,Heat (Allows survival in the Desert),Anonymous #10
+2021/09/30 3:02:07 PM MDT,Josep Raich,Desert,Antivenom only,0,5,5,Carrion,Heat (Allows survival in the Desert),Anonymous #10
+2021/09/30 3:03:27 PM MDT,Tell Masoud,Rainforest,Neither,6,0,6,,,Anonymous #10
+2021/09/30 3:04:03 PM MDT,Broken Fetters,Tundra,Neither,0,0,10,Lichen,Cold (Allows survival in the Tundra),Anonymous #10
+2021/09/30 3:05:03 PM MDT,Buneh Rizak-e Chenar,Ocean,Neither,0,0,10,Algae,,Anonymous #10
+2021/09/30 3:05:56 PM MDT,Ken Nishimura,Temperate Forest,Neither,0,0,10,Leaves;Grass;Seeds,,Anonymous #10
+2021/09/30 3:07:06 PM MDT,Agyneta insolita,Rainforest,Neither,0,0,10,Leaves;Grass;Seeds,,Anonymous #10
+2021/09/30 3:07:45 PM MDT,The Dark Secret of Harvest Home,Temperate Forest,Venom + Antivenom,3,3,3,Carrion;Leaves;Grass,,Anonymous #10
+2021/09/30 3:29:50 PM MDT,sea tortoise,Ocean,Antivenom only,0,10,0,Carrion,,Henny
+2021/09/30 3:30:14 PM MDT,Deap Sea Tortoise,Benthic,Antivenom only,0,10,0,Carrion,,Henny
+2021/09/30 3:30:49 PM MDT,Armadillo v2,Desert,Antivenom only,0,10,0,Carrion,Heat (Allows survival in the Desert),Henny
+2021/09/30 3:31:31 PM MDT,Nuclear Waste,Human Garbage Dump,Antivenom only,0,10,0,Carrion,,Henny
+2021/09/30 3:32:04 PM MDT,Slow Moving Nuclear Waste,Human Garbage Dump,Antivenom only,0,10,1,Carrion,,Henny
+2021/09/30 3:37:57 PM MDT,Patricians,Ocean,Venom + Antivenom,1,2,2,Detritus;Algae,,Jon Rahoi
+2021/09/30 3:38:28 PM MDT,Jon Rahoi,Rainforest,Venom + Antivenom,10,10,10,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,Heat (Allows survival in the Desert),Jon Rahoi
+2021/09/30 3:38:55 PM MDT,0-0-0 algae,Ocean,Neither,0,0,0,Algae,,Optimization Process
+2021/09/30 3:39:27 PM MDT,Colonoscopies,Temperate Forest,Neither,8,3,5,,Cold (Allows survival in the Tundra),Jon Rahoi
+2021/09/30 3:40:34 PM MDT,2-8-0 A algae-carrion-coconut-detritus-lichen,Human Garbage Dump,Antivenom only,2,8,0,Carrion;Detritus;Coconuts;Algae;Lichen,,Optimization Process
+2021/09/30 3:41:18 PM MDT,0-0-0 algae-seed,Ocean,Neither,0,0,0,Seeds;Algae,,Optimization Process
+2021/09/30 3:45:12 PM MDT,1-4-1 carrion,Ocean,Neither,1,4,1,Carrion,,Optimization Process
+2021/09/30 3:47:00 PM MDT,6-0-3 seed,Grassland,Neither,6,0,3,Seeds,,Optimization Process
+2021/09/30 3:48:01 PM MDT,Armadillo2,Rainforest,Antivenom only,0,10,0,Grass;Seeds,,Optimization Process
+2021/09/30 3:48:30 PM MDT,Locust-Seeds,Grassland,Neither,0,0,1,Seeds,,Optimization Process
+2021/09/30 3:50:11 PM MDT,Frontier-W2,Grassland,Neither,2,8,4,Lichen,,Optimization Process
+2021/09/30 3:50:45 PM MDT,Frontier-W5,Grassland,Antivenom only,5,5,3,Lichen,,Optimization Process
+2021/09/30 3:51:09 PM MDT,Frontier-W8,Grassland,Antivenom only,8,2,0,Lichen,,Optimization Process
+2021/09/30 7:31:31 PM MDT,lRa-GLM281,Rainforest,Antivenom only,2,8,1,Leaves;Grass;Lichen,,__nobody
+2021/09/30 7:32:34 PM MDT,lRa-G256,Rainforest,Antivenom only,2,5,6,Grass,,__nobody
+2021/09/30 7:34:27 PM MDT,lGha-S541,Grassland,Antivenom only,5,4,1,Seeds,Heat (Allows survival in the Desert),__nobody
+2021/09/30 7:35:29 PM MDT,aBa-D262,Benthic,Antivenom only,2,6,2,Detritus,,__nobody
+2021/09/30 7:37:06 PM MDT,aBa-CG751,Benthic,Antivenom only,7,5,1,Carrion;Grass,,__nobody
+2021/09/30 7:38:20 PM MDT,lFa-G172,Temperate Forest,Antivenom only,1,7,2,Grass,,__nobody
+2021/09/30 7:39:59 PM MDT,lF-LM732,Temperate Forest,Neither,7,3,2,Leaves;Lichen,,__nobody
+2021/09/30 7:41:29 PM MDT,lGca-AS154,Grassland,Antivenom only,1,5,4,Seeds;Algae,Cold (Allows survival in the Tundra),__nobody
+2021/09/30 7:43:25 PM MDT,aBa-D273,Benthic,Antivenom only,2,7,3,Detritus,,__nobody
+2021/09/30 7:44:46 PM MDT,lDha-C293,Desert,Antivenom only,2,9,3,Carrion,Heat (Allows survival in the Desert),__nobody
+2021/09/30 7:48:27 PM MDT,Soonbegon,Benthic,Venom + Antivenom,0,0,10,Detritus,,Martin Randall
+2021/09/30 7:53:10 PM MDT,gonnabiteit,Benthic,Venom + Antivenom,0,0,7,,,Martin Randall
+2021/09/30 7:53:53 PM MDT,Doomed,Benthic,Venom + Antivenom,0,0,4,,,Martin Randall
+2021/09/30 7:54:42 PM MDT,Happy Hunter,Benthic,Venom + Antivenom,0,0,2,,,Martin Randall
+2021/09/30 7:56:21 PM MDT,Not Picky,Benthic,Venom + Antivenom,0,0,2,Detritus,,Martin Randall
+2021/09/30 7:57:16 PM MDT,Slowmo,Benthic,Venom + Antivenom,0,0,1,Detritus,,Martin Randall
+2021/09/30 7:58:02 PM MDT,A new hope,Benthic,Venom + Antivenom,0,0,1,Detritus,,Martin Randall
+2021/09/30 7:59:04 PM MDT,Rubble on Double,Benthic,Antivenom only,0,0,0,Detritus,,Martin Randall
+2021/09/30 7:59:43 PM MDT,Sea Zombie,Benthic,Antivenom only,0,0,0,Detritus,,Martin Randall
+2021/09/30 8:00:17 PM MDT,Tasty,Benthic,Neither,0,0,0,Detritus,,Martin Randall
+2021/09/30 8:12:35 PM MDT,Spider,Temperate Forest,Neither,1,0,1,,,Random guy in NY
+2021/09/30 8:50:50 PM MDT,TrashMonster3-2,Human Garbage Dump,Neither,3,0,2,,,kyleherndon
+2021/09/30 8:51:15 PM MDT,TrashMonster3-3,Human Garbage Dump,Neither,3,0,3,,,kyleherndon
+2021/09/30 8:51:53 PM MDT,TrashMonster3-4,Human Garbage Dump,Neither,3,0,4,,,kyleherndon
+2021/09/30 8:52:10 PM MDT,TrashMonster4-2,Human Garbage Dump,Neither,4,0,2,,,kyleherndon
+2021/09/30 8:52:28 PM MDT,TrashMonster4-3,Human Garbage Dump,Neither,4,0,3,,,kyleherndon
+2021/09/30 8:53:29 PM MDT,TrashMonster4-4,Human Garbage Dump,Neither,4,0,4,,,kyleherndon
+2021/09/30 8:54:56 PM MDT,Muk1,Human Garbage Dump,Venom + Antivenom,0,0,1,,,kyleherndon
+2021/09/30 8:55:33 PM MDT,Muk2,Human Garbage Dump,Venom + Antivenom,0,0,3,,,kyleherndon
+2021/09/30 8:59:19 PM MDT,TrashMonster2-2,Human Garbage Dump,Neither,2,0,2,,,kyleherndon
+2021/09/30 9:12:00 PM MDT,Armored Pigeon,Temperate Forest,Antivenom only,0,10,0,Seeds,,Random guy in NY
+2021/09/30 9:15:04 PM MDT,Bullfrog,Temperate Forest,Antivenom only,5,0,5,Seeds,,Random guy in NY
+2021/09/30 9:25:36 PM MDT,Hedgie ,Temperate Forest,Antivenom only,2,3,5,Leaves;Grass;Seeds;Coconuts,,Samantha
+2021/09/30 9:32:13 PM MDT,Stinging ant colony,Rainforest,Venom + Antivenom,3,1,7,Carrion;Leaves;Grass;Seeds;Detritus;Coconuts;Algae;Lichen,Heat (Allows survival in the Desert),Samantha
+2021/09/30 9:39:52 PM MDT,Meercat colony,Grassland,Antivenom only,4,3,5,Leaves;Grass;Seeds;Coconuts,Heat (Allows survival in the Desert),Samantha
+2021/09/30 9:46:23 PM MDT,Sea snek run,Ocean,Venom + Antivenom,7,2,3,Carrion,,Samantha
+2021/09/30 9:49:54 PM MDT,Jibbers Crabst,Human Garbage Dump,Antivenom only,6,5,1,Carrion;Leaves;Seeds;Detritus;Coconuts,,Samantha
+2021/09/30 9:54:35 PM MDT,Flock of birbs,Grassland,Neither,1,1,9,Carrion;Leaves;Grass;Seeds,,Samantha 
+2021/09/30 10:08:22 PM MDT,Tribble,Grassland,Neither,0,0,0,Seeds,,simon
+2021/09/30 10:09:26 PM MDT,Omnivorous Tribble Hunter,Grassland,Neither,1,0,1,Seeds,,simon
+2021/09/30 10:10:27 PM MDT,Tribble Hunter Hunter,Grassland,Neither,2,0,2,,,simon
+2021/09/30 10:11:16 PM MDT,Tribble Hunter Hunter Hunter Hunter,Grassland,Neither,4,0,4,,,simon
+2021/09/30 10:12:26 PM MDT,Shai-Hulud,Desert,Antivenom only,10,0,7,,Heat (Allows survival in the Desert),simon
+2021/09/30 10:13:32 PM MDT,Forest Tribble1,Temperate Forest,Neither,0,0,0,Seeds,,simon
+2021/09/30 10:14:14 PM MDT,Rain Tribble,Rainforest,Neither,0,0,0,Seeds,,simon
+2021/09/30 10:15:09 PM MDT,Sol Invictus,Desert,Antivenom only,0,10,0,Carrion,Heat (Allows survival in the Desert),simon
+2021/09/30 10:15:48 PM MDT,Leaf Tribble,Temperate Forest,Neither,0,0,0,Leaves,,simon
+2021/09/30 10:16:29 PM MDT,Algae Tribble,Ocean,Neither,0,0,0,Algae,,simon
+2021-Sep-30 19:03:08.6575130,"FOERDI 0,0,0,10,D",Benthic,Neither,0,0,10,Detritus;,,foerdi
+2021-Sep-30 19:03:08.6575535,"FOERDI 1,10,0,1,D",Benthic,Antivenom only,10,0,1,Detritus;,,foerdi
+2021-Sep-30 19:03:08.6575632,"FOERDI 1,9,1,1,D",Benthic,Antivenom only,9,1,1,Detritus;,,foerdi
+2021-Sep-30 19:03:08.6575715,"FOERDI 1,3,7,3,D",Benthic,Antivenom only,3,7,3,Detritus;,,foerdi
+2021-Sep-30 19:03:08.6575796,"FOERDI 1,6,4,3,D",Benthic,Antivenom only,6,4,3,Detritus;,,foerdi
+2021-Sep-30 19:03:08.6575880,"FOERDI 1,0,10,1,D",Benthic,Antivenom only,0,10,1,Detritus;,,foerdi
+2021-Sep-30 19:03:08.6912146,"FOERDI 1,0,10,0,CDA",Ocean,Antivenom only,0,10,0,Carrion;Detritus;Algae;,,foerdi
+2021-Sep-30 19:03:08.6912486,"FOERDI 0,0,0,0,A",Ocean,Neither,0,0,0,Algae;,,foerdi
+2021-Sep-30 19:03:08.6912584,"FOERDI 0,3,0,3,A",Ocean,Neither,3,0,3,Algae;,,foerdi
+2021-Sep-30 19:03:08.6912667,"FOERDI 1,1,0,1,A",Ocean,Antivenom only,1,0,1,Algae;,,foerdi

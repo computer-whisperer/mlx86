@@ -3,9 +3,9 @@ project(mlx86 C CXX ASM)
 set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
 set(CMAKE_CXX_STANDARD 20)
 
-#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
-#set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
-#set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
+set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
 
 include(FetchContent)
 
@@ -21,6 +21,7 @@ include_directories(
         src
         src/executors
         src/problems
+        src/problems/darwin2021
         src/problems/x86
         src/reporters
         src/solvers
@@ -71,3 +72,5 @@ target_link_libraries(mlx86 ${LIBS_TO_LINK})
 target_link_libraries(solver_benchmark_test ${LIBS_TO_LINK})
 target_link_libraries(testing_test ${LIBS_TO_LINK})
 target_link_libraries(executor_test ${LIBS_TO_LINK})
+
+add_executable(darwin_2021 src/problems/darwin2021/darwin2021.cpp)

@@ -254,7 +254,7 @@ U32 qhashmurmur3_32(const void *data, size_t nbytes) {
 
     const int nblocks = nbytes / 4;
     const U32 *blocks = (const U32 *) (data);
-    const U8 *tail = (const U8 *) (data + (nblocks * 4));
+    const U8 *tail = (const U8 *) ((uint8_t*)data + (nblocks * 4));
 
     U32 h = 0;
 

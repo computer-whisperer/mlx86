@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define NUM_PROCESSES 10
+#define NUM_PROCESSES 48
 
 struct reporting_mem_t {
     std::atomic<U64> tests_run;
