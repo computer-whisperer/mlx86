@@ -420,7 +420,7 @@ inline void bar_game_tick(void* game_in)
     }
 
     // Cash out converters
-    if (game->tick % bar_game_tps == 0)
+    if ((game->tick % bar_game_tps == 0) && (player.resources[BAR_ResourceType_Metal] < player.total_resource_capacity[BAR_ResourceType_Metal]))
     {
       uint32_t basic_converter_operations = player.converter_bank/(70*bar_game_resource_denominator);
       player.converter_bank -= basic_converter_operations*(70*bar_game_resource_denominator);
@@ -500,10 +500,10 @@ inline void bar_game_tick(void* game_in)
                 unit->build_points += build_points_to_give;
                 if (BAR_UnitData[unit_type].build_cost > 0)
                 {
-                  uint32_t energy_to_give = BAR_UnitData[unit_type].energy_cost*build_points_to_give/BAR_UnitData[unit_type].build_cost;
+                  uint32_t energy_to_give = (BAR_UnitData[unit_type].energy_cost*build_points_to_give)/BAR_UnitData[unit_type].build_cost;
                   player.resources[BAR_ResourceType_Energy] -= energy_to_give;
                   unit->resources[BAR_ResourceType_Energy] += energy_to_give;
-                  uint32_t metal_to_give = BAR_UnitData[unit_type].metal_cost*build_points_to_give/BAR_UnitData[unit_type].build_cost;
+                  uint32_t metal_to_give = (BAR_UnitData[unit_type].metal_cost*build_points_to_give)/BAR_UnitData[unit_type].build_cost;
                   player.resources[BAR_ResourceType_Metal] -= metal_to_give;
                   unit->resources[BAR_ResourceType_Metal] += metal_to_give;
                 }
@@ -562,7 +562,7 @@ inline void bar_game_tick(void* game_in)
     }
 
     // Add to power converter banks
-    int32_t power_for_converters = player.resources[BAR_ResourceType_Energy] - player.total_resource_capacity[BAR_ResourceType_Energy]/2;
+    int32_t power_for_converters = player.resources[BAR_ResourceType_Energy] - (player.total_resource_capacity[BAR_ResourceType_Energy]/2);
     if (power_for_converters > 0)
     {
       uint32_t max_advanced_converter_bank = player.num_units[BAR_Unit_ArmadaAdvancedEnergyConverter]*600*bar_game_resource_denominator;
@@ -584,7 +584,7 @@ inline void bar_game_tick(void* game_in)
       {
         max_to_add = power_for_converters;
       }
-      player.advanced_converter_bank += max_to_add;
+      player.converter_bank += max_to_add;
       power_for_converters = (int32_t)(power_for_converters - max_to_add);
       player.resources[BAR_ResourceType_Energy] -= max_to_add;
     }
