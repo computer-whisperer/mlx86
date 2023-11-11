@@ -29,7 +29,7 @@ double ProblemTravellingSalesman::scalarTrial(U8 *data) {
     for (state_t i = 1; i < node_count; i++)
     {
         state_t next_state = steps[i];
-        if (next_state > node_count)
+        if (next_state >= node_count)
         {
             next_state = 0;
         }

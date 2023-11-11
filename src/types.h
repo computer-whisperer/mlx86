@@ -1,6 +1,6 @@
 #ifndef TYPES_H
 #define TYPES_H
-#include <cstdint>
+#include <stdint.h>
 
 typedef uint8_t U8;
 typedef int16_t S16;

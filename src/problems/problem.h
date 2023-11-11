@@ -1,6 +1,6 @@
 #ifndef PROBLEMS_PROBLEMS_H
 #define PROBLEMS_PROBLEMS_H
-#include <cstddef>
+#include <stddef.h>
 #include "types.h"
 
 class Problem

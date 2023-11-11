@@ -11,7 +11,7 @@ static ZydisFormatter formatter;
 void zydis_init()
 {
 
-    ZydisDecoderInit(&decoder, ZYDIS_MACHINE_MODE_LEGACY_32, ZYDIS_ADDRESS_WIDTH_32);
+    ZydisDecoderInit(&decoder, ZYDIS_MACHINE_MODE_LEGACY_32, ZYDIS_STACK_WIDTH_32);
 
     // Initialize formatter. Only required when you actually plan to do instruction
     // formatting ("disassembling"), like we do here
@@ -28,10 +28,11 @@ void zydis_print_dissasembly(void * data, size_t data_len)
 	ZyanU64 runtime_address = 0x1000000;
 	size_t offset = 0;
 	ZydisDecodedInstruction instruction;
+  ZydisDecodedOperand operands[ZYDIS_MAX_OPERAND_COUNT];
 	while (offset < data_len)
 	{
-		U8 rc = ZydisDecoderDecodeBuffer(&decoder, (uint8_t*)data + offset, data_len - offset,
-				&instruction);
+		U8 rc = ZydisDecoderDecodeFull(&decoder, (uint8_t*)data + offset, data_len - offset,
+				&instruction, operands);
 		if (rc)
 		{
 			break;
@@ -45,8 +46,15 @@ void zydis_print_dissasembly(void * data, size_t data_len)
 
 			// Format & print the binary instruction structure to human readable format
 			char buffer[256];
-			ZydisFormatterFormatInstruction(&formatter, &instruction, buffer, sizeof(buffer),
-				runtime_address);
+			ZydisFormatterFormatInstruction(
+              &formatter,
+              &instruction,
+              operands,
+              ZYDIS_MAX_OPERAND_COUNT,
+              buffer,
+              sizeof(buffer),
+				      runtime_address,
+              nullptr);
 			puts(buffer);
 		}
 
@@ -58,8 +66,13 @@ void zydis_print_dissasembly(void * data, size_t data_len)
 void zydis_print_instruction(void * data, size_t data_len, uint32_t address)
 {
 	ZydisDecodedInstruction instruction;
-	U8 rc = ZydisDecoderDecodeBuffer(&decoder, data, data_len,
-			&instruction);
+  ZydisDecodedOperand operands[ZYDIS_MAX_OPERAND_COUNT];
+	U8 rc = ZydisDecoderDecodeFull(
+          &decoder,
+          data,
+          data_len,
+			    &instruction,
+          operands);
 	if (!rc)
 	{
 		// Print current instruction pointer.
@@ -67,8 +80,15 @@ void zydis_print_instruction(void * data, size_t data_len, uint32_t address)
 
 		// Format & print the binary instruction structure to human readable format
 		char buffer[256];
-		ZydisFormatterFormatInstruction(&formatter, &instruction, buffer, sizeof(buffer),
-				address);
+    ZydisFormatterFormatInstruction(
+            &formatter,
+            &instruction,
+            operands,
+            ZYDIS_MAX_OPERAND_COUNT,
+            buffer,
+            sizeof(buffer),
+            address,
+            nullptr);
 		puts(buffer);
 	}
 }

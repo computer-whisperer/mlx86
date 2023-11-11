@@ -1,5 +1,6 @@
 #ifndef CZYDIS_H
 #define CZYDIS_H
+#include <cstdint>
 
 void zydis_init();
 void zydis_print_dissasembly(void * data, size_t data_len);

@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <ProblemTravellingSalesman.h>
 #include <SolverSimulatedAnnealing.h>
-//#include <problem_audio_regen.h>
+#include <ProblemBARBuildOrder.hpp>
 #include <SolverSimpleGreedy.h>
 #include <SolverParallelTempering.h>
 #include <SolverParallelGreedy.h>
@@ -46,15 +46,16 @@ int main(int argc, char * argv[])
 
 	struct REPORTER_MEM_T * reporter_mem = reporter_mem_init();
 
+  auto problem = new ProblemBARBuildOrder();
 	//auto problem = new ProblemTravellingSalesman(1000, 10);
 	//auto problem = new problem_audio_regen("../audio/582986__queenoyster__low-battery.wav");
-	auto problem = new SolverHybridX86(800);
+	//auto problem = new SolverHybridX86(800);
 	//auto problem = new ProblemX86StringMatch("I am a creature of mystery", 800);
 	//auto problem = new ProblemHelloWorld();
 
-	auto solver = new SolverParallelTempering();
+	//auto solver = new SolverParallelTempering();
 	//auto solver = new SolverParallelGreedy();
-	//auto solver = new SolverSimulatedAnnealing();
+	auto solver = new SolverSimulatedAnnealing();
 	//auto solver = new SolverSimpleGreedy();
 	//auto solver = new SolverTabuSearch();
 /*
@@ -76,7 +77,7 @@ int main(int argc, char * argv[])
 	struct SolverResults_T results{};
 
 	init_reporter_process(reporter_mem, (Problem*)problem);
-	solver->run((Problem*)problem, reporter_mem, 10, 50000000, &results);
+	solver->run((Problem*)problem, reporter_mem, 10, 500000, &results);
 	deinit_reporter_process(reporter_mem);
 
 	{

@@ -3,9 +3,9 @@ project(mlx86 C CXX ASM)
 set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
 set(CMAKE_CXX_STANDARD 20)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
-set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
+#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
+#set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
+#set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
 
 include(FetchContent)
 
@@ -48,8 +48,10 @@ set(SOURCES
         src/executors/KVMExecutor.cpp
         src/reporters/cli_reporter.cpp
         src/problems/problem.cpp
+        src/problems/ProblemBARBuildOrder.cpp
         src/problems/ProblemHelloWorld.cpp
         src/problems/ProblemTravellingSalesman.cpp
+        src/problems/rts_buildorders/game.cpp
        # src/problems/problem_audio_regen.cpp
         src/problems/ProblemX86StringMatch.cpp
         #src/problems/starcraft2_supplymax.cpp
@@ -65,6 +67,7 @@ add_executable(mlx86 src/main.cpp ${SOURCES})
 add_executable(solver_benchmark_test src/tests/solver_benchmark_test.c ${SOURCES})
 add_executable(testing_test src/tests/testing_test.c ${SOURCES})
 add_executable(executor_test src/tests/executor_test.c ${SOURCES})
+add_executable(demo_game_test src/tests/demo_game_test.cpp ${SOURCES})
 
 set(LIBS_TO_LINK kfr_dft kfr_capi kfr_io m pthread protobuf-c rt Zydis)
 
@@ -72,5 +75,6 @@ target_link_libraries(mlx86 ${LIBS_TO_LINK})
 target_link_libraries(solver_benchmark_test ${LIBS_TO_LINK})
 target_link_libraries(testing_test ${LIBS_TO_LINK})
 target_link_libraries(executor_test ${LIBS_TO_LINK})
+target_link_libraries(demo_game_test ${LIBS_TO_LINK})
 
 add_executable(darwin_2021 src/problems/darwin2021/darwin2021.cpp)
