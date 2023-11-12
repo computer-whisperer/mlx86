@@ -61,6 +61,7 @@ public:
 
     uint32_t resources[config.num_resource_types];
     uint32_t total_resource_rates[config.num_resource_types];
+    uint32_t total_resource_upkeep[config.num_resource_types];
     uint32_t total_resource_capacity[config.num_resource_types];
 
     void reset()
@@ -81,6 +82,7 @@ public:
         resources[i] = config.get_start_resource_count(i);
         total_resource_rates[i] = 0;
         total_resource_capacity[i] = 0;
+        total_resource_upkeep[i] = 0;
       }
     }
 

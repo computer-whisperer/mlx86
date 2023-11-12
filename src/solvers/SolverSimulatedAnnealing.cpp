@@ -26,7 +26,7 @@ void SolverSimulatedAnnealing::run(Problem *problem, struct REPORTER_MEM_T * rep
 
 	int batch_num = 0;
 
-	U64 max_iterations = first_cycle_len;
+	U64 max_iterations = trial_limit;
 
 	if (reporter_mem)
 	{

@@ -31,11 +31,18 @@ enum BAR_Unit {
   BAR_Unit_ArmadaHardenedMetalStorage,
   BAR_Unit_ArmadaPrude,
   BAR_Unit_ArmadaAdvancedGeothermalPowerplant,
-  BAR_Unit_FusionReactor,
-  BAR_Unit_CloakableFusionReactor,
-  BAR_Unit_AdvancedFusionReactor,
-  BAR_Unit_HardenedEnergyStorage,
-  BAR_Unit_Armageddon,
+  BAR_Unit_ArmadaFusionReactor,
+  BAR_Unit_ArmadaCloakableFusionReactor,
+  BAR_Unit_ArmadaAdvancedFusionReactor,
+  BAR_Unit_ArmadaHardenedEnergyStorage,
+  BAR_Unit_ArmadaArmageddon,
+  BAR_Unit_ArmadaTick,
+  BAR_Unit_ArmadaConstructionAircraft,
+  BAR_Unit_ArmadaStormbringer,
+  BAR_Unit_ArmadaAdvancedAircraftPlant,
+  BAR_Unit_ArmadaBlizzard,
+  BAR_Unit_ArmadaAdvancedConstructionAircraft,
+  BAR_Unit_ArmadaLiche,
   BAR_Unit_MAX
 };
 
@@ -44,6 +51,8 @@ enum BAR_ResourceTypes {
   BAR_ResourceType_Energy,
   BAR_ResourceType_MAX
 };
+
+constexpr uint32_t max_num_required_units = 4;
 
 class BARUnitData {
 public:
@@ -58,18 +67,23 @@ public:
   uint32_t energy_production = 0;
   uint32_t energy_capacity = 0;
   uint32_t metal_capacity = 0;
-  BAR_Unit required_unit = BAR_Unit_None;
+  BAR_Unit required_unit[max_num_required_units] = {};
   uint32_t max_count = 0;
   uint32_t avg_travel_time = 0;
+  uint32_t energy_upkeep = 0;
+  uint32_t metal_upkeep = 0;
 };
 
-constexpr uint32_t mine_limit = 5;
+constexpr uint32_t mine_limit = 4;
 constexpr uint32_t geothermal_limit = 1;
 constexpr uint32_t turbine_limit = 25;
 
 constexpr uint32_t bar_game_tps = 20;
 
 constexpr uint32_t bar_game_resource_denominator = 1000;
+
+#define general_armada_tier1_constructor {BAR_Unit_ArmadaConstructionBot, BAR_Unit_ArmadaConstructionAircraft}
+#define general_armada_tier2_constructor {BAR_Unit_ArmadaAdvancedConstructionBot, BAR_Unit_ArmadaAdvancedConstructionAircraft}
 
 constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
 {
@@ -96,16 +110,17 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_cost = 1800,
       .metal_production = (uint32_t)(1.8*bar_game_resource_denominator/bar_game_tps),
       .metal_capacity = 50*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaCommander,
+      .required_unit = {BAR_Unit_ArmadaCommander},
       .max_count = mine_limit,
       .avg_travel_time = 280,
+      .energy_upkeep = 3*bar_game_resource_denominator/bar_game_tps,
     },
     {
       .name = "Armada Energy Converter",
       .metal_cost = 1*bar_game_resource_denominator,
       .energy_cost = 1150*bar_game_resource_denominator,
       .build_cost = 2600,
-      .required_unit = BAR_Unit_ArmadaCommander,
+      .required_unit = {BAR_Unit_ArmadaCommander},
     },
     {
       .name = "Armada Metal Storage",
@@ -113,7 +128,7 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .energy_cost = 570*bar_game_resource_denominator,
       .build_cost = 2920,
       .metal_capacity = 3000*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaCommander,
+      .required_unit = {BAR_Unit_ArmadaCommander},
     },
     {
       .name = "Armada Wind Turbine",
@@ -122,7 +137,7 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_cost = 1600,
       .energy_production = 14*bar_game_resource_denominator/bar_game_tps,
       .energy_capacity = (uint32_t)(0.5*bar_game_resource_denominator),
-      .required_unit = BAR_Unit_ArmadaCommander,
+      .required_unit = {BAR_Unit_ArmadaCommander},
       .max_count = turbine_limit
     },
     {
@@ -132,7 +147,7 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_cost = 2800,
       .energy_production = 20*bar_game_resource_denominator/bar_game_tps,
       .energy_capacity = 50*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaCommander,
+      .required_unit = {BAR_Unit_ArmadaCommander},
     },
     {
       .name = "Armada Energy Storage",
@@ -140,48 +155,48 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .energy_cost = 1700*bar_game_resource_denominator,
       .build_cost = 4110,
       .energy_capacity = 6000*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaCommander,
+      .required_unit = {BAR_Unit_ArmadaCommander},
     },
     {
       .name = "Armada Bot Lab",
       .metal_cost = 650*bar_game_resource_denominator,
       .energy_cost = 1200*bar_game_resource_denominator,
       .build_cost = 6500,
-      .build_power = 100,
+      .direct_build_power = 100/bar_game_tps,
       .can_share_build_power = false,
       .energy_capacity = 100*bar_game_resource_denominator,
       .metal_capacity = 100*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaCommander,
+      .required_unit = {BAR_Unit_ArmadaCommander},
     },
     {
       .name = "Armada Vehicle Plant",
       .metal_cost = 740*bar_game_resource_denominator,
       .energy_cost = 1800*bar_game_resource_denominator,
       .build_cost = 7200,
-      .direct_build_power = 100,
+      .direct_build_power = 100/bar_game_tps,
       .energy_capacity = 100*bar_game_resource_denominator,
       .metal_capacity = 100*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaCommander,
+      .required_unit = {BAR_Unit_ArmadaCommander},
     },
     {
       .name = "Armada Hovercraft Plant",
       .metal_cost =  900*bar_game_resource_denominator,
       .energy_cost = 3000*bar_game_resource_denominator,
       .build_cost = 11000,
-      .direct_build_power = 100,
+      .direct_build_power = 100/bar_game_tps,
       .energy_capacity = 200*bar_game_resource_denominator,
       .metal_capacity = 200*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaCommander,
+      .required_unit = {BAR_Unit_ArmadaCommander},
     },
     {
       .name = "Armada Aircraft Plant",
       .metal_cost =  860*bar_game_resource_denominator,
       .energy_cost = 1350*bar_game_resource_denominator,
       .build_cost = 7250,
-      .direct_build_power = 100,
+      .direct_build_power = 100/bar_game_tps,
       .energy_capacity = 100*bar_game_resource_denominator,
       .metal_capacity = 100*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaCommander,
+      .required_unit = {BAR_Unit_ArmadaCommander},
     },
     {
             .name = "Armada Construction Bot",
@@ -190,7 +205,7 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
             .build_cost = 3450,
             .build_power = 80/bar_game_tps,
             .energy_production = 7*bar_game_resource_denominator/bar_game_tps,
-            .required_unit = BAR_Unit_ArmadaBotLab
+            .required_unit = {BAR_Unit_ArmadaBotLab}
     },
     {
       .name = "Armada Advanced Solar Collector",
@@ -199,7 +214,7 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_cost = 7950,
       .energy_production = 75*bar_game_resource_denominator/bar_game_tps,
       .energy_capacity = 100*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaConstructionBot,
+      .required_unit = general_armada_tier1_constructor,
     },
     {
       .name = "Armada Geothermal Power plant",
@@ -208,8 +223,9 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_cost = 13100,
       .energy_production = 300*bar_game_resource_denominator/bar_game_tps,
       .energy_capacity = 1000*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaConstructionBot,
+      .required_unit = general_armada_tier1_constructor,
       .max_count = geothermal_limit,
+      .avg_travel_time = 28*bar_game_tps
     },
     {
       .name = "Armada Construction Turret",
@@ -217,7 +233,7 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .energy_cost = 3200*bar_game_resource_denominator,
       .build_cost = 5300,
       .build_power = 200/bar_game_tps,
-      .required_unit = BAR_Unit_ArmadaConstructionBot,
+      .required_unit = general_armada_tier1_constructor,
     },
     {
       .name = "Armada Advanced Bot Lab",
@@ -227,7 +243,7 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .direct_build_power = 300/bar_game_tps,
       .energy_capacity = 200*bar_game_resource_denominator,
       .metal_capacity = 200*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaConstructionBot,
+      .required_unit = {BAR_Unit_ArmadaConstructionBot},
     },
     {
       .name = "Armada Advanced Construction Bot",
@@ -237,7 +253,7 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_power = 180/bar_game_tps,
       .energy_production = 14*bar_game_resource_denominator/bar_game_tps,
       .energy_capacity = 100*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaAdvancedBotLab,
+      .required_unit = {BAR_Unit_ArmadaAdvancedBotLab},
     },
     {
       .name = "Armada Advanced Metal Extractor",
@@ -246,15 +262,17 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_cost = 14900,
       .metal_production = (uint32_t)(7.23*bar_game_resource_denominator/bar_game_tps),
       .metal_capacity = 600*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaAdvancedConstructionBot,
+      .required_unit = general_armada_tier2_constructor,
       .max_count = mine_limit,
+      .avg_travel_time = 280,
+      .energy_upkeep = 20*bar_game_resource_denominator/bar_game_tps,
     },
     {
       .name = "Armada Advanced Energy Converter",
       .metal_cost = 380*bar_game_resource_denominator,
       .energy_cost = 21000*bar_game_resource_denominator,
       .build_cost = 35000,
-      .required_unit = BAR_Unit_ArmadaAdvancedConstructionBot,
+      .required_unit = general_armada_tier2_constructor,
     },
     {
       .name = "Armada Hardened Metal Storage",
@@ -262,16 +280,18 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .energy_cost = 11500*bar_game_resource_denominator,
       .build_cost = 20400,
       .metal_capacity = 10000*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaAdvancedConstructionBot,
+      .required_unit = general_armada_tier2_constructor,
     },
     {
       .name = "Armada Prude",
       .metal_cost = 1150*bar_game_resource_denominator,
       .energy_cost = 25000*bar_game_resource_denominator,
       .build_cost = 41500,
-      .energy_production = 750*bar_game_resource_denominator/bar_game_tps,
+      //.energy_production = 750*bar_game_resource_denominator/bar_game_tps,
       .energy_capacity = 1500*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaAdvancedConstructionBot,
+      .required_unit = general_armada_tier2_constructor,
+      .max_count = geothermal_limit,
+      .avg_travel_time = 28*bar_game_tps
     },
     {
       .name = "Armada Advanced Geothermal Power Plant",
@@ -280,7 +300,9 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_cost = 33300,
       .energy_production = 1250*bar_game_resource_denominator/bar_game_tps,
       .energy_capacity = 12000*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaAdvancedConstructionBot,
+      .required_unit = general_armada_tier2_constructor,
+      .max_count = geothermal_limit,
+      .avg_travel_time = 28*bar_game_tps,
     },
     {
       .name = "Armada Fusion Reactor",
@@ -289,7 +311,7 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_cost = 70000,
       .energy_production = 1000*bar_game_resource_denominator/bar_game_tps,
       .energy_capacity = 2500*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaAdvancedConstructionBot,
+      .required_unit = general_armada_tier2_constructor,
     },
     {
       .name = "Armada Cloakable Fusion Reactor",
@@ -298,7 +320,7 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_cost = 84400,
       .energy_production = 1050*bar_game_resource_denominator/bar_game_tps,
       .energy_capacity = 2500*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaAdvancedConstructionBot,
+      .required_unit = general_armada_tier2_constructor,
     },
     {
       .name = "Armada Advanced Fusion Reactor",
@@ -307,22 +329,77 @@ constexpr BARUnitData BAR_UnitData[BAR_Unit_MAX] =
       .build_cost = 312500,
       .energy_production = 3000*bar_game_resource_denominator/bar_game_tps,
       .energy_capacity = 9000*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaAdvancedConstructionBot,
+      .required_unit = general_armada_tier2_constructor,
     },
     {
-      .name = "Hardened Energy Storage",
+      .name = "Armada Hardened Energy Storage",
       .metal_cost = 830*bar_game_resource_denominator,
       .energy_cost = 10000*bar_game_resource_denominator,
       .build_cost = 20300,
       .energy_capacity = 40000*bar_game_resource_denominator,
-      .required_unit = BAR_Unit_ArmadaAdvancedConstructionBot,
+      .required_unit = general_armada_tier2_constructor,
     },
     {
-      .name = "Armageddon",
+      .name = "Armada Armageddon",
       .metal_cost = 8100*bar_game_resource_denominator,
       .energy_cost = 90000*bar_game_resource_denominator,
       .build_cost = 178500,
-      .required_unit = BAR_Unit_ArmadaAdvancedConstructionBot,
+      .required_unit = general_armada_tier2_constructor,
+    },
+    {
+      .name = "Armada Tick",
+      .metal_cost = 17*bar_game_resource_denominator,
+      .energy_cost = 340*bar_game_resource_denominator,
+      .build_cost = 800,
+      .required_unit = {BAR_Unit_ArmadaBotLab},
+    },
+    {
+      .name = "Armada Construction Aircraft",
+      .metal_cost = 110*bar_game_resource_denominator,
+      .energy_cost = 3000*bar_game_resource_denominator,
+      .build_cost = 7960,
+      .build_power = 60/bar_game_tps,
+      .energy_production = 5*bar_game_resource_denominator/bar_game_tps,
+      .energy_capacity = 25*bar_game_resource_denominator,
+      .required_unit = {BAR_Unit_ArmadaAircraftPlant},
+    },
+    {
+      .name = "Armada Stormbringer",
+      .metal_cost = 145*bar_game_resource_denominator,
+      .energy_cost = 4200*bar_game_resource_denominator,
+      .build_cost = 7250,
+      .required_unit = {BAR_Unit_ArmadaAircraftPlant},
+    },
+    {
+      .name = "Armada Advanced Aircraft Plant",
+      .metal_cost = 3200*bar_game_resource_denominator,
+      .energy_cost = 29000*bar_game_resource_denominator,
+      .build_cost = 20900,
+      .required_unit = {BAR_Unit_ArmadaConstructionAircraft},
+    },
+    {
+      .name = "Armada Blizzard",
+      .metal_cost = 230*bar_game_resource_denominator,
+      .energy_cost = 12500*bar_game_resource_denominator,
+      .build_cost = 21000,
+      .required_unit = {BAR_Unit_ArmadaAdvancedAircraftPlant},
+    },
+    {
+      .name = "Armada Advanced Construction Aircraft",
+      .metal_cost = 340*bar_game_resource_denominator,
+      .energy_cost = 12000*bar_game_resource_denominator,
+      .build_cost = 17750,
+      .build_power = 100/bar_game_tps,
+      .energy_production = 10*bar_game_resource_denominator/bar_game_tps,
+      .energy_capacity = 50*bar_game_resource_denominator,
+      .required_unit = {BAR_Unit_ArmadaAdvancedAircraftPlant},
+    },
+    {
+      .name = "Armada Liche",
+      .metal_cost = 2200*bar_game_resource_denominator,
+      .energy_cost = 46000*bar_game_resource_denominator,
+      .build_cost = 57400,
+      .required_unit = {BAR_Unit_ArmadaAdvancedAircraftPlant},
     },
 };
 
@@ -379,7 +456,7 @@ constexpr struct GameConfig BAR_game_config = {
         bar_game_name,
         1,
         BAR_Unit_MAX,
-        32,
+        100,
         BAR_ResourceType_MAX,
         bar_game_resource_denominator,
         bar_game_get_unit_name,
@@ -419,6 +496,19 @@ inline void bar_game_tick(void* game_in)
       player.resources[i] += player.total_resource_rates[i];
     }
 
+    // Unit upkeep
+    for (uint32_t i = 0; i < BAR_game_config.num_resource_types; i++)
+    {
+      if (player.resources[i] > player.total_resource_upkeep[i])
+      {
+        player.resources[i] -= player.total_resource_upkeep[i];
+      }
+      else
+      {
+        player.resources[i] = 0;
+      }
+    }
+
     // Cash out converters
     if ((game->tick % bar_game_tps == 0) && (player.resources[BAR_ResourceType_Metal] < player.total_resource_capacity[BAR_ResourceType_Metal]))
     {
@@ -449,8 +539,19 @@ inline void bar_game_tick(void* game_in)
           else
           {
             auto unit_type = (BAR_Unit)current_instruction.data;
-            if (BAR_UnitData[unit_type].required_unit != BAR_Unit_None &&
-                player.num_units[BAR_UnitData[unit_type].required_unit] == 0)
+            BAR_Unit required_unit = BAR_Unit_None;
+            for (uint32_t i = 0; i < max_num_required_units; i++)
+            {
+              if (BAR_UnitData[unit_type].required_unit[i] == BAR_Unit_None)
+                break;
+              required_unit = BAR_UnitData[unit_type].required_unit[i];
+              if (player.num_units[required_unit])
+              {
+                break;
+              }
+            }
+            if (required_unit != BAR_Unit_None &&
+                player.num_units[required_unit] == 0)
             {
               // Invalid (do not have prerequisite unit)
               advance_instruction = true;
@@ -479,7 +580,7 @@ inline void bar_game_tick(void* game_in)
               } else
               {
                 // Add resources
-                uint32_t build_points_to_give = player.total_build_power + BAR_UnitData[BAR_UnitData[unit_type].required_unit].direct_build_power;
+                uint32_t build_points_to_give = player.total_build_power + BAR_UnitData[required_unit].direct_build_power;
                 if (BAR_UnitData[unit_type].energy_cost > 0)
                 {
                   uint32_t build_points_allowed_by_energy = ((uint64_t)player.resources[BAR_ResourceType_Energy]*(uint64_t)BAR_UnitData[unit_type].build_cost) / (uint64_t)BAR_UnitData[unit_type].energy_cost;
@@ -532,6 +633,8 @@ inline void bar_game_tick(void* game_in)
                 player.total_resource_rates[BAR_ResourceType_Energy] += BAR_UnitData[unit_type].energy_production;
                 player.total_resource_capacity[BAR_ResourceType_Energy] += BAR_UnitData[unit_type].energy_capacity;
                 player.total_resource_capacity[BAR_ResourceType_Metal] += BAR_UnitData[unit_type].metal_capacity;
+                player.total_resource_upkeep[BAR_ResourceType_Energy] += BAR_UnitData[unit_type].energy_upkeep;
+                player.total_resource_upkeep[BAR_ResourceType_Metal] += BAR_UnitData[unit_type].metal_upkeep;
 
                 if (unit_type == BAR_Unit_ArmadaAdvancedMetalExtractor)
                 {
@@ -542,6 +645,22 @@ inline void bar_game_tick(void* game_in)
                     player.total_resource_rates[BAR_ResourceType_Energy] -= BAR_UnitData[BAR_Unit_ArmadaMetalExtractor].energy_production;
                     player.total_resource_capacity[BAR_ResourceType_Energy] -= BAR_UnitData[BAR_Unit_ArmadaMetalExtractor].energy_capacity;
                     player.total_resource_capacity[BAR_ResourceType_Metal] -= BAR_UnitData[BAR_Unit_ArmadaMetalExtractor].metal_capacity;
+                    player.total_resource_upkeep[BAR_ResourceType_Energy] -= BAR_UnitData[BAR_Unit_ArmadaMetalExtractor].energy_upkeep;
+                    player.total_resource_upkeep[BAR_ResourceType_Metal] -= BAR_UnitData[BAR_Unit_ArmadaMetalExtractor].metal_upkeep;
+                  }
+                }
+
+                if (unit_type == BAR_Unit_ArmadaAdvancedGeothermalPowerplant)
+                {
+                  if (player.num_units[BAR_Unit_ArmadaAdvancedGeothermalPowerplant] < player.num_units[BAR_Unit_ArmadaGeothermalPowerplant])
+                  {
+                    // Deduct old metal extractor power
+                    player.total_resource_rates[BAR_ResourceType_Metal] -= BAR_UnitData[BAR_Unit_ArmadaGeothermalPowerplant].metal_production;
+                    player.total_resource_rates[BAR_ResourceType_Energy] -= BAR_UnitData[BAR_Unit_ArmadaGeothermalPowerplant].energy_production;
+                    player.total_resource_capacity[BAR_ResourceType_Energy] -= BAR_UnitData[BAR_Unit_ArmadaGeothermalPowerplant].energy_capacity;
+                    player.total_resource_capacity[BAR_ResourceType_Metal] -= BAR_UnitData[BAR_Unit_ArmadaGeothermalPowerplant].metal_capacity;
+                    player.total_resource_upkeep[BAR_ResourceType_Energy] -= BAR_UnitData[BAR_Unit_ArmadaGeothermalPowerplant].energy_upkeep;
+                    player.total_resource_upkeep[BAR_ResourceType_Metal] -= BAR_UnitData[BAR_Unit_ArmadaGeothermalPowerplant].metal_upkeep;
                   }
                 }
 

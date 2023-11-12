@@ -14,7 +14,7 @@ class ProblemBARBuildOrder: public Problem {
 public:
   uint32_t num_instructions;
 
-  uint32_t sim_time_ticks = 20*60*25;
+  uint32_t sim_time_ticks = bar_game_tps*60*30;
 
   explicit ProblemBARBuildOrder(uint32_t n_instructions=100): num_instructions(n_instructions), Problem(sizeof(Game<BAR_game_config>::Instruction) * n_instructions){};
 
@@ -26,6 +26,10 @@ public:
   }
 
   double scalarTrial(uint8_t *data) override;
+  double scalarTrialNukeRush(uint8_t *data) const;
+  double scalarTrialTickSpam(uint8_t *data) const;
+  double scalarTrialEconomyRush(uint8_t *data) const;
+  double scalarTrialBomberRush(uint8_t *data) const;
 
   void prettyPrintData(uint8_t *data) override;
 
