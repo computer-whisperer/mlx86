@@ -14,7 +14,7 @@ class ProblemBARBuildOrder: public Problem {
 public:
   uint32_t num_instructions;
 
-  uint32_t sim_time_ticks = bar_game_tps*60*30;
+  uint32_t sim_time_ticks = bar_game_tps*60*25;
 
   explicit ProblemBARBuildOrder(uint32_t n_instructions=100): num_instructions(n_instructions), Problem(sizeof(Game<BAR_game_config>::Instruction) * n_instructions){};
 

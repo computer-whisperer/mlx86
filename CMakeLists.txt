@@ -3,6 +3,9 @@ project(mlx86 C CXX ASM)
 set(CMAKE_POSITION_INDEPENDENT_CODE FALSE)
 set(CMAKE_CXX_STANDARD 20)
 
+
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops")
+
 #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
 #set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
 #set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined")
@@ -52,6 +55,7 @@ set(SOURCES
         src/problems/ProblemHelloWorld.cpp
         src/problems/ProblemTravellingSalesman.cpp
         src/problems/rts_buildorders/game.cpp
+        src/problems/rts_buildorders/bar_game_config.cpp
        # src/problems/problem_audio_regen.cpp
         src/problems/ProblemX86StringMatch.cpp
         #src/problems/starcraft2_supplymax.cpp

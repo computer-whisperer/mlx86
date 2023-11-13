@@ -77,7 +77,7 @@ int main(int argc, char * argv[])
 	struct SolverResults_T results{};
 
 	init_reporter_process(reporter_mem, (Problem*)problem);
-	solver->run((Problem*)problem, reporter_mem, 10, 4000*60*30, &results);
+	solver->run((Problem*)problem, reporter_mem, 10, 4000*60*1, &results);
 	deinit_reporter_process(reporter_mem);
 
 	{
