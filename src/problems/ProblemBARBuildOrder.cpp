@@ -7,13 +7,12 @@
 
 
 double ProblemBARBuildOrder::scalarTrial(uint8_t *data) {
-  return scalarTrialNukeRush(data);
+  return scalarTrialEconomyRush(data);
 }
 
 double ProblemBARBuildOrder::scalarTrialTickSpam(uint8_t *data) const {
   auto instructions = (Game<BAR_game_config>::Instruction*)data;
   Game<BAR_game_config> game;
-  bar_game_setup(&game);
   game.players[0].instructions = instructions;
   game.players[0].num_instructions = num_instructions;
 
@@ -42,7 +41,6 @@ double ProblemBARBuildOrder::scalarTrialTickSpam(uint8_t *data) const {
 double ProblemBARBuildOrder::scalarTrialBomberRush(uint8_t *data) const {
   auto instructions = (Game<BAR_game_config>::Instruction*)data;
   Game<BAR_game_config> game;
-  bar_game_setup(&game);
   game.players[0].instructions = instructions;
   game.players[0].num_instructions = num_instructions;
 
@@ -82,11 +80,11 @@ double ProblemBARBuildOrder::scalarTrialBomberRush(uint8_t *data) const {
 double ProblemBARBuildOrder::scalarTrialNukeRush(uint8_t *data) const {
   auto instructions = (Game<BAR_game_config>::Instruction*)data;
   Game<BAR_game_config> game;
-  bar_game_setup(&game);
   game.players[0].instructions = instructions;
   game.players[0].num_instructions = num_instructions;
 
   double score = 0;
+  float armageddon_count = 0;
   for (uint32_t i = 0; i < sim_time_ticks; i++)
   {
     game.do_tick();
@@ -103,17 +101,18 @@ double ProblemBARBuildOrder::scalarTrialNukeRush(uint8_t *data) const {
     {
       score += 0.1;
     }
-    uint32_t nuke_energy_count = (game.players[0].cached_resource_rates[BAR_ResourceType_Energy] - bar_game_get_full_upkeep(&game.players[0], BAR_ResourceType_Energy)) / ((1111 * bar_game_resource_denominator) / bar_game_tps);
-    uint32_t armageddon_count = bar_game_get_num_of_unit_type(&game.players[0], BAR_UnitType_ArmadaArmageddon);
+    float nuke_energy_count = (float)(game.players[0].cached_resource_rates[BAR_ResourceType_Energy] - bar_game_get_full_upkeep(&game.players[0], BAR_ResourceType_Energy)) / (float)((1111 * bar_game_resource_denominator) / bar_game_tps);
+    armageddon_count = (float)bar_game_get_num_of_unit_type(&game.players[0], BAR_UnitType_ArmadaArmageddon);
     if (nuke_energy_count < armageddon_count)
     {
       armageddon_count = nuke_energy_count;
     }
-    score += armageddon_count * 10;
+    score += armageddon_count * 3;
   }
   score /= sim_time_ticks;
 
-  score += (float)bar_game_get_num_of_unit_type(&game.players[0], BAR_UnitType_ArmadaArmageddon)/3;
+  score += armageddon_count * 3;
+
   score += game.players[0].cached_resource_rates[BAR_ResourceType_Metal] / 100000;
   score += game.players[0].cached_resource_rates[BAR_ResourceType_Energy] / 1000000;
 
@@ -133,7 +132,6 @@ double ProblemBARBuildOrder::scalarTrialNukeRush(uint8_t *data) const {
 double ProblemBARBuildOrder::scalarTrialEconomyRush(uint8_t *data) const {
   auto instructions = (Game<BAR_game_config>::Instruction*)data;
   Game<BAR_game_config> game;
-  bar_game_setup(&game);
   game.players[0].instructions = instructions;
   game.players[0].num_instructions = num_instructions;
 
@@ -165,7 +163,6 @@ double ProblemBARBuildOrder::scalarTrialEconomyRush(uint8_t *data) const {
 void ProblemBARBuildOrder::prettyPrintData(uint8_t *data) {
   auto instructions = (Game<BAR_game_config>::Instruction*)data;
   Game<BAR_game_config> game;
-  bar_game_setup(&game);
   game.players[0].instructions = instructions;
   game.players[0].num_instructions = num_instructions;
   game.players[0].print_instructions("");
@@ -173,7 +170,7 @@ void ProblemBARBuildOrder::prettyPrintData(uint8_t *data) {
   {
     game.do_tick();
   }
-  game.print_summary();
+  game.print_summary(false);
 }
 
 void ProblemBARBuildOrder::dataInit(uint8_t *data) {
@@ -202,11 +199,17 @@ void ProblemBARBuildOrder::scrambler(U8 *data) {
         break;
       }
     }
-
   }
-  // Set build instruction
+  else if (fast_rand()%5 == 0)
+  {
+    // Set reclaim unit instruction
+    auto instruction = &instructions[fast_rand()%(num_instructions)];
+    instruction->type = BAR_Instruction_Reclaim;
+    instruction->data = (fast_rand()%(BAR_UnitType_MAX));
+  }
   else
   {
+    // Set build instruction
     auto instruction = &instructions[fast_rand()%(num_instructions)];
     instruction->type = BAR_Instruction_Build;
     instruction->data = (fast_rand()%(BAR_UnitType_MAX));
