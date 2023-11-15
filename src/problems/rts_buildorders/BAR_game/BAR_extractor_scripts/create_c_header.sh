@@ -3,7 +3,7 @@ units=$(cat desired_units.txt)
 echo "return {" > unitPaths.lua
 
 for tool in $units; do
-  path=$(find .. -name $tool.lua 2>/dev/null | head -n 1)
+  path=$(find ../Beyond-All-Reason/units -name $tool.lua 2>/dev/null | head -n 1)
   echo "{\"$tool\", \"$path\"}," >> unitPaths.lua
 done
 

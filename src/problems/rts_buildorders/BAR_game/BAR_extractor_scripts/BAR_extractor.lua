@@ -1,5 +1,10 @@
 local units = dofile("unitPaths.lua")
 
+VFS = {}
+VFS.Include = function(path)
+    return dofile("../Beyond-All-Reason/" .. path)
+end
+
 local json = require("json")
 local file = io.open("../Beyond-All-Reason/language/en/units.json", "r")
 local content = file:read("*all")
