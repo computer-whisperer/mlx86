@@ -11,9 +11,8 @@ print("enum BAR_UnitType {")
 
 for unit, _ in pairs(language["units"]["names"]) do
     if desiredUnits[unit] then
-        print(unit .. ",")
+        print("BAR_UnitType_" unit .. ",")
     end
-    print(unit .. ",")
 end
 
 print("BAR_UnitType_MAX\n};")

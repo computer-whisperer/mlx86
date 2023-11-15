@@ -8,6 +8,6 @@ with open('../Beyond-All-Reason/language/en/units.json') as f:
 print("enum BAR_UnitType {")
 
 for unit in data["units"]["names"]:
-    print(unit + ",")
+    print("BAR_UnitType_" + unit + ",")
 
 print("BAR_UnitType_MAX\n};")

@@ -24,6 +24,7 @@ include_directories(
         src
         src/executors
         src/problems
+        src/problems/rts_buildorders
         src/problems/darwin2021
         src/problems/x86
         src/reporters
@@ -55,7 +56,7 @@ set(SOURCES
         src/problems/ProblemHelloWorld.cpp
         src/problems/ProblemTravellingSalesman.cpp
         src/problems/rts_buildorders/game.cpp
-        src/problems/rts_buildorders/bar_game_config.cpp
+        src/problems/rts_buildorders/BAR_game/bar_game_config.cpp
        # src/problems/problem_audio_regen.cpp
         src/problems/ProblemX86StringMatch.cpp
         #src/problems/starcraft2_supplymax.cpp
