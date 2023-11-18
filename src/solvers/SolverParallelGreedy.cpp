@@ -128,7 +128,7 @@ struct shared_data_t
 	struct sync_mem_t sync_mems[NUM_PROCESSES];
 };
 
-void SolverParallelGreedy::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out)
+void SolverParallelGreedy::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out, uint8_t* starting_data)
 {
 	// Setup process data
 	struct shared_data_t * shared_data = static_cast<shared_data_t *>(mmap(NULL, sizeof(struct shared_data_t),
@@ -141,7 +141,14 @@ void SolverParallelGreedy::run(Problem *problem, struct REPORTER_MEM_T * reporte
 	for (U32 i = 0; i < NUM_PROCESSES; i++)
 	{
 		sem_init(&(shared_data->sync_mems[i].sem), 1, 1);
-		problem->dataInit(shared_data->sync_mems[i].data);
+    if (starting_data)
+    {
+      memcpy(shared_data->sync_mems[i].data, starting_data, problem->data_len);
+    }
+    else
+    {
+      problem->dataInit(shared_data->sync_mems[i].data);
+    }
 		shared_data->sync_mems[i].score = 0;
 	}
 

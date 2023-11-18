@@ -375,7 +375,7 @@ BAR_UnitType_corgantuw,
 BAR_UnitType_corfmine3,
 BAR_UnitType_MAX
 };
-#include "bar_game_unit_type_metadata_type.hpp"
+#include "bar_game_types.hpp"
 constexpr inline static struct BARUnitTypeMetadata_T bar_game_get_unit_type_metadata_generated(const BAR_UnitType unit_type) {
     switch (unit_type) {
         default:
@@ -403,6 +403,7 @@ case BAR_UnitType_armck:
     .build_power = (uint32_t)(80/ bar_game_tps),
     .energy_production = (uint32_t)(7 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(7 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armsolar,
       BAR_UnitType_armadvsol,
@@ -435,6 +436,9 @@ case BAR_UnitType_armck:
       BAR_UnitType_armjuno,
       BAR_UnitType_armsy,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 130,
   };
 case BAR_UnitType_armrectr:
   return {
@@ -443,6 +447,9 @@ case BAR_UnitType_armrectr:
     .energy_cost = (uint32_t)(1400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2400),
     .build_power = (uint32_t)(200/ bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 0,
+    .build_distance = 96,
   };
 case BAR_UnitType_armrock:
   return {
@@ -503,6 +510,9 @@ case BAR_UnitType_armcom:
       BAR_UnitType_armuwms,
       BAR_UnitType_armuwes,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 145,
   };
 case BAR_UnitType_armvader:
   return {
@@ -517,6 +527,7 @@ case BAR_UnitType_armaser:
     .metal_cost = (uint32_t)(78 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4940),
+    .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armmark:
   return {
@@ -532,6 +543,9 @@ case BAR_UnitType_armspy:
     .energy_cost = (uint32_t)(8800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(17600),
     .build_power = (uint32_t)(50/ bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 0,
+    .build_distance = 136,
   };
 case BAR_UnitType_armfast:
   return {
@@ -549,6 +563,7 @@ case BAR_UnitType_armfark:
     .build_power = (uint32_t)(140/ bar_game_tps),
     .energy_production = (uint32_t)(12 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(25 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(12 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armsolar,
       BAR_UnitType_armwin,
@@ -558,6 +573,9 @@ case BAR_UnitType_armfark:
       BAR_UnitType_armmark,
       BAR_UnitType_armaser,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_armspid:
   return {
@@ -567,6 +585,10 @@ case BAR_UnitType_armspid:
     .build_cost = (uint32_t)(5100),
     .build_power = (uint32_t)(150/ bar_game_tps),
     .energy_production = (uint32_t)(0.7 * bar_game_resource_denominator / bar_game_tps),
+    .energy_upkeep = (uint32_t)(0.7 * bar_game_resource_denominator/bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 0,
+    .build_distance = 150,
   };
 case BAR_UnitType_armamph:
   return {
@@ -605,6 +627,7 @@ case BAR_UnitType_armack:
     .build_power = (uint32_t)(180/ bar_game_tps),
     .energy_production = (uint32_t)(14 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(100 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(14 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armfus,
       BAR_UnitType_armafus,
@@ -637,6 +660,9 @@ case BAR_UnitType_armack:
       BAR_UnitType_armlab,
       BAR_UnitType_armalab,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_armaak:
   return {
@@ -708,6 +734,7 @@ case BAR_UnitType_armsolar:
     .energy_cost = (uint32_t)(0 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2800),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(-20 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armadvsol:
   return {
@@ -759,6 +786,7 @@ case BAR_UnitType_armmex:
     .energy_cost = (uint32_t)(500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1800),
     .metal_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(3 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 1,
   };
 case BAR_UnitType_armamex:
@@ -768,6 +796,7 @@ case BAR_UnitType_armamex:
     .energy_cost = (uint32_t)(1500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1800),
     .metal_capacity = (uint32_t)(75 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(3 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 1,
   };
 case BAR_UnitType_armmakr:
@@ -808,6 +837,8 @@ case BAR_UnitType_armalab:
       BAR_UnitType_armspy,
       BAR_UnitType_armmark,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armlab:
   return {
@@ -828,6 +859,8 @@ case BAR_UnitType_armlab:
       BAR_UnitType_armwar,
       BAR_UnitType_armflea,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armvp:
   return {
@@ -850,6 +883,8 @@ case BAR_UnitType_armvp:
       BAR_UnitType_armjanus,
       BAR_UnitType_armsam,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armap:
   return {
@@ -868,6 +903,8 @@ case BAR_UnitType_armap:
       BAR_UnitType_armatlas,
       BAR_UnitType_armkam,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armhp:
   return {
@@ -885,6 +922,8 @@ case BAR_UnitType_armhp:
       BAR_UnitType_armah,
       BAR_UnitType_armmh,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armnanotc:
   return {
@@ -893,6 +932,10 @@ case BAR_UnitType_armnanotc:
     .energy_cost = (uint32_t)(3200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5300),
     .build_power = (uint32_t)(200/ bar_game_tps),
+    .energy_upkeep = (uint32_t)(30 * bar_game_resource_denominator/bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 400,
   };
 case BAR_UnitType_armeyes:
   return {
@@ -900,6 +943,7 @@ case BAR_UnitType_armeyes:
     .metal_cost = (uint32_t)(32 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(850 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(750),
+    .energy_upkeep = (uint32_t)(3 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armrad:
   return {
@@ -984,6 +1028,7 @@ case BAR_UnitType_armjamt:
     .metal_cost = (uint32_t)(240 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(8500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9950),
+    .energy_upkeep = (uint32_t)(40 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armjuno:
   return {
@@ -1010,6 +1055,8 @@ case BAR_UnitType_armsy:
       BAR_UnitType_armroy,
       BAR_UnitType_armsub,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armtide:
   return {
@@ -1079,6 +1126,8 @@ case BAR_UnitType_armshltx:
       BAR_UnitType_armlun,
       BAR_UnitType_armthor,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armageo:
   return {
@@ -1107,6 +1156,7 @@ case BAR_UnitType_armmoho:
     .energy_cost = (uint32_t)(7700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(14900),
     .metal_capacity = (uint32_t)(600 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 4,
   };
 case BAR_UnitType_armmmkr:
@@ -1147,6 +1197,7 @@ case BAR_UnitType_armveil:
     .metal_cost = (uint32_t)(125 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(19000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9100),
+    .energy_upkeep = (uint32_t)(125 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armfort:
   return {
@@ -1162,6 +1213,9 @@ case BAR_UnitType_armasp:
     .energy_cost = (uint32_t)(4300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9100),
     .build_power = (uint32_t)(1000/ bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_armtarg:
   return {
@@ -1169,6 +1223,7 @@ case BAR_UnitType_armtarg:
     .metal_cost = (uint32_t)(810 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(7200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(8700),
+    .energy_upkeep = (uint32_t)(100 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armsd:
   return {
@@ -1176,6 +1231,7 @@ case BAR_UnitType_armsd:
     .metal_cost = (uint32_t)(710 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(7100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(11900),
+    .energy_upkeep = (uint32_t)(125 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armgate:
   return {
@@ -1272,6 +1328,7 @@ case BAR_UnitType_armcv:
     .build_power = (uint32_t)(90/ bar_game_tps),
     .energy_production = (uint32_t)(10 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(10 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armsolar,
       BAR_UnitType_armadvsol,
@@ -1304,6 +1361,9 @@ case BAR_UnitType_armcv:
       BAR_UnitType_armjuno,
       BAR_UnitType_armsy,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 130,
   };
 case BAR_UnitType_armbeaver:
   return {
@@ -1314,6 +1374,7 @@ case BAR_UnitType_armbeaver:
     .build_power = (uint32_t)(80/ bar_game_tps),
     .energy_production = (uint32_t)(8 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(8 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armsolar,
       BAR_UnitType_armadvsol,
@@ -1359,6 +1420,9 @@ case BAR_UnitType_armbeaver:
       BAR_UnitType_armfrt,
       BAR_UnitType_armptl,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 112,
   };
 case BAR_UnitType_armmlv:
   return {
@@ -1374,6 +1438,9 @@ case BAR_UnitType_armmlv:
       BAR_UnitType_armdrag,
       BAR_UnitType_armeyes,
     },
+    .is_builder = 1,
+    .can_assist = 0,
+    .build_distance = 96,
   };
 case BAR_UnitType_armfav:
   return {
@@ -1433,6 +1500,7 @@ case BAR_UnitType_armca:
     .build_power = (uint32_t)(60/ bar_game_tps),
     .energy_production = (uint32_t)(5 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(25 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(5 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armsolar,
       BAR_UnitType_armadvsol,
@@ -1466,6 +1534,9 @@ case BAR_UnitType_armca:
       BAR_UnitType_armjuno,
       BAR_UnitType_armsy,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_armpeep:
   return {
@@ -1501,6 +1572,7 @@ case BAR_UnitType_armkam:
     .metal_cost = (uint32_t)(135 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5050),
+    .energy_upkeep = (uint32_t)(0.8 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armch:
   return {
@@ -1511,6 +1583,7 @@ case BAR_UnitType_armch:
     .build_power = (uint32_t)(110/ bar_game_tps),
     .energy_production = (uint32_t)(11 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(75 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(11 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armsolar,
       BAR_UnitType_armadvsol,
@@ -1547,6 +1620,9 @@ case BAR_UnitType_armch:
       BAR_UnitType_armplat,
       BAR_UnitType_armtide,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 150,
   };
 case BAR_UnitType_armsh:
   return {
@@ -1612,6 +1688,9 @@ case BAR_UnitType_armcs:
       BAR_UnitType_armfrt,
       BAR_UnitType_armfhlt,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 200,
   };
 case BAR_UnitType_armrecl:
   return {
@@ -1620,6 +1699,9 @@ case BAR_UnitType_armrecl:
     .energy_cost = (uint32_t)(3000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6200),
     .build_power = (uint32_t)(150/ bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 0,
+    .build_distance = 140,
   };
 case BAR_UnitType_armdecade:
   return {
@@ -1662,6 +1744,8 @@ case BAR_UnitType_armlun:
     .metal_cost = (uint32_t)(1150 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(23000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(32000),
+    .is_builder = 0,
+    .can_assist = 1,
   };
 case BAR_UnitType_armthor:
   return {
@@ -1693,6 +1777,8 @@ case BAR_UnitType_armavp:
       BAR_UnitType_armseer,
       BAR_UnitType_armjam,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armamsub:
   return {
@@ -1710,6 +1796,8 @@ case BAR_UnitType_armamsub:
       BAR_UnitType_armaak,
       BAR_UnitType_armdecom,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armplat:
   return {
@@ -1727,6 +1815,8 @@ case BAR_UnitType_armplat:
       BAR_UnitType_armsfig,
       BAR_UnitType_armsehak,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armfdrag:
   return {
@@ -1755,6 +1845,7 @@ case BAR_UnitType_armfrt:
     .metal_cost = (uint32_t)(90 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2200),
+    .energy_upkeep = (uint32_t)(0.1 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armptl:
   return {
@@ -1770,6 +1861,10 @@ case BAR_UnitType_armnanotcplat:
     .energy_cost = (uint32_t)(2600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5300),
     .build_power = (uint32_t)(200/ bar_game_tps),
+    .energy_upkeep = (uint32_t)(30 * bar_game_resource_denominator/bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 400,
   };
 case BAR_UnitType_armfhp:
   return {
@@ -1787,6 +1882,8 @@ case BAR_UnitType_armfhp:
       BAR_UnitType_armah,
       BAR_UnitType_armmh,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armfmkr:
   return {
@@ -1839,6 +1936,8 @@ case BAR_UnitType_armaap:
       BAR_UnitType_armstil,
       BAR_UnitType_armliche,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armacv:
   return {
@@ -1849,6 +1948,7 @@ case BAR_UnitType_armacv:
     .build_power = (uint32_t)(250/ bar_game_tps),
     .energy_production = (uint32_t)(20 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(100 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armfus,
       BAR_UnitType_armckfus,
@@ -1881,6 +1981,9 @@ case BAR_UnitType_armacv:
       BAR_UnitType_armavp,
       BAR_UnitType_armshltx,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_armconsul:
   return {
@@ -1891,6 +1994,7 @@ case BAR_UnitType_armconsul:
     .build_power = (uint32_t)(150/ bar_game_tps),
     .energy_production = (uint32_t)(15 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(100 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(15 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armsolar,
       BAR_UnitType_armmex,
@@ -1915,6 +2019,9 @@ case BAR_UnitType_armconsul:
       BAR_UnitType_armcs,
       BAR_UnitType_armroy,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_armcroc:
   return {
@@ -1985,6 +2092,7 @@ case BAR_UnitType_armjam:
     .metal_cost = (uint32_t)(105 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5930),
+    .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armasy:
   return {
@@ -2008,6 +2116,8 @@ case BAR_UnitType_armasy:
       BAR_UnitType_armmship,
       BAR_UnitType_armepoch,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armtl:
   return {
@@ -2025,6 +2135,7 @@ case BAR_UnitType_armcsa:
     .build_power = (uint32_t)(75/ bar_game_tps),
     .energy_production = (uint32_t)(20 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(75 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armsolar,
       BAR_UnitType_armadvsol,
@@ -2061,6 +2172,9 @@ case BAR_UnitType_armcsa:
       BAR_UnitType_armplat,
       BAR_UnitType_armtide,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_armsaber:
   return {
@@ -2106,6 +2220,7 @@ case BAR_UnitType_armaca:
     .build_power = (uint32_t)(100/ bar_game_tps),
     .energy_production = (uint32_t)(10 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(10 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armfus,
       BAR_UnitType_armafus,
@@ -2139,6 +2254,9 @@ case BAR_UnitType_armaca:
       BAR_UnitType_armplat,
       BAR_UnitType_armshltx,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_armbrawl:
   return {
@@ -2202,6 +2320,7 @@ case BAR_UnitType_armliche:
     .metal_cost = (uint32_t)(2200 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(46000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(57400),
+    .energy_upkeep = (uint32_t)(40 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armacsub:
   return {
@@ -2212,6 +2331,7 @@ case BAR_UnitType_armacsub:
     .build_power = (uint32_t)(300/ bar_game_tps),
     .energy_production = (uint32_t)(30 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(150 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(30 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_armuwfus,
       BAR_UnitType_armuwmmm,
@@ -2227,6 +2347,9 @@ case BAR_UnitType_armacsub:
       BAR_UnitType_armfflak,
       BAR_UnitType_armkraken,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 180,
   };
 case BAR_UnitType_armmls:
   return {
@@ -2254,6 +2377,9 @@ case BAR_UnitType_armmls:
       BAR_UnitType_armamb,
       BAR_UnitType_armkraken,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 250,
   };
 case BAR_UnitType_armcrus:
   return {
@@ -2289,6 +2415,7 @@ case BAR_UnitType_armsjam:
     .metal_cost = (uint32_t)(110 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6040),
+    .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armcarry:
   return {
@@ -2299,6 +2426,9 @@ case BAR_UnitType_armcarry:
     .build_power = (uint32_t)(1000/ bar_game_tps),
     .energy_production = (uint32_t)(300 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(1500 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(25 * bar_game_resource_denominator/bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 0,
   };
 case BAR_UnitType_armbats:
   return {
@@ -2367,6 +2497,7 @@ case BAR_UnitType_armuwmme:
     .energy_cost = (uint32_t)(9800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(24800),
     .metal_capacity = (uint32_t)(600 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 4,
   };
 case BAR_UnitType_armason:
@@ -2382,6 +2513,7 @@ case BAR_UnitType_armfatf:
     .metal_cost = (uint32_t)(800 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(7300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9880),
+    .energy_upkeep = (uint32_t)(150 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_armatl:
   return {
@@ -2404,6 +2536,8 @@ case BAR_UnitType_armshltxuw:
       BAR_UnitType_armmar,
       BAR_UnitType_armcroc,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_armdecom:
   return {
@@ -2432,6 +2566,9 @@ case BAR_UnitType_armdecom:
       BAR_UnitType_armuwes,
       BAR_UnitType_armfmkr,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 145,
   };
 case BAR_UnitType_corcom:
   return {
@@ -2464,6 +2601,9 @@ case BAR_UnitType_corcom:
       BAR_UnitType_coruwms,
       BAR_UnitType_coruwes,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 145,
   };
 case BAR_UnitType_corsolar:
   return {
@@ -2472,6 +2612,7 @@ case BAR_UnitType_corsolar:
     .energy_cost = (uint32_t)(0 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2800),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(-20 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corwin:
   return {
@@ -2504,6 +2645,7 @@ case BAR_UnitType_cormex:
     .energy_cost = (uint32_t)(500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1870),
     .metal_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(3 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 1,
   };
 case BAR_UnitType_cormakr:
@@ -2532,6 +2674,8 @@ case BAR_UnitType_corlab:
       BAR_UnitType_corthud,
       BAR_UnitType_corcrash,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_corvp:
   return {
@@ -2554,6 +2698,8 @@ case BAR_UnitType_corvp:
       BAR_UnitType_corwolv,
       BAR_UnitType_cormist,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_corap:
   return {
@@ -2572,6 +2718,8 @@ case BAR_UnitType_corap:
       BAR_UnitType_corvalk,
       BAR_UnitType_corbw,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_coreyes:
   return {
@@ -2579,6 +2727,7 @@ case BAR_UnitType_coreyes:
     .metal_cost = (uint32_t)(32 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(850 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(750),
+    .energy_upkeep = (uint32_t)(5 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corrad:
   return {
@@ -2648,6 +2797,7 @@ case BAR_UnitType_corck:
     .build_power = (uint32_t)(80/ bar_game_tps),
     .energy_production = (uint32_t)(7 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(7 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_corsolar,
       BAR_UnitType_coradvsol,
@@ -2680,6 +2830,9 @@ case BAR_UnitType_corck:
       BAR_UnitType_corjuno,
       BAR_UnitType_corsy,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 130,
   };
 case BAR_UnitType_corak:
   return {
@@ -2695,6 +2848,9 @@ case BAR_UnitType_cornecro:
     .energy_cost = (uint32_t)(1400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2400),
     .build_power = (uint32_t)(200/ bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 0,
+    .build_distance = 96,
   };
 case BAR_UnitType_corstorm:
   return {
@@ -2726,6 +2882,7 @@ case BAR_UnitType_corcv:
     .build_power = (uint32_t)(90/ bar_game_tps),
     .energy_production = (uint32_t)(10 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(10 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_corsolar,
       BAR_UnitType_coradvsol,
@@ -2758,6 +2915,9 @@ case BAR_UnitType_corcv:
       BAR_UnitType_corjuno,
       BAR_UnitType_corsy,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 130,
   };
 case BAR_UnitType_cormuskrat:
   return {
@@ -2767,6 +2927,7 @@ case BAR_UnitType_cormuskrat:
     .build_cost = (uint32_t)(6860),
     .build_power = (uint32_t)(80/ bar_game_tps),
     .energy_production = (uint32_t)(8 * bar_game_resource_denominator / bar_game_tps),
+    .energy_upkeep = (uint32_t)(8 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_corsolar,
       BAR_UnitType_coradvsol,
@@ -2812,6 +2973,9 @@ case BAR_UnitType_cormuskrat:
       BAR_UnitType_corfrt,
       BAR_UnitType_corptl,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 110,
   };
 case BAR_UnitType_cormlv:
   return {
@@ -2827,6 +2991,9 @@ case BAR_UnitType_cormlv:
       BAR_UnitType_cordrag,
       BAR_UnitType_coreyes,
     },
+    .is_builder = 1,
+    .can_assist = 0,
+    .build_distance = 96,
   };
 case BAR_UnitType_corfav:
   return {
@@ -2886,6 +3053,7 @@ case BAR_UnitType_corca:
     .build_power = (uint32_t)(60/ bar_game_tps),
     .energy_production = (uint32_t)(5 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(25 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(5 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_corsolar,
       BAR_UnitType_coradvsol,
@@ -2919,6 +3087,9 @@ case BAR_UnitType_corca:
       BAR_UnitType_corjuno,
       BAR_UnitType_corsy,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_corfink:
   return {
@@ -2981,6 +3152,7 @@ case BAR_UnitType_corexp:
     .energy_cost = (uint32_t)(1900 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2720),
     .metal_capacity = (uint32_t)(75 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(3 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 1,
   };
 case BAR_UnitType_coralab:
@@ -3011,6 +3183,8 @@ case BAR_UnitType_coralab:
       BAR_UnitType_corspec,
       BAR_UnitType_cormando,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_corhp:
   return {
@@ -3029,6 +3203,8 @@ case BAR_UnitType_corhp:
       BAR_UnitType_cormh,
       BAR_UnitType_corhal,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_cornanotc:
   return {
@@ -3037,6 +3213,10 @@ case BAR_UnitType_cornanotc:
     .energy_cost = (uint32_t)(3200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5300),
     .build_power = (uint32_t)(200/ bar_game_tps),
+    .energy_upkeep = (uint32_t)(30 * bar_game_resource_denominator/bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 400,
   };
 case BAR_UnitType_cormaw:
   return {
@@ -3073,6 +3253,7 @@ case BAR_UnitType_cormadsam:
     .metal_cost = (uint32_t)(315 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5240),
+    .energy_upkeep = (uint32_t)(5 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corerad:
   return {
@@ -3087,6 +3268,7 @@ case BAR_UnitType_corjamt:
     .metal_cost = (uint32_t)(115 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(5200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4570),
+    .energy_upkeep = (uint32_t)(25 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corjuno:
   return {
@@ -3113,6 +3295,8 @@ case BAR_UnitType_corsy:
       BAR_UnitType_corroy,
       BAR_UnitType_corsub,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_coravp:
   return {
@@ -3138,6 +3322,8 @@ case BAR_UnitType_coravp:
       BAR_UnitType_coreter,
       BAR_UnitType_corvrad,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_cornanotcplat:
   return {
@@ -3146,6 +3332,10 @@ case BAR_UnitType_cornanotcplat:
     .energy_cost = (uint32_t)(2600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5300),
     .build_power = (uint32_t)(200/ bar_game_tps),
+    .energy_upkeep = (uint32_t)(30 * bar_game_resource_denominator/bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 400,
   };
 case BAR_UnitType_corfhp:
   return {
@@ -3164,6 +3354,8 @@ case BAR_UnitType_corfhp:
       BAR_UnitType_cormh,
       BAR_UnitType_corhal,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_coramsub:
   return {
@@ -3182,6 +3374,8 @@ case BAR_UnitType_coramsub:
       BAR_UnitType_coraak,
       BAR_UnitType_cordecom,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_corplat:
   return {
@@ -3199,6 +3393,8 @@ case BAR_UnitType_corplat:
       BAR_UnitType_corsfig,
       BAR_UnitType_corhunt,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_corfdrag:
   return {
@@ -3227,6 +3423,7 @@ case BAR_UnitType_corfrt:
     .metal_cost = (uint32_t)(90 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2200),
+    .energy_upkeep = (uint32_t)(0.1 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corptl:
   return {
@@ -3272,6 +3469,9 @@ case BAR_UnitType_corasp:
     .energy_cost = (uint32_t)(4400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9300),
     .build_power = (uint32_t)(1000/ bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_coraap:
   return {
@@ -3292,6 +3492,8 @@ case BAR_UnitType_coraap:
       BAR_UnitType_corseah,
       BAR_UnitType_corcrw,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_corack:
   return {
@@ -3302,6 +3504,7 @@ case BAR_UnitType_corack:
     .build_power = (uint32_t)(180/ bar_game_tps),
     .energy_production = (uint32_t)(14 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(100 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(14 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_corfus,
       BAR_UnitType_corafus,
@@ -3333,6 +3536,9 @@ case BAR_UnitType_corack:
       BAR_UnitType_corlab,
       BAR_UnitType_coralab,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_corfast:
   return {
@@ -3343,6 +3549,7 @@ case BAR_UnitType_corfast:
     .build_power = (uint32_t)(125/ bar_game_tps),
     .energy_production = (uint32_t)(15 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(100 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(15 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_corsolar,
       BAR_UnitType_cormex,
@@ -3367,6 +3574,9 @@ case BAR_UnitType_corfast:
       BAR_UnitType_corcs,
       BAR_UnitType_corroy,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_corpyro:
   return {
@@ -3465,6 +3675,9 @@ case BAR_UnitType_cordecom:
       BAR_UnitType_coruwes,
       BAR_UnitType_corfmkr,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 145,
   };
 case BAR_UnitType_corvoyr:
   return {
@@ -3480,6 +3693,9 @@ case BAR_UnitType_corspy:
     .energy_cost = (uint32_t)(12500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(22200),
     .build_power = (uint32_t)(50/ bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 0,
+    .build_distance = 136,
   };
 case BAR_UnitType_corspec:
   return {
@@ -3487,6 +3703,7 @@ case BAR_UnitType_corspec:
     .metal_cost = (uint32_t)(75 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1550 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5440),
+    .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_cormando:
   return {
@@ -3506,6 +3723,9 @@ case BAR_UnitType_cormando:
       BAR_UnitType_coreyes,
       BAR_UnitType_corjamt,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 275,
   };
 case BAR_UnitType_corch:
   return {
@@ -3516,6 +3736,7 @@ case BAR_UnitType_corch:
     .build_power = (uint32_t)(110/ bar_game_tps),
     .energy_production = (uint32_t)(11 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(75 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(11 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_corsolar,
       BAR_UnitType_coradvsol,
@@ -3552,6 +3773,9 @@ case BAR_UnitType_corch:
       BAR_UnitType_corplat,
       BAR_UnitType_cortide,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 150,
   };
 case BAR_UnitType_corsh:
   return {
@@ -3624,6 +3848,9 @@ case BAR_UnitType_corcs:
       BAR_UnitType_corfrt,
       BAR_UnitType_corfhlt,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 200,
   };
 case BAR_UnitType_correcl:
   return {
@@ -3632,6 +3859,9 @@ case BAR_UnitType_correcl:
     .energy_cost = (uint32_t)(3200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5960),
     .build_power = (uint32_t)(150/ bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 0,
+    .build_distance = 140,
   };
 case BAR_UnitType_coresupp:
   return {
@@ -3677,6 +3907,7 @@ case BAR_UnitType_coracv:
     .build_power = (uint32_t)(250/ bar_game_tps),
     .energy_production = (uint32_t)(20 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(100 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_corfus,
       BAR_UnitType_corafus,
@@ -3708,6 +3939,9 @@ case BAR_UnitType_coracv:
       BAR_UnitType_coravp,
       BAR_UnitType_corgant,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_corseal:
   return {
@@ -3785,6 +4019,7 @@ case BAR_UnitType_coreter:
     .metal_cost = (uint32_t)(105 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1900 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6400),
+    .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corvrad:
   return {
@@ -3802,6 +4037,7 @@ case BAR_UnitType_corcsa:
     .build_power = (uint32_t)(75/ bar_game_tps),
     .energy_production = (uint32_t)(20 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(75 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_corsolar,
       BAR_UnitType_coradvsol,
@@ -3838,6 +4074,9 @@ case BAR_UnitType_corcsa:
       BAR_UnitType_corplat,
       BAR_UnitType_cortide,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_corcut:
   return {
@@ -3883,6 +4122,7 @@ case BAR_UnitType_coraca:
     .build_power = (uint32_t)(100/ bar_game_tps),
     .energy_production = (uint32_t)(10 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(10 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_corfus,
       BAR_UnitType_corafus,
@@ -3915,6 +4155,9 @@ case BAR_UnitType_coraca:
       BAR_UnitType_corplat,
       BAR_UnitType_corgant,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 136,
   };
 case BAR_UnitType_corape:
   return {
@@ -4000,6 +4243,8 @@ case BAR_UnitType_corgant:
       BAR_UnitType_corcat,
       BAR_UnitType_corsok,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_corageo:
   return {
@@ -4028,6 +4273,7 @@ case BAR_UnitType_cormoho:
     .energy_cost = (uint32_t)(8100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(14100),
     .metal_capacity = (uint32_t)(600 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 4,
   };
 case BAR_UnitType_cormexp:
@@ -4037,6 +4283,7 @@ case BAR_UnitType_cormexp:
     .energy_cost = (uint32_t)(12000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(32500),
     .metal_capacity = (uint32_t)(600 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 4,
   };
 case BAR_UnitType_cormmkr:
@@ -4077,6 +4324,7 @@ case BAR_UnitType_corshroud:
     .metal_cost = (uint32_t)(130 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(20000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9400),
+    .energy_upkeep = (uint32_t)(125 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corfort:
   return {
@@ -4091,6 +4339,7 @@ case BAR_UnitType_cortarg:
     .metal_cost = (uint32_t)(800 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(7500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(10900),
+    .energy_upkeep = (uint32_t)(100 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corsd:
   return {
@@ -4098,6 +4347,7 @@ case BAR_UnitType_corsd:
     .metal_cost = (uint32_t)(750 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12000),
+    .energy_upkeep = (uint32_t)(125 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corgate:
   return {
@@ -4200,6 +4450,8 @@ case BAR_UnitType_corasy:
       BAR_UnitType_cormship,
       BAR_UnitType_corblackhy,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_cortl:
   return {
@@ -4256,6 +4508,8 @@ case BAR_UnitType_corsok:
     .metal_cost = (uint32_t)(950 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(19000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(27000),
+    .is_builder = 0,
+    .can_assist = 1,
   };
 case BAR_UnitType_coracsub:
   return {
@@ -4266,6 +4520,7 @@ case BAR_UnitType_coracsub:
     .build_power = (uint32_t)(300/ bar_game_tps),
     .energy_production = (uint32_t)(30 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(150 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(30 * bar_game_resource_denominator/bar_game_tps),
     .build_options = {
       BAR_UnitType_coruwfus,
       BAR_UnitType_coruwmmm,
@@ -4281,6 +4536,9 @@ case BAR_UnitType_coracsub:
       BAR_UnitType_corenaa,
       BAR_UnitType_corfdoom,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 180,
   };
 case BAR_UnitType_cormls:
   return {
@@ -4307,6 +4565,9 @@ case BAR_UnitType_cormls:
       BAR_UnitType_cortoast,
       BAR_UnitType_corfdoom,
     },
+    .is_builder = 1,
+    .can_assist = 1,
+    .build_distance = 250,
   };
 case BAR_UnitType_corcrus:
   return {
@@ -4342,6 +4603,7 @@ case BAR_UnitType_corsjam:
     .metal_cost = (uint32_t)(120 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6320),
+    .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corcarry:
   return {
@@ -4352,6 +4614,9 @@ case BAR_UnitType_corcarry:
     .build_power = (uint32_t)(1000/ bar_game_tps),
     .energy_production = (uint32_t)(300 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(1500 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(25 * bar_game_resource_denominator/bar_game_tps),
+    .is_builder = 1,
+    .can_assist = 0,
   };
 case BAR_UnitType_corbats:
   return {
@@ -4399,6 +4664,7 @@ case BAR_UnitType_coruwmme:
     .energy_cost = (uint32_t)(10500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(24300),
     .metal_capacity = (uint32_t)(600 * bar_game_resource_denominator),
+    .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 4,
   };
 case BAR_UnitType_corason:
@@ -4414,6 +4680,7 @@ case BAR_UnitType_corfatf:
     .metal_cost = (uint32_t)(800 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(7500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(10300),
+    .energy_upkeep = (uint32_t)(150 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_coratl:
   return {
@@ -4428,6 +4695,7 @@ case BAR_UnitType_corenaa:
     .metal_cost = (uint32_t)(890 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(25000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(23100),
+    .energy_upkeep = (uint32_t)(0.1 * bar_game_resource_denominator/bar_game_tps),
   };
 case BAR_UnitType_corfdoom:
   return {
@@ -4452,6 +4720,8 @@ case BAR_UnitType_corgantuw:
       BAR_UnitType_corseal,
       BAR_UnitType_corparrow,
     },
+    .is_builder = 1,
+    .can_assist = 1,
   };
 case BAR_UnitType_corfmine3:
   return {

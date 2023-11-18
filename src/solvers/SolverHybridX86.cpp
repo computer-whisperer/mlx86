@@ -32,7 +32,7 @@ SolverHybridX86 * SolverHybridX86::Clone()
     return new SolverHybridX86(*this);
 }
 
-void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out)
+void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out, uint8_t* starting_data)
 {
 
 	struct io_memory_map_t

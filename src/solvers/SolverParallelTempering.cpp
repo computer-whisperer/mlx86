@@ -174,7 +174,7 @@ struct shared_data_t {
 
 void
 SolverParallelTempering::run(Problem *problem, struct REPORTER_MEM_T *reporter_mem, double score_limit, U32 trial_limit,
-                             struct SolverResults_T *results_out) {
+                             struct SolverResults_T *results_out, uint8_t* starting_data) {
     // Setup process data
     auto *shared_data = static_cast<shared_data_t *>(mmap(nullptr, sizeof(struct shared_data_t),
                                                           PROT_READ | PROT_WRITE,
@@ -183,7 +183,14 @@ SolverParallelTempering::run(Problem *problem, struct REPORTER_MEM_T *reporter_m
     shared_data->should_exit = 0;
     shared_data->reporting_mem.tests_run = 0;
     for (U32 i = 0; i < NUM_PROCESSES; i++) {
-        problem->dataInit(shared_data->sync_mems[i].data);
+        if (starting_data)
+        {
+          memcpy(shared_data->sync_mems[i].data, starting_data, problem->data_len);
+        }
+        else
+        {
+          problem->dataInit(shared_data->sync_mems[i].data);
+        }
         shared_data->sync_mems[i].score = 0;
     }
 

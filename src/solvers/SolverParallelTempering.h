@@ -29,7 +29,7 @@ class SolverParallelTempering : public Solver
 
             void tempering_process(Problem *problem, struct sync_mem_t * our_sync, sync_mem_t **neighbor_syncs, U8* should_exit, struct reporting_mem_t * reporting_mem);
 
-            void run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out) override;
+            void run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out, uint8_t* starting_data=nullptr) override;
         };
 
 

@@ -10,13 +10,19 @@
 #define TABU_LEN 10
 #define NEIGHBOR_NUM 50
 
-void SolverTabuSearch::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out)
+void SolverTabuSearch::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out, uint8_t* starting_data)
 {
 
 	U8 * data = static_cast<U8 *>(malloc(problem->data_len));
 	U8 * data_b = static_cast<U8 *>(malloc(problem->data_len));
 	U8 * data_c = static_cast<U8 *>(malloc(problem->data_len));
-	problem->dataInit(data);
+  if (starting_data) {
+    memcpy(data, starting_data, problem->data_len);
+  }
+  else
+  {
+    problem->dataInit(data);
+  }
 	U32 data_hash = qhashmurmur3_32(data, problem->data_len);
 
 	U32 tabu_list[TABU_LEN];

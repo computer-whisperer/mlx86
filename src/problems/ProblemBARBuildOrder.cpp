@@ -6,7 +6,7 @@
 #include "christian_utils.h"
 
 double ProblemBARBuildOrder::scalarTrial(uint8_t *data) {
-  return scalarTrialEconomyRush(data);
+  return scalarTrialGauntletRush(data);
 }
 
 double ProblemBARBuildOrder::scalarTrialTickSpam(uint8_t *data) const {
@@ -25,6 +25,34 @@ double ProblemBARBuildOrder::scalarTrialTickSpam(uint8_t *data) const {
 
   score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armflea) / 100;
   score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corak) / 100;
+
+  score += scalarTrialGeneralRules(&game, instructions);
+  return score;
+}
+
+
+double ProblemBARBuildOrder::scalarTrialGauntletRush(uint8_t *data) const {
+  auto instructions = (Game<BAR_game_config>::Instruction*)data;
+  Game<BAR_game_config> game;
+  auto player = game.add_player(faction);
+  player->instructions = instructions;
+  player->num_instructions = num_instructions;
+
+  double score = 0;
+  for (uint32_t i = 0; i < sim_time_ticks; i++)
+  {
+    game.do_tick();
+    if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armguard))
+    {
+      score += 1;
+    }
+    if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armatlas))
+    {
+      score += 1;
+    }
+  }
+  score /= sim_time_ticks;
+
 
   score += scalarTrialGeneralRules(&game, instructions);
   return score;
@@ -154,12 +182,12 @@ double ProblemBARBuildOrder::scalarTrialEconomyRush(uint8_t *data) const {
   for (uint32_t i = 0; i < sim_time_ticks; i++)
   {
     game.do_tick();
-    score += (float)player->resource_production_rate_cache[BAR_ResourceType_Metal] / 1000000;
+    score += (float)player->resource_production_rate_cache[BAR_ResourceType_Metal] /   1000000;
     score += (float)player->resource_production_rate_cache[BAR_ResourceType_Energy] / 10000000;
   }
   score /= sim_time_ticks;
 
-  score += (float)player->resource_production_rate_cache[BAR_ResourceType_Metal] / 1000000;
+  score += (float)player->resource_production_rate_cache[BAR_ResourceType_Metal] /   1000000;
   score += (float)player->resource_production_rate_cache[BAR_ResourceType_Energy] / 10000000;
 
   score += scalarTrialGeneralRules(&game, instructions);
@@ -171,6 +199,22 @@ double ProblemBARBuildOrder::scalarTrialEconomyRush(uint8_t *data) const {
 double ProblemBARBuildOrder::scalarTrialGeneralRules(Game<BAR_game_config> *game, Game<BAR_game_config>::Instruction* instructions) const {
 
   double score = 0;
+
+  // T2 Incentive
+  uint32_t num_t2_builders = 0;
+  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_armack);
+  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_corack);
+  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_armacv);
+  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_coracv);
+  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_armaca);
+  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_coraca);
+  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_armacsub);
+  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_coracsub);
+  if (num_t2_builders > 0)
+  {
+    score += 0.1;
+  }
+
   // Prefer build orders that end by the end
   if (game->players[0].current_instruction == num_instructions)
   {

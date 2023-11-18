@@ -25,23 +25,26 @@ int main(int argc, char **argv) {
   BAR_game_config::free_unit_build(player, BAR_UnitType_armestor);
   BAR_game_config::free_unit_build(player, BAR_UnitType_armmstor);
   BAR_game_config::free_unit_build(player, BAR_UnitType_armadvsol);
-  player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armmex, 0);
+  player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armmex, 5);
   player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armwin, 3);
   player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armmakr, 2);
-  /*
   player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armlab);
   player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armck);
   player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armadvsol, 15);
-  player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armalab);*/
+  player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armalab);
+  player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armack);
+  player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armck, 10);
+  player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armamex, 5);
+  player->append_instruction(BAR_Instruction_Build, BAR_UnitType_armfus);
   player->print_instructions("");
-  for (uint32_t i = 0; i < 4*60; i++)
+  for (uint32_t i = 0; i < 30*60; i++)
   {
     for (uint32_t j = 0; j < 20; j++)
     {
       game.do_tick();
     }
     game.print_summary(false);
-    sleep(1);
+    //usleep(250000);
   }
   game.print_summary(false);
 }

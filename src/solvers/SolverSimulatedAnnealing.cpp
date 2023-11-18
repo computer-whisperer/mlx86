@@ -13,11 +13,17 @@
 #include "christian_utils.h"
 #include "SolverSimulatedAnnealing.h"
 
-void SolverSimulatedAnnealing::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out)
+void SolverSimulatedAnnealing::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out, uint8_t* starting_data)
 {
 	U8 * data = static_cast<U8 *>(malloc(problem->data_len));
 	U8 * data_b = static_cast<U8 *>(malloc(problem->data_len));
-	problem->dataInit(data);
+  if (starting_data) {
+    memcpy(data, starting_data, problem->data_len);
+  }
+  else
+  {
+    problem->dataInit(data);
+  }
 	memcpy(data_b, data, problem->data_len);
 
 	double score = problem->scalarTrial(data);

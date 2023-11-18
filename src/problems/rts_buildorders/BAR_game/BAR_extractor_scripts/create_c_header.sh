@@ -19,6 +19,6 @@ done
 echo BAR_UnitType_MAX
 echo "};"
 
-echo "#include \"bar_game_unit_type_metadata_type.hpp\""
+echo "#include \"bar_game_types.hpp\""
 
 lua BAR_extractor.lua

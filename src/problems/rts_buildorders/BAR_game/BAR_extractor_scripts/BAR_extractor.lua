@@ -55,8 +55,17 @@ for _, unit in ipairs(units) do
     if data["energystorage"] then
         print("    .energy_capacity = (uint32_t)(" .. data["energystorage"] .. " * bar_game_resource_denominator),")
     end
+
     if data["metalstorage"] then
         print("    .metal_capacity = (uint32_t)(" .. data["metalstorage"] .. " * bar_game_resource_denominator),")
+    end
+
+    if data["energyuse"] then
+        print("    .energy_upkeep = (uint32_t)(" .. data["energyuse"] .. " * bar_game_resource_denominator/bar_game_tps),")
+    end
+
+    if data["metaluse"] then
+        print("    .metal_upkeep = (uint32_t)(" .. data["metaluse"] .. " * bar_game_resource_denominator/bar_game_tps),")
     end
 
     if data["buildoptions"] then
@@ -78,6 +87,26 @@ for _, unit in ipairs(units) do
 
     if data["customparams"] and data["customparams"]["metal_extractor"] then
       print("    .metal_extractor = ".. data["customparams"]["metal_extractor"] ..",")
+    end
+
+    if data["builder"] ~= nil then
+        print("    .is_builder = " .. (data["builder"] and 1 or 0) .. ",")
+        if data["canassist"] ~= nil then
+            print("    .can_assist = " .. (data["canassist"] and 1 or 0) .. ",")
+        else
+            print("    .can_assist = 1,")
+        end
+        if data["builddistance"] ~= nil then
+            print("    .build_distance = ".. data["builddistance"].. ",")
+        end
+    else
+        if data["canassist"] ~= nil then
+            print("    .can_assist = " .. (data["canassist"] and 1 or 0) .. ",")
+        end
+    end
+
+    if data["max_velocity"] ~= nil then
+        print("    .max_velocity = ".. data["maxvelocity"] .. ",")
     end
 
     print("  };")

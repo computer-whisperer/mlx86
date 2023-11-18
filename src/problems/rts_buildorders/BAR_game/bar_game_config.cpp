@@ -3,6 +3,8 @@
 //
 #include "bar_game_config.hpp"
 
+BAR_UnitMetadata_Table_T bar_game_unit_type_metadata_table;
+
 bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, Game<BAR_game_config>::Instruction* instruction, bool first_tick)
 {
   bool advance_instruction = false;
@@ -21,23 +23,18 @@ bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, 
         player->invalid_command_count++;
         break;
       }
-      BARUnitTypeMetadata_T unit_metadata = bar_game_get_unit_type_metadata(unit_type);
 
       if (first_tick)
       {
-        update_cached_total_general_build_power(player);
         player->data.currently_building_unit = nullptr;
 
         // Find unit to reclaim
         for (uint32_t i = 0; i < player->furthest_allocated_unit[unit_type]; i++)
         {
-          if (player->units[unit_type][i].is_allocated)
+          if (player->units[unit_type][i].is_allocated && player->units[unit_type][i].data.is_alive)
           {
-            if (player->units[unit_type][i].data.is_alive)
-            {
-              player->data.currently_building_unit = &player->units[unit_type][i];
-              break;
-            }
+            player->data.currently_building_unit = &player->units[unit_type][i];
+            break;
           }
         }
 
@@ -47,19 +44,23 @@ bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, 
           advance_instruction = true;
           break;
         }
+        command_all_units_to_assist(
+                player,
+                static_cast<Game<BAR_game_config>::Unit *>(player->data.currently_building_unit),
+                unit_type
+        );
       }
 
-      auto unit = (Game<BAR_game_config>::Unit *) player->data.currently_building_unit;
-
-      uint32_t build_power = player->data.cached_total_general_build_power - unit_metadata.build_power;
-
-      if (build_power >= unit->data.allocated_build_points)
+      if (!player->data.currently_building_unit)
       {
-        player->resources[BAR_ResourceType_Metal] += bar_game_get_unit_type_metadata(unit_type).metal_cost;
-        player->deallocate_unit(unit, unit_type);
+        player->invalid_command_count++;
         advance_instruction = true;
-      } else{
-        unit->data.allocated_build_points -= build_power;
+        break;
+      }
+
+      if (!static_cast<Game<BAR_game_config>::Unit *>(player->data.currently_building_unit)->data.is_alive) {
+        // Reclaim order was finished, continue!
+        advance_instruction = true;
       }
       break;
     }
@@ -72,17 +73,13 @@ bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, 
         player->invalid_command_count++;
         break;
       }
-      BARUnitTypeMetadata_T unit_metadata = bar_game_get_unit_type_metadata(unit_type);
+      BARUnitTypeMetadata_T& unit_metadata = bar_game_unit_type_metadata_table.values[unit_type];
 
       if (first_tick) {
-        update_cached_total_general_build_power(player);
-
         if (player->data.builder_for_unit_type_cache_dirty)
         {
           update_builder_for_unit_type_cache(player);
         }
-
-        player->data.travel_time_remaining = 0;
         player->data.currently_building_unit = nullptr;
 
         // Check if we have a builder that can build this
@@ -92,6 +89,8 @@ bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, 
           player->invalid_command_count++;
           break;
         }
+
+        BAR_UnitType builder_type = player->data.builder_for_unit_type_cache[unit_type];
 
         // Check if we already built too many units (approximated here by furthest_allocated_unit)
         if (player->furthest_allocated_unit[unit_type] >= unit_metadata.max_count)
@@ -119,74 +118,62 @@ bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, 
             break;
           }
         }
+
+        // Find builder
+        Game<BAR_game_config>::Unit* builder = nullptr;
+        for (uint32_t i = 0; i < player->furthest_allocated_unit[builder_type]; i++)
+        {
+          if (player->units[builder_type][i].is_allocated && player->units[builder_type][i].data.is_alive)
+          {
+            builder = &player->units[builder_type][i];
+            break;
+          }
+        }
+
+        if (!builder)
+        {
+          advance_instruction = true;
+          player->invalid_command_count++;
+          break;
+        }
+
         // Do it
         player->data.currently_building_unit = player->allocate_unit(unit_type);
-        if (player->data.currently_building_unit)
+        if (!player->data.currently_building_unit)
         {
-          player->data.travel_time_remaining = unit_metadata.avg_travel_time;
+          // Allocation failure
+          advance_instruction = true;
+          player->invalid_command_count++;
+          break;
         }
+        command_unit_to_build_inner(
+                builder,
+                builder_type,
+                static_cast<Game<BAR_game_config>::Unit *>(player->data.currently_building_unit),
+                unit_type);
+        command_all_units_to_assist(
+                player,
+                static_cast<Game<BAR_game_config>::Unit *>(player->data.currently_building_unit),
+                unit_type
+                );
       }
+
       if (!player->data.currently_building_unit)
       {
-        // Allocation failure
-        advance_instruction = true;
         player->invalid_command_count++;
+        advance_instruction = true;
         break;
       }
-      auto unit = (Game<BAR_game_config>::Unit*) player->data.currently_building_unit;
-      if (player->data.travel_time_remaining) {
-        player->data.travel_time_remaining--;
-      } else {
-        // Add resources
-        uint32_t build_points_to_give = player->data.cached_total_general_build_power + bar_game_get_unit_type_metadata(player->data.builder_for_unit_type_cache[unit_type]).direct_build_power;
-        if (unit_metadata.energy_cost > 0) {
-          uint32_t build_points_allowed_by_energy =
-                  ((uint64_t) player->resources[BAR_ResourceType_Energy] * (uint64_t) unit_metadata.build_cost) / (uint64_t) unit_metadata.energy_cost;
-          if (build_points_to_give > build_points_allowed_by_energy) {
-            build_points_to_give = build_points_allowed_by_energy;
-          }
-        }
-        if (unit_metadata.metal_cost > 0) {
-          uint32_t build_points_allowed_by_metal =
-                  ((uint64_t) player->resources[BAR_ResourceType_Metal] * (uint64_t) unit_metadata.build_cost) / (uint64_t) unit_metadata.metal_cost;
-          if (build_points_to_give > build_points_allowed_by_metal) {
-            build_points_to_give = build_points_allowed_by_metal;
-          }
-        }
 
-        unit->data.allocated_build_points += build_points_to_give;
-        if (unit_metadata.build_cost > 0) {
-          uint32_t energy_to_give = (unit_metadata.energy_cost * build_points_to_give) / unit_metadata.build_cost;
-          player->resources[BAR_ResourceType_Energy] -= energy_to_give;
-          unit->data.allocated_resources[BAR_ResourceType_Energy] += energy_to_give;
-          uint32_t metal_to_give = (unit_metadata.metal_cost * build_points_to_give) / unit_metadata.build_cost;
-          player->resources[BAR_ResourceType_Metal] -= metal_to_give;
-          unit->data.allocated_resources[BAR_ResourceType_Metal] += metal_to_give;
-        }
-      }
-
-      // Figure out if we can build this tick
-      bool can_finish = true;
-      if (unit->data.allocated_build_points < unit_metadata.build_cost)
-        can_finish = false;
-      if (unit->data.allocated_resources[BAR_ResourceType_Energy] < unit_metadata.energy_cost)
-        can_finish = false;
-      if (unit->data.allocated_resources[BAR_ResourceType_Metal] < unit_metadata.metal_cost)
-        can_finish = false;
-      if (can_finish) {
-        // Refund extra resources
-        player->resources[BAR_ResourceType_Metal] += unit->data.allocated_resources[BAR_ResourceType_Metal] - unit_metadata.metal_cost;
-        player->resources[BAR_ResourceType_Energy] += unit->data.allocated_resources[BAR_ResourceType_Energy] - unit_metadata.energy_cost;
-
-        on_unit_alive(player, unit, unit_type);
-
+      if (static_cast<Game<BAR_game_config>::Unit *>(player->data.currently_building_unit)->data.is_alive) {
+        // Build order was finished, continue!
         advance_instruction = true;
       }
       break;
     }
   }
   return advance_instruction;
-};
+}
 
 uint32_t bar_game_get_num_of_unit_type(Game<BAR_game_config>::Player *player, BAR_UnitType unit_type)
 {
@@ -201,7 +188,7 @@ uint32_t bar_game_get_num_of_unit_type(Game<BAR_game_config>::Player *player, BA
   return count;
 }
 
-template<uint32_t unit_type=BAR_UnitType_MAX-1> static inline uint32_t upkeep_iterator(Game<BAR_game_config>::Player *player, BAR_ResourceTypes resource_type)
+template<uint32_t unit_type=0> static inline uint32_t upkeep_iterator(Game<BAR_game_config>::Player *player, BAR_ResourceType resource_type)
 {
   uint32_t total_upkeep = 0;
   for (uint32_t j = 0; j < player->furthest_allocated_unit[unit_type]; j++)
@@ -210,25 +197,25 @@ template<uint32_t unit_type=BAR_UnitType_MAX-1> static inline uint32_t upkeep_it
     {
       if (resource_type == BAR_ResourceType_Energy)
       {
-        total_upkeep += bar_game_get_unit_type_metadata(unit_type).energy_upkeep;
+        total_upkeep += bar_game_get_unit_type_metadata<static_cast<BAR_UnitType>(unit_type)>().energy_upkeep;
       }
       if (resource_type == BAR_ResourceType_Metal)
       {
-        total_upkeep += bar_game_get_unit_type_metadata(unit_type).metal_upkeep;
+        total_upkeep += bar_game_get_unit_type_metadata<static_cast<BAR_UnitType>(unit_type)>().metal_upkeep;
       }
     }
   }
-  if constexpr (unit_type == 0)
+  if constexpr (unit_type == BAR_UnitType_MAX)
   {
     return total_upkeep;
   }
   else
   {
-    return total_upkeep + upkeep_iterator<unit_type-1>(player, resource_type);
+    return total_upkeep + upkeep_iterator<unit_type+1>(player, resource_type);
   }
 }
 
-uint32_t bar_game_get_full_upkeep(Game<BAR_game_config>::Player *player, BAR_ResourceTypes resource_type)
+uint32_t bar_game_get_full_upkeep(Game<BAR_game_config>::Player *player, BAR_ResourceType resource_type)
 {
   return upkeep_iterator(player, resource_type);
 }
