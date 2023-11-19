@@ -78,16 +78,16 @@ int main(int argc, char * argv[])
 	struct SolverResults_T results{};
 
 	init_reporter_process(reporter_mem, (Problem*)problem);
-	solver->run((Problem*)problem, reporter_mem, 10, 1000*60*20, &results);
+	solver->run((Problem*)problem, reporter_mem, 10, 500*60*30, &results);
 	deinit_reporter_process(reporter_mem);
 
   uint8_t first_pass_data[problem->data_len];
   memcpy(first_pass_data, results.data, problem->data_len);
 
-  auto final_solver = new SolverSimpleGreedy();
-  init_reporter_process(reporter_mem, (Problem*)problem);
-  final_solver->run((Problem*)problem, reporter_mem, 10, 10000, &results, first_pass_data);
-  deinit_reporter_process(reporter_mem);
+  //auto final_solver = new SolverSimpleGreedy();
+  //init_reporter_process(reporter_mem, (Problem*)problem);
+  //final_solver->run((Problem*)problem, reporter_mem, 10, 10000, &results, first_pass_data);
+  //deinit_reporter_process(reporter_mem);
 
 	{
 	    std::vector<double> scores;
@@ -101,9 +101,9 @@ int main(int argc, char * argv[])
   problem->prettyPrintData(results.data);
 
 
-	FILE * fp = fopen("best_data", "wb");
-	fwrite(results.data, sizeof(U8), ((Problem*)problem)->data_len, fp);
-	fclose(fp);
+	//FILE * fp = fopen("best_data", "wb");
+	//fwrite(results.data, sizeof(U8), ((Problem*)problem)->data_len, fp);
+	//fclose(fp);
 
 	//((problem_audio_regen*)problem)->export_wav("test.wav", results.data);
 

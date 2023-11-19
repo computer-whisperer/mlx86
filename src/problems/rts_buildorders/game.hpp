@@ -26,6 +26,7 @@ inline void repeat(const F &f) {
 
 template <typename GameConfig> class Game {
 public:
+  GameConfig::GameData data;
 
   uint32_t tick = 0;
 
@@ -38,8 +39,8 @@ public:
 
   class Unit {
   public:
-    uint32_t x = 0;
-    uint32_t z = 0;
+    int32_t position_x = 0;
+    int32_t position_z = 0;
     bool is_allocated = false; // If this unit memory has been allocated
     GameConfig::UnitData data = {0};
   };
@@ -56,10 +57,14 @@ public:
 
     GameConfig::PlayerData data;
 
-    Unit units[GameConfig::num_unit_types][GameConfig::max_num_units_of_type];
+    Unit units_by_type[GameConfig::num_unit_types][GameConfig::max_num_units_of_type];
     uint32_t furthest_allocated_unit[GameConfig::num_unit_types] = {};
     static constexpr uint32_t num_enable_categories = 8;
     bool is_unit_set_enabled[num_enable_categories] = {false};
+
+    Unit* allocated_units[GameConfig::max_num_units] = {};
+    uint32_t allocated_unit_types[GameConfig::max_num_units] = {};
+    uint32_t num_allocated_units = 0;
 
     uint32_t resources[GameConfig::num_resource_types] = {};
 
@@ -72,63 +77,101 @@ public:
     uint32_t base_resource_capacity[GameConfig::num_resource_types] = {};
 
 
-    template <uint32_t unit_type=GameConfig::num_unit_types-1, uint32_t resource_type=GameConfig::num_resource_types-1> inline void resource_rate_iterator()
+    template <typename inner_wrapper, uint32_t unit_type=0> inline void unit_iterator_by_type()
     {
-      for (uint32_t i = 0; i < furthest_allocated_unit[unit_type]; i++) {
-        if (units[unit_type][i].is_allocated) {
-          resource_production_rate_cache[resource_type] += GameConfig::template get_unit_resource_production_rate<unit_type, resource_type>(this, &units[unit_type][i]);
+      if constexpr (unit_type < GameConfig::num_unit_types) {
+        uint8_t category = unit_type*num_enable_categories/GameConfig::num_unit_types;
+        if (is_unit_set_enabled[category]){
+          for (uint32_t i = 0; i < furthest_allocated_unit[unit_type]; i++) {
+            if (units_by_type[unit_type][i].is_allocated) {
+              inner_wrapper::template inner_iterator<unit_type>(this, &units_by_type[unit_type][i], unit_type);
+            }
+          }
         }
-      }
-      if constexpr (resource_type == 0) {
-        if constexpr (unit_type == 0) {
-          return;
-        }
-        else
-        {
-          resource_rate_iterator<unit_type - 1, GameConfig::num_resource_types-1>();
-        }
-      }
-      else {
-        resource_rate_iterator<unit_type, resource_type - 1>();
+
+        unit_iterator_by_type<inner_wrapper, unit_type+1>();;
       }
     }
+
+    template <typename inner_wrapper> class IteratorLookupGenerator
+    {
+      typedef void(*InnerIterator)(Game<GameConfig>::Player* player, Game<GameConfig>::Unit* unit, uint32_t unit_type);
+      template<uint32_t unit_type=0> constexpr void inner_iterator_populator()
+      {
+        if constexpr (unit_type < GameConfig::num_unit_types) {
+          inner_iterators[unit_type] = inner_wrapper::template inner_iterator<unit_type>;
+          inner_iterator_populator<unit_type+1>();
+        }
+      }
+      public:
+      InnerIterator inner_iterators[GameConfig::num_unit_types] = {nullptr};
+      constexpr IteratorLookupGenerator() {
+        inner_iterator_populator();
+      }
+    };
+
+    template <typename inner_wrapper> inline void unit_iterator_by_unit_lookup()
+    {
+      static IteratorLookupGenerator<inner_wrapper> iterator_lookup_generator;
+      for (uint32_t i = 0; i < num_allocated_units; i++)
+      {
+        iterator_lookup_generator.inner_iterators[allocated_unit_types[i]](this, allocated_units[i], allocated_unit_types[i]);
+      }
+    }
+
+    template <typename inner_wrapper, uint32_t unit_type=0> inline void inner_unit_iterator_by_unit(uint32_t unit_type_selected, Unit* unit)
+    {
+      if constexpr (unit_type < GameConfig::num_unit_types) {
+        if (unit_type == unit_type_selected) {
+          inner_wrapper::template inner_iterator<unit_type>(this, unit, unit_type);
+        }
+        inner_unit_iterator_by_unit<inner_wrapper, unit_type+1>(unit_type_selected, unit);
+      }
+    }
+
+    template <typename inner_wrapper> inline void unit_iterator_by_unit()
+    {
+      for (uint32_t i = 0; i < num_allocated_units; i++)
+      {
+        inner_unit_iterator_by_unit<inner_wrapper>(allocated_unit_types[i], allocated_units[i]);
+      }
+    }
+
+    class ResourceRateIterator {
+      public:
+      template <uint32_t unit_type> inline static void inner_iterator(Game<GameConfig>::Player* player, Game<GameConfig>::Unit* unit, uint32_t unit_type_runtime)
+      {
+        for (uint32_t i = 0; i < GameConfig::num_resource_types; i++) {
+          player->resource_production_rate_cache[i] += GameConfig::template get_unit_resource_production_rate<unit_type>(player, unit, i, unit_type_runtime);
+        }
+      };
+    };
 
     void update_cached_resource_rates()
     {
       for (uint32_t resource_type = 0; resource_type < GameConfig::num_resource_types; resource_type++) {
         resource_production_rate_cache[resource_type] = 0;
       }
-      resource_rate_iterator();
+      unit_iterator_by_type<ResourceRateIterator>();
       resource_production_rate_cache_dirty = false;
     }
 
-    template <uint32_t unit_type=GameConfig::num_unit_types-1, uint32_t resource_type=GameConfig::num_resource_types-1> inline void resource_capacity_iterator()
-    {
-      for (uint32_t i = 0; i < furthest_allocated_unit[unit_type]; i++) {
-        if (units[unit_type][i].is_allocated) {
-          resource_max_capacity_cache[resource_type] += GameConfig::template get_unit_resource_capacity<unit_type, resource_type>(this, &units[unit_type][i]);
+    class ResourceCapacityIterator {
+    public:
+      template <uint32_t unit_type> inline static void inner_iterator(Game<GameConfig>::Player* player, Game<GameConfig>::Unit* unit, uint32_t unit_type_runtime)
+      {
+        for (uint32_t i = 0; i < GameConfig::num_resource_types; i++) {
+          player->resource_max_capacity_cache[i] += GameConfig::template get_unit_resource_capacity<unit_type>(player, unit, i, unit_type_runtime);
         }
-      }
-      if constexpr (resource_type == 0) {
-        if constexpr (unit_type == 0) {
-          return;
-        }
-        else
-        {
-          resource_capacity_iterator<unit_type - 1, GameConfig::num_resource_types-1>();
-        }
-      }
-      else {
-        resource_capacity_iterator<unit_type, resource_type - 1>();
-      }
-    }
+      };
+    };
 
     void update_cached_resource_capacity()
     {
       for (uint32_t resource_type = 0; resource_type < GameConfig::num_resource_types; resource_type++) {
         resource_max_capacity_cache[resource_type] = base_resource_capacity[resource_type];
       }
-      resource_capacity_iterator();
+      unit_iterator_by_type<ResourceCapacityIterator>();
       resource_max_capacity_cache_dirty = false;
     }
 
@@ -141,22 +184,28 @@ public:
       if (unit_type >= GameConfig::num_unit_types) {
         return nullptr;
       }
+      if (num_allocated_units >= GameConfig::max_num_units) {
+        return nullptr;
+      }
       uint8_t category = unit_type*num_enable_categories/GameConfig::num_unit_types;
       is_unit_set_enabled[category] = true;
       Unit* ret = nullptr;
       for (uint32_t i = 0; i < GameConfig::max_num_units_of_type; i++) {
-        if (!units[unit_type][i].is_allocated) {
+        if (!units_by_type[unit_type][i].is_allocated) {
           if ((i+1) > furthest_allocated_unit[unit_type]) {
             furthest_allocated_unit[unit_type] = i+1;
           }
 
-          units[unit_type][i].is_allocated = true;
-          ret = &units[unit_type][i];
+          units_by_type[unit_type][i].is_allocated = true;
+          ret = &units_by_type[unit_type][i];
           break;
         }
       }
       if(ret)
       {
+        allocated_units[num_allocated_units] = ret;
+        allocated_unit_types[num_allocated_units] = unit_type;
+        num_allocated_units++;
         GameConfig::on_unit_allocated(this, ret, unit_type);
       }
       resource_max_capacity_cache_dirty = true;
@@ -170,6 +219,24 @@ public:
       resource_max_capacity_cache_dirty = true;
       resource_production_rate_cache_dirty = true;
       GameConfig::on_unit_deallocated(this, unit, unit_type);
+
+      // Drop unit from allocated table
+      uint32_t i = 0;
+      for (; i < num_allocated_units; i++)
+      {
+        if (allocated_units[i] == unit)
+        {
+          allocated_units[i] = nullptr;
+          allocated_unit_types[i] = 0;
+          break;
+        }
+      }
+      for (; i < num_allocated_units-1; i++)
+      {
+        allocated_units[i] = allocated_units[i+1];
+        allocated_unit_types[i] = allocated_unit_types[i+1];
+      }
+      num_allocated_units--;
     }
 
     void print_summary(std::string indent, bool detailed_mode) {
@@ -196,8 +263,8 @@ public:
           if (detailed_mode)
           {
             for (uint32_t j = 0; j < furthest_allocated_unit[x]; j++) {
-              if (units[x][j].is_allocated) {
-                GameConfig::print_detailed_unit_info(this, &units[x][j], x, indent);
+              if (units_by_type[x][j].is_allocated) {
+                GameConfig::print_detailed_unit_info(this, &units_by_type[x][j], x, indent);
               }
             }
           }
@@ -205,7 +272,7 @@ public:
           {
             uint32_t num_units = 0;
             for (uint32_t j = 0; j < furthest_allocated_unit[x]; j++) {
-              if (units[x][j].is_allocated) {
+              if (units_by_type[x][j].is_allocated) {
                 num_units++;
               }
             }
@@ -248,91 +315,23 @@ public:
       }
     }
 
-    template <uint32_t unit_type=GameConfig::num_unit_types-1> inline void pre_tick_iterator()
-    {
-      uint8_t category = unit_type*num_enable_categories/GameConfig::num_unit_types;
-      if (is_unit_set_enabled[category]) {
-        for (uint32_t i = 0; i < furthest_allocated_unit[unit_type]; i++) {
-          if (units[unit_type][i].is_allocated) {
-            GameConfig::template unit_pre_tick<unit_type>(this, &units[unit_type][i]);
-          }
-        }
-      }
-      if constexpr (unit_type == 0) {
-        return;
-      }
-      else {
-        pre_tick_iterator<unit_type - 1>();
-      }
-    }
-
-    template <uint32_t unit_type=GameConfig::num_unit_types-1> inline void post_tick_iterator()
-    {
-      for (uint32_t i = 0; i < furthest_allocated_unit[unit_type]; i++) {
-        if (units[unit_type][i].is_allocated) {
-          GameConfig::template unit_post_tick<unit_type>(this, &units[unit_type][i]);
-        }
-      }
-      if constexpr (unit_type == 0) {
-        return;
-      }
-      else {
-        post_tick_iterator<unit_type - 1>();
-      }
-    }
-
-    void tick()
-    {
-      if (resource_production_rate_cache_dirty)
+    class UnitTickIterator {
+    public:
+      template <uint32_t unit_type> inline static void inner_iterator(Game<GameConfig>::Player* player, Game<GameConfig>::Unit* unit, uint32_t unit_type_runtime)
       {
-        update_cached_resource_rates();
-      }
-      for (uint32_t resource_type = 0; resource_type < GameConfig::num_resource_types; resource_type++)
+        GameConfig::template unit_tick<unit_type>(player, unit, unit_type_runtime);
+      };
+    };
+
+    class UnitPostTickIterator {
+    public:
+      template <uint32_t unit_type> inline static void inner_iterator(Game<GameConfig>::Player* player, Game<GameConfig>::Unit* unit, uint32_t unit_type_runtime)
       {
-        resources[resource_type] += resource_production_rate_cache[resource_type];
-      }
+        GameConfig::template unit_post_tick<unit_type>(player, unit, unit_type_runtime);
+      };
+    };
 
-      pre_tick_iterator();
-
-      if (instructions && current_instruction < num_instructions)
-      {
-        auto instruction = instructions[current_instruction];
-        bool advance_instruction = false;
-        if ((instruction.type == 0) || (instruction.iterations == 0))
-        {
-          advance_instruction = true;
-        }
-        else
-        {
-          advance_instruction = GameConfig::follow_instruction(this, &instruction, is_instruction_first_tick);
-        }
-
-        is_instruction_first_tick = false;
-        if (advance_instruction)
-        {
-          current_iteration++;
-          is_instruction_first_tick = true;
-          if (current_iteration >= instruction.iterations) {
-            current_instruction++;
-            current_iteration = 0;
-          }
-        }
-      }
-
-      post_tick_iterator();
-
-      if (resource_max_capacity_cache_dirty)
-      {
-        update_cached_resource_capacity();
-      }
-      for (uint32_t resource_type = 0; resource_type < GameConfig::num_resource_types; resource_type++)
-      {
-        if (resources[resource_type] > resource_max_capacity_cache[resource_type])
-        {
-          resources[resource_type] = resource_max_capacity_cache[resource_type];
-        }
-      }
-    }
+    void tick();
   };
 
   Player players[GameConfig::num_players] = {Player(this)};
@@ -361,14 +360,70 @@ public:
     }
   }
 
-  void do_tick()
+  void do_tick();
+};
+
+template<typename GameConfig>
+void Game<GameConfig>::do_tick() {
   {
     for (auto& player : players) {
       player.tick();
     }
     tick++;
   }
+}
 
-};
+template<typename GameConfig>
+void Game<GameConfig>::Player::tick() {
+  if (resource_production_rate_cache_dirty)
+  {
+    update_cached_resource_rates();
+  }
+  for (uint32_t resource_type = 0; resource_type < GameConfig::num_resource_types; resource_type++)
+  {
+    resources[resource_type] += resource_production_rate_cache[resource_type];
+  }
+
+  unit_iterator_by_unit_lookup<UnitTickIterator>();
+
+  if (instructions && current_instruction < num_instructions)
+  {
+    auto instruction = instructions[current_instruction];
+    bool advance_instruction = false;
+    if ((instruction.type == 0) || (instruction.iterations == 0))
+    {
+      advance_instruction = true;
+    }
+    else
+    {
+      advance_instruction = GameConfig::follow_instruction(this, &instruction, is_instruction_first_tick);
+    }
+
+    is_instruction_first_tick = false;
+    if (advance_instruction)
+    {
+      current_iteration++;
+      is_instruction_first_tick = true;
+      if (current_iteration >= instruction.iterations) {
+        current_instruction++;
+        current_iteration = 0;
+      }
+    }
+  }
+
+  unit_iterator_by_type<UnitPostTickIterator>();
+
+  if (resource_max_capacity_cache_dirty)
+  {
+    update_cached_resource_capacity();
+  }
+  for (uint32_t resource_type = 0; resource_type < GameConfig::num_resource_types; resource_type++)
+  {
+    if (resources[resource_type] > resource_max_capacity_cache[resource_type])
+    {
+      resources[resource_type] = resource_max_capacity_cache[resource_type];
+    }
+  }
+}
 
 #endif //MLX86_GAME_HPP

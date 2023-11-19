@@ -376,7 +376,7 @@ BAR_UnitType_corfmine3,
 BAR_UnitType_MAX
 };
 #include "bar_game_types.hpp"
-constexpr inline static struct BARUnitTypeMetadata_T bar_game_get_unit_type_metadata_generated(const BAR_UnitType unit_type) {
+template <const BAR_UnitType unit_type> constexpr inline static struct BARUnitTypeMetadata_T bar_game_get_unit_type_metadata_generated() {
     switch (unit_type) {
         default:
           return {.name = "Invalid"};
@@ -386,6 +386,8 @@ case BAR_UnitType_armflea:
     .metal_cost = (uint32_t)(17 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(340 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(800),
+    .max_velocity = 4.4,
+    .max_water_depth = 16,
   };
 case BAR_UnitType_armpw:
   return {
@@ -393,6 +395,8 @@ case BAR_UnitType_armpw:
     .metal_cost = (uint32_t)(48 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(960 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1420),
+    .max_velocity = 2.8,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armck:
   return {
@@ -439,6 +443,8 @@ case BAR_UnitType_armck:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 130,
+    .max_velocity = 1.2,
+    .max_water_depth = 25,
   };
 case BAR_UnitType_armrectr:
   return {
@@ -450,6 +456,8 @@ case BAR_UnitType_armrectr:
     .is_builder = 1,
     .can_assist = 0,
     .build_distance = 96,
+    .max_velocity = 2.6,
+    .max_water_depth = 22,
   };
 case BAR_UnitType_armrock:
   return {
@@ -457,6 +465,8 @@ case BAR_UnitType_armrock:
     .metal_cost = (uint32_t)(120 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2010),
+    .max_velocity = 1.69,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armjeth:
   return {
@@ -464,6 +474,8 @@ case BAR_UnitType_armjeth:
     .metal_cost = (uint32_t)(125 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1830),
+    .max_velocity = 1.875,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armham:
   return {
@@ -471,6 +483,8 @@ case BAR_UnitType_armham:
     .metal_cost = (uint32_t)(130 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2200),
+    .max_velocity = 1.54,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armwar:
   return {
@@ -478,6 +492,8 @@ case BAR_UnitType_armwar:
     .metal_cost = (uint32_t)(270 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(3100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4200),
+    .max_velocity = 1.5,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armcom:
   return {
@@ -513,6 +529,8 @@ case BAR_UnitType_armcom:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 145,
+    .max_velocity = 1.25,
+    .max_water_depth = 35,
   };
 case BAR_UnitType_armvader:
   return {
@@ -520,6 +538,8 @@ case BAR_UnitType_armvader:
     .metal_cost = (uint32_t)(65 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(5800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7900),
+    .max_velocity = 2.8,
+    .max_water_depth = 112,
   };
 case BAR_UnitType_armaser:
   return {
@@ -528,6 +548,8 @@ case BAR_UnitType_armaser:
     .energy_cost = (uint32_t)(1400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4940),
     .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
+    .max_velocity = 1.61,
+    .max_water_depth = 112,
   };
 case BAR_UnitType_armmark:
   return {
@@ -535,6 +557,8 @@ case BAR_UnitType_armmark:
     .metal_cost = (uint32_t)(100 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1250 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3800),
+    .max_velocity = 1.35,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armspy:
   return {
@@ -546,6 +570,8 @@ case BAR_UnitType_armspy:
     .is_builder = 1,
     .can_assist = 0,
     .build_distance = 136,
+    .max_velocity = 2.18,
+    .max_water_depth = 112,
   };
 case BAR_UnitType_armfast:
   return {
@@ -553,6 +579,8 @@ case BAR_UnitType_armfast:
     .metal_cost = (uint32_t)(190 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3960),
+    .max_velocity = 3.71,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armfark:
   return {
@@ -576,6 +604,8 @@ case BAR_UnitType_armfark:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 2.5,
+    .max_water_depth = 22,
   };
 case BAR_UnitType_armspid:
   return {
@@ -589,6 +619,8 @@ case BAR_UnitType_armspid:
     .is_builder = 1,
     .can_assist = 0,
     .build_distance = 150,
+    .max_velocity = 2.385,
+    .max_water_depth = 16,
   };
 case BAR_UnitType_armamph:
   return {
@@ -596,6 +628,8 @@ case BAR_UnitType_armamph:
     .metal_cost = (uint32_t)(260 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5200),
+    .max_velocity = 3,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armfido:
   return {
@@ -603,6 +637,8 @@ case BAR_UnitType_armfido:
     .metal_cost = (uint32_t)(300 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6230),
+    .max_velocity = 2.3,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armzeus:
   return {
@@ -610,6 +646,8 @@ case BAR_UnitType_armzeus:
     .metal_cost = (uint32_t)(350 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7250),
+    .max_velocity = 1.58,
+    .max_water_depth = 23,
   };
 case BAR_UnitType_armsptk:
   return {
@@ -617,6 +655,8 @@ case BAR_UnitType_armsptk:
     .metal_cost = (uint32_t)(400 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(8800),
+    .max_velocity = 1.72,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armack:
   return {
@@ -663,6 +703,8 @@ case BAR_UnitType_armack:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 1.1,
+    .max_water_depth = 25,
   };
 case BAR_UnitType_armaak:
   return {
@@ -670,6 +712,8 @@ case BAR_UnitType_armaak:
     .metal_cost = (uint32_t)(520 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(5600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7000),
+    .max_velocity = 1.58,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armmav:
   return {
@@ -677,6 +721,8 @@ case BAR_UnitType_armmav:
     .metal_cost = (uint32_t)(650 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(11000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(17000),
+    .max_velocity = 1.65,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armsnipe:
   return {
@@ -684,6 +730,8 @@ case BAR_UnitType_armsnipe:
     .metal_cost = (uint32_t)(680 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(20000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(19000),
+    .max_velocity = 1.1,
+    .max_water_depth = 22,
   };
 case BAR_UnitType_armscab:
   return {
@@ -691,6 +739,8 @@ case BAR_UnitType_armscab:
     .metal_cost = (uint32_t)(1150 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(30000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(40000),
+    .max_velocity = 1.7,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armfboy:
   return {
@@ -698,6 +748,8 @@ case BAR_UnitType_armfboy:
     .metal_cost = (uint32_t)(1400 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(11000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(21000),
+    .max_velocity = 1,
+    .max_water_depth = 25,
   };
 case BAR_UnitType_armmar:
   return {
@@ -705,6 +757,8 @@ case BAR_UnitType_armmar:
     .metal_cost = (uint32_t)(970 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(21000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(26100),
+    .max_velocity = 3.15,
+    .max_water_depth = 32,
   };
 case BAR_UnitType_armvang:
   return {
@@ -712,6 +766,8 @@ case BAR_UnitType_armvang:
     .metal_cost = (uint32_t)(3300 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(71000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(91000),
+    .max_velocity = 1.1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armraz:
   return {
@@ -719,6 +775,8 @@ case BAR_UnitType_armraz:
     .metal_cost = (uint32_t)(3800 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(68000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(88600),
+    .max_velocity = 2.3,
+    .max_water_depth = 22,
   };
 case BAR_UnitType_armbanth:
   return {
@@ -726,6 +784,8 @@ case BAR_UnitType_armbanth:
     .metal_cost = (uint32_t)(13500 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(286000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(276000),
+    .max_velocity = 1.52,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armsolar:
   return {
@@ -735,6 +795,7 @@ case BAR_UnitType_armsolar:
     .build_cost = (uint32_t)(2800),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(-20 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armadvsol:
   return {
@@ -744,6 +805,7 @@ case BAR_UnitType_armadvsol:
     .build_cost = (uint32_t)(7950),
     .energy_production = (uint32_t)(75 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(100 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armwin:
   return {
@@ -752,6 +814,8 @@ case BAR_UnitType_armwin:
     .energy_cost = (uint32_t)(175 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1600),
     .energy_capacity = (uint32_t)(0.5 * bar_game_resource_denominator),
+    .wind_generator = 25,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armgeo:
   return {
@@ -762,6 +826,7 @@ case BAR_UnitType_armgeo:
     .energy_production = (uint32_t)(300 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(1000 * bar_game_resource_denominator),
     .geothermal = 1,
+    .max_water_depth = 99999,
   };
 case BAR_UnitType_armmstor:
   return {
@@ -770,6 +835,7 @@ case BAR_UnitType_armmstor:
     .energy_cost = (uint32_t)(570 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2920),
     .metal_capacity = (uint32_t)(3000 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armestor:
   return {
@@ -778,6 +844,7 @@ case BAR_UnitType_armestor:
     .energy_cost = (uint32_t)(1700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4110),
     .energy_capacity = (uint32_t)(6000 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armmex:
   return {
@@ -788,6 +855,7 @@ case BAR_UnitType_armmex:
     .metal_capacity = (uint32_t)(50 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(3 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 1,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armamex:
   return {
@@ -798,6 +866,7 @@ case BAR_UnitType_armamex:
     .metal_capacity = (uint32_t)(75 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(3 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 1,
+    .max_water_depth = 20,
   };
 case BAR_UnitType_armmakr:
   return {
@@ -807,6 +876,7 @@ case BAR_UnitType_armmakr:
     .build_cost = (uint32_t)(2600),
     .energy_convert_capacity = (uint32_t)(70* bar_game_resource_denominator),
     .energy_convert_return = (uint32_t)(70*0.014285714285714* bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armalab:
   return {
@@ -839,6 +909,7 @@ case BAR_UnitType_armalab:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armlab:
   return {
@@ -861,6 +932,7 @@ case BAR_UnitType_armlab:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armvp:
   return {
@@ -885,6 +957,7 @@ case BAR_UnitType_armvp:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armap:
   return {
@@ -905,6 +978,7 @@ case BAR_UnitType_armap:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armhp:
   return {
@@ -924,6 +998,7 @@ case BAR_UnitType_armhp:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armnanotc:
   return {
@@ -936,6 +1011,7 @@ case BAR_UnitType_armnanotc:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 400,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armeyes:
   return {
@@ -944,6 +1020,7 @@ case BAR_UnitType_armeyes:
     .energy_cost = (uint32_t)(850 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(750),
     .energy_upkeep = (uint32_t)(3 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armrad:
   return {
@@ -951,6 +1028,7 @@ case BAR_UnitType_armrad:
     .metal_cost = (uint32_t)(60 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(630 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1140),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armdrag:
   return {
@@ -958,6 +1036,7 @@ case BAR_UnitType_armdrag:
     .metal_cost = (uint32_t)(8 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(0 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(255),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armclaw:
   return {
@@ -965,6 +1044,7 @@ case BAR_UnitType_armclaw:
     .metal_cost = (uint32_t)(340 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4650),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armllt:
   return {
@@ -972,6 +1052,7 @@ case BAR_UnitType_armllt:
     .metal_cost = (uint32_t)(85 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(680 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2660),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armbeamer:
   return {
@@ -979,6 +1060,7 @@ case BAR_UnitType_armbeamer:
     .metal_cost = (uint32_t)(190 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5320),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armhlt:
   return {
@@ -986,6 +1068,7 @@ case BAR_UnitType_armhlt:
     .metal_cost = (uint32_t)(440 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12500),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armguard:
   return {
@@ -993,6 +1076,7 @@ case BAR_UnitType_armguard:
     .metal_cost = (uint32_t)(1250 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(12500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(21400),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armrl:
   return {
@@ -1000,6 +1084,7 @@ case BAR_UnitType_armrl:
     .metal_cost = (uint32_t)(80 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(900 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1800),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armferret:
   return {
@@ -1007,6 +1092,7 @@ case BAR_UnitType_armferret:
     .metal_cost = (uint32_t)(360 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(5700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5800),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armcir:
   return {
@@ -1014,6 +1100,7 @@ case BAR_UnitType_armcir:
     .metal_cost = (uint32_t)(750 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(7300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armdl:
   return {
@@ -1021,6 +1108,7 @@ case BAR_UnitType_armdl:
     .metal_cost = (uint32_t)(240 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6600),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armjamt:
   return {
@@ -1029,6 +1117,7 @@ case BAR_UnitType_armjamt:
     .energy_cost = (uint32_t)(8500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9950),
     .energy_upkeep = (uint32_t)(40 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armjuno:
   return {
@@ -1036,6 +1125,7 @@ case BAR_UnitType_armjuno:
     .metal_cost = (uint32_t)(640 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(17000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(21800),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armsy:
   return {
@@ -1057,6 +1147,8 @@ case BAR_UnitType_armsy:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armtide:
   return {
@@ -1065,6 +1157,9 @@ case BAR_UnitType_armtide:
     .energy_cost = (uint32_t)(250 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2190),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .tidal_generator = 1,
+    .min_water_depth = 20,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armuwms:
   return {
@@ -1073,6 +1168,8 @@ case BAR_UnitType_armuwms:
     .energy_cost = (uint32_t)(1200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3750),
     .metal_capacity = (uint32_t)(3000 * bar_game_resource_denominator),
+    .min_water_depth = 31,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armuwes:
   return {
@@ -1081,6 +1178,8 @@ case BAR_UnitType_armuwes:
     .energy_cost = (uint32_t)(2600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7090),
     .energy_capacity = (uint32_t)(6000 * bar_game_resource_denominator),
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armfus:
   return {
@@ -1090,6 +1189,7 @@ case BAR_UnitType_armfus:
     .build_cost = (uint32_t)(70000),
     .energy_production = (uint32_t)(1000 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(2500 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armafus:
   return {
@@ -1099,6 +1199,7 @@ case BAR_UnitType_armafus:
     .build_cost = (uint32_t)(312500),
     .energy_production = (uint32_t)(3000 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(9000 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armckfus:
   return {
@@ -1108,6 +1209,7 @@ case BAR_UnitType_armckfus:
     .build_cost = (uint32_t)(84400),
     .energy_production = (uint32_t)(1050 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(2500 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armshltx:
   return {
@@ -1128,6 +1230,7 @@ case BAR_UnitType_armshltx:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armageo:
   return {
@@ -1138,6 +1241,7 @@ case BAR_UnitType_armageo:
     .energy_production = (uint32_t)(1250 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(12000 * bar_game_resource_denominator),
     .geothermal = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armgmm:
   return {
@@ -1148,6 +1252,7 @@ case BAR_UnitType_armgmm:
     .energy_production = (uint32_t)(750 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(1500 * bar_game_resource_denominator),
     .geothermal = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armmoho:
   return {
@@ -1158,6 +1263,7 @@ case BAR_UnitType_armmoho:
     .metal_capacity = (uint32_t)(600 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 4,
+    .max_water_depth = 20,
   };
 case BAR_UnitType_armmmkr:
   return {
@@ -1167,6 +1273,7 @@ case BAR_UnitType_armmmkr:
     .build_cost = (uint32_t)(35000),
     .energy_convert_capacity = (uint32_t)(600* bar_game_resource_denominator),
     .energy_convert_return = (uint32_t)(600*0.017241379310345* bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armuwadves:
   return {
@@ -1175,6 +1282,7 @@ case BAR_UnitType_armuwadves:
     .energy_cost = (uint32_t)(10000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(20300),
     .energy_capacity = (uint32_t)(40000 * bar_game_resource_denominator),
+    .max_water_depth = 9999,
   };
 case BAR_UnitType_armuwadvms:
   return {
@@ -1183,6 +1291,7 @@ case BAR_UnitType_armuwadvms:
     .energy_cost = (uint32_t)(11500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(20400),
     .metal_capacity = (uint32_t)(10000 * bar_game_resource_denominator),
+    .max_water_depth = 9999,
   };
 case BAR_UnitType_armarad:
   return {
@@ -1190,6 +1299,7 @@ case BAR_UnitType_armarad:
     .metal_cost = (uint32_t)(560 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(19000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(11800),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armveil:
   return {
@@ -1198,6 +1308,7 @@ case BAR_UnitType_armveil:
     .energy_cost = (uint32_t)(19000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9100),
     .energy_upkeep = (uint32_t)(125 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armfort:
   return {
@@ -1205,6 +1316,7 @@ case BAR_UnitType_armfort:
     .metal_cost = (uint32_t)(40 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(900),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armasp:
   return {
@@ -1216,6 +1328,7 @@ case BAR_UnitType_armasp:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_water_depth = 1,
   };
 case BAR_UnitType_armtarg:
   return {
@@ -1224,6 +1337,7 @@ case BAR_UnitType_armtarg:
     .energy_cost = (uint32_t)(7200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(8700),
     .energy_upkeep = (uint32_t)(100 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armsd:
   return {
@@ -1232,6 +1346,7 @@ case BAR_UnitType_armsd:
     .energy_cost = (uint32_t)(7100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(11900),
     .energy_upkeep = (uint32_t)(125 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armgate:
   return {
@@ -1240,6 +1355,7 @@ case BAR_UnitType_armgate:
     .energy_cost = (uint32_t)(54000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(55000),
     .energy_capacity = (uint32_t)(1000 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armamb:
   return {
@@ -1247,6 +1363,7 @@ case BAR_UnitType_armamb:
     .metal_cost = (uint32_t)(2500 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(17000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(27000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armpb:
   return {
@@ -1254,6 +1371,7 @@ case BAR_UnitType_armpb:
     .metal_cost = (uint32_t)(680 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(14000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(15000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armanni:
   return {
@@ -1262,6 +1380,7 @@ case BAR_UnitType_armanni:
     .energy_cost = (uint32_t)(74000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(52000),
     .energy_capacity = (uint32_t)(1000 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armflak:
   return {
@@ -1269,6 +1388,7 @@ case BAR_UnitType_armflak:
     .metal_cost = (uint32_t)(820 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(13000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(19000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armmercury:
   return {
@@ -1276,6 +1396,7 @@ case BAR_UnitType_armmercury:
     .metal_cost = (uint32_t)(1600 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(33000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(28000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armemp:
   return {
@@ -1283,6 +1404,7 @@ case BAR_UnitType_armemp:
     .metal_cost = (uint32_t)(1600 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(29000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(79300),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armamd:
   return {
@@ -1290,6 +1412,7 @@ case BAR_UnitType_armamd:
     .metal_cost = (uint32_t)(1500 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(38000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(60000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armsilo:
   return {
@@ -1297,6 +1420,7 @@ case BAR_UnitType_armsilo:
     .metal_cost = (uint32_t)(8100 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(90000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(178500),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armbrtha:
   return {
@@ -1304,6 +1428,7 @@ case BAR_UnitType_armbrtha:
     .metal_cost = (uint32_t)(4500 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(64000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(85000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armvulc:
   return {
@@ -1311,6 +1436,7 @@ case BAR_UnitType_armvulc:
     .metal_cost = (uint32_t)(63000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(752000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1400000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armdf:
   return {
@@ -1318,6 +1444,7 @@ case BAR_UnitType_armdf:
     .metal_cost = (uint32_t)(370 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7500),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armcv:
   return {
@@ -1364,6 +1491,8 @@ case BAR_UnitType_armcv:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 130,
+    .max_velocity = 1.8,
+    .max_water_depth = 18,
   };
 case BAR_UnitType_armbeaver:
   return {
@@ -1423,6 +1552,8 @@ case BAR_UnitType_armbeaver:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 112,
+    .max_velocity = 1.4,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_armmlv:
   return {
@@ -1441,6 +1572,8 @@ case BAR_UnitType_armmlv:
     .is_builder = 1,
     .can_assist = 0,
     .build_distance = 96,
+    .max_velocity = 2.5,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armfav:
   return {
@@ -1448,6 +1581,8 @@ case BAR_UnitType_armfav:
     .metal_cost = (uint32_t)(31 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(370 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(950),
+    .max_velocity = 5.6,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armflash:
   return {
@@ -1455,6 +1590,8 @@ case BAR_UnitType_armflash:
     .metal_cost = (uint32_t)(109 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(911 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1960),
+    .max_velocity = 3.3,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armpincer:
   return {
@@ -1462,6 +1599,8 @@ case BAR_UnitType_armpincer:
     .metal_cost = (uint32_t)(200 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2610),
+    .max_velocity = 2.1,
+    .max_water_depth = 125,
   };
 case BAR_UnitType_armstump:
   return {
@@ -1469,6 +1608,8 @@ case BAR_UnitType_armstump:
     .metal_cost = (uint32_t)(225 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2900),
+    .max_velocity = 2.53,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armart:
   return {
@@ -1476,6 +1617,8 @@ case BAR_UnitType_armart:
     .metal_cost = (uint32_t)(135 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3000),
+    .max_velocity = 1.8,
+    .max_water_depth = 8,
   };
 case BAR_UnitType_armjanus:
   return {
@@ -1483,6 +1626,8 @@ case BAR_UnitType_armjanus:
     .metal_cost = (uint32_t)(240 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3550),
+    .max_velocity = 1.8,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armsam:
   return {
@@ -1490,6 +1635,8 @@ case BAR_UnitType_armsam:
     .metal_cost = (uint32_t)(150 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3420),
+    .max_velocity = 1.5,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armca:
   return {
@@ -1537,6 +1684,8 @@ case BAR_UnitType_armca:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 6.94,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armpeep:
   return {
@@ -1544,6 +1693,8 @@ case BAR_UnitType_armpeep:
     .metal_cost = (uint32_t)(52 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1550 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2800),
+    .max_velocity = 12.5,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armfig:
   return {
@@ -1551,6 +1702,8 @@ case BAR_UnitType_armfig:
     .metal_cost = (uint32_t)(73 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2900 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3500),
+    .max_velocity = 9.64,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armthund:
   return {
@@ -1558,6 +1711,8 @@ case BAR_UnitType_armthund:
     .metal_cost = (uint32_t)(145 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4780),
+    .max_velocity = 8.5,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armatlas:
   return {
@@ -1565,6 +1720,8 @@ case BAR_UnitType_armatlas:
     .metal_cost = (uint32_t)(68 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3850),
+    .max_velocity = 6.9,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armkam:
   return {
@@ -1573,6 +1730,8 @@ case BAR_UnitType_armkam:
     .energy_cost = (uint32_t)(2300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5050),
     .energy_upkeep = (uint32_t)(0.8 * bar_game_resource_denominator/bar_game_tps),
+    .max_velocity = 6.16,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armch:
   return {
@@ -1623,6 +1782,8 @@ case BAR_UnitType_armch:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 150,
+    .max_velocity = 2.23,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armsh:
   return {
@@ -1630,6 +1791,8 @@ case BAR_UnitType_armsh:
     .metal_cost = (uint32_t)(85 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1250 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1700),
+    .max_velocity = 3.79,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armanac:
   return {
@@ -1637,6 +1800,8 @@ case BAR_UnitType_armanac:
     .metal_cost = (uint32_t)(290 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3200),
+    .max_velocity = 2.333,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armah:
   return {
@@ -1644,6 +1809,8 @@ case BAR_UnitType_armah:
     .metal_cost = (uint32_t)(230 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3560),
+    .max_velocity = 2.95,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armmh:
   return {
@@ -1651,6 +1818,8 @@ case BAR_UnitType_armmh:
     .metal_cost = (uint32_t)(175 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(3000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3300),
+    .max_velocity = 2.13,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armcs:
   return {
@@ -1691,6 +1860,9 @@ case BAR_UnitType_armcs:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 200,
+    .max_velocity = 2.18,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armrecl:
   return {
@@ -1702,6 +1874,9 @@ case BAR_UnitType_armrecl:
     .is_builder = 1,
     .can_assist = 0,
     .build_distance = 140,
+    .max_velocity = 2.2,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armdecade:
   return {
@@ -1709,6 +1884,9 @@ case BAR_UnitType_armdecade:
     .metal_cost = (uint32_t)(175 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2450),
+    .max_velocity = 3.49,
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armpt:
   return {
@@ -1716,6 +1894,9 @@ case BAR_UnitType_armpt:
     .metal_cost = (uint32_t)(150 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2700),
+    .max_velocity = 3.1,
+    .min_water_depth = 6,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armpship:
   return {
@@ -1723,6 +1904,9 @@ case BAR_UnitType_armpship:
     .metal_cost = (uint32_t)(390 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4350),
+    .max_velocity = 2.7,
+    .min_water_depth = 6,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armroy:
   return {
@@ -1730,6 +1914,9 @@ case BAR_UnitType_armroy:
     .metal_cost = (uint32_t)(880 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(10200),
+    .max_velocity = 2.24,
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armsub:
   return {
@@ -1737,6 +1924,9 @@ case BAR_UnitType_armsub:
     .metal_cost = (uint32_t)(440 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(3100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5800),
+    .max_velocity = 2.1,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armlun:
   return {
@@ -1746,6 +1936,8 @@ case BAR_UnitType_armlun:
     .build_cost = (uint32_t)(32000),
     .is_builder = 0,
     .can_assist = 1,
+    .max_velocity = 1.67,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armthor:
   return {
@@ -1753,6 +1945,8 @@ case BAR_UnitType_armthor:
     .metal_cost = (uint32_t)(9000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(240000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(250000),
+    .max_velocity = 1.8,
+    .max_water_depth = 20,
   };
 case BAR_UnitType_armavp:
   return {
@@ -1779,6 +1973,7 @@ case BAR_UnitType_armavp:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armamsub:
   return {
@@ -1798,6 +1993,8 @@ case BAR_UnitType_armamsub:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 25,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armplat:
   return {
@@ -1817,6 +2014,8 @@ case BAR_UnitType_armplat:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armfdrag:
   return {
@@ -1824,6 +2023,8 @@ case BAR_UnitType_armfdrag:
     .metal_cost = (uint32_t)(15 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(0 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(370),
+    .min_water_depth = 1,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armfrad:
   return {
@@ -1831,6 +2032,8 @@ case BAR_UnitType_armfrad:
     .metal_cost = (uint32_t)(130 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1800),
+    .min_water_depth = 5,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armfhlt:
   return {
@@ -1838,6 +2041,8 @@ case BAR_UnitType_armfhlt:
     .metal_cost = (uint32_t)(470 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9670),
+    .min_water_depth = 2,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armfrt:
   return {
@@ -1846,6 +2051,8 @@ case BAR_UnitType_armfrt:
     .energy_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2200),
     .energy_upkeep = (uint32_t)(0.1 * bar_game_resource_denominator/bar_game_tps),
+    .min_water_depth = 2,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armptl:
   return {
@@ -1853,6 +2060,8 @@ case BAR_UnitType_armptl:
     .metal_cost = (uint32_t)(170 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3700),
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armnanotcplat:
   return {
@@ -1865,6 +2074,8 @@ case BAR_UnitType_armnanotcplat:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 400,
+    .min_water_depth = 12,
+    .max_water_depth = 50000000,
   };
 case BAR_UnitType_armfhp:
   return {
@@ -1884,6 +2095,8 @@ case BAR_UnitType_armfhp:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 5,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armfmkr:
   return {
@@ -1893,6 +2106,8 @@ case BAR_UnitType_armfmkr:
     .build_cost = (uint32_t)(2960),
     .energy_convert_capacity = (uint32_t)(70* bar_game_resource_denominator),
     .energy_convert_return = (uint32_t)(70*0.015625* bar_game_resource_denominator),
+    .min_water_depth = 11,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armmine1:
   return {
@@ -1900,6 +2115,7 @@ case BAR_UnitType_armmine1:
     .metal_cost = (uint32_t)(5 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(270 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(50),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armmine2:
   return {
@@ -1907,6 +2123,7 @@ case BAR_UnitType_armmine2:
     .metal_cost = (uint32_t)(16 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1050 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(100),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armmine3:
   return {
@@ -1914,6 +2131,7 @@ case BAR_UnitType_armmine3:
     .metal_cost = (uint32_t)(21 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1350 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(125),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armaap:
   return {
@@ -1938,6 +2156,7 @@ case BAR_UnitType_armaap:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armacv:
   return {
@@ -1984,6 +2203,8 @@ case BAR_UnitType_armacv:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 1.75,
+    .max_water_depth = 18,
   };
 case BAR_UnitType_armconsul:
   return {
@@ -2022,6 +2243,8 @@ case BAR_UnitType_armconsul:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 2.6,
+    .max_water_depth = 18,
   };
 case BAR_UnitType_armcroc:
   return {
@@ -2029,6 +2252,8 @@ case BAR_UnitType_armcroc:
     .metal_cost = (uint32_t)(750 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(18000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(16000),
+    .max_velocity = 1.8,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_armlatnk:
   return {
@@ -2036,6 +2261,8 @@ case BAR_UnitType_armlatnk:
     .metal_cost = (uint32_t)(330 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6030),
+    .max_velocity = 3,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armbull:
   return {
@@ -2043,6 +2270,8 @@ case BAR_UnitType_armbull:
     .metal_cost = (uint32_t)(950 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(13000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(17200),
+    .max_velocity = 2.17,
+    .max_water_depth = 15,
   };
 case BAR_UnitType_armgremlin:
   return {
@@ -2050,6 +2279,8 @@ case BAR_UnitType_armgremlin:
     .metal_cost = (uint32_t)(230 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(3700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6700),
+    .max_velocity = 2.35,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armmart:
   return {
@@ -2057,6 +2288,8 @@ case BAR_UnitType_armmart:
     .metal_cost = (uint32_t)(270 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5530),
+    .max_velocity = 1.7,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armmerl:
   return {
@@ -2064,6 +2297,8 @@ case BAR_UnitType_armmerl:
     .metal_cost = (uint32_t)(920 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(15500),
+    .max_velocity = 1.1,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armmanni:
   return {
@@ -2071,6 +2306,8 @@ case BAR_UnitType_armmanni:
     .metal_cost = (uint32_t)(1200 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(13500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(25700),
+    .max_velocity = 1.4,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armyork:
   return {
@@ -2078,6 +2315,8 @@ case BAR_UnitType_armyork:
     .metal_cost = (uint32_t)(450 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(9100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9950),
+    .max_velocity = 2.35,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_armseer:
   return {
@@ -2085,6 +2324,8 @@ case BAR_UnitType_armseer:
     .metal_cost = (uint32_t)(125 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6200),
+    .max_velocity = 1.9,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armjam:
   return {
@@ -2093,6 +2334,8 @@ case BAR_UnitType_armjam:
     .energy_cost = (uint32_t)(1700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5930),
     .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
+    .max_velocity = 1.1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armasy:
   return {
@@ -2118,6 +2361,8 @@ case BAR_UnitType_armasy:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armtl:
   return {
@@ -2125,6 +2370,8 @@ case BAR_UnitType_armtl:
     .metal_cost = (uint32_t)(170 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3700),
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armcsa:
   return {
@@ -2175,6 +2422,8 @@ case BAR_UnitType_armcsa:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 6.4,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_armsaber:
   return {
@@ -2182,6 +2431,8 @@ case BAR_UnitType_armsaber:
     .metal_cost = (uint32_t)(210 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9000),
+    .max_velocity = 5.23,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_armsb:
   return {
@@ -2189,6 +2440,8 @@ case BAR_UnitType_armsb:
     .metal_cost = (uint32_t)(240 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(7500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(8000),
+    .max_velocity = 8.91,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_armseap:
   return {
@@ -2196,6 +2449,8 @@ case BAR_UnitType_armseap:
     .metal_cost = (uint32_t)(290 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(14800),
+    .max_velocity = 9.04,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_armsfig:
   return {
@@ -2203,6 +2458,8 @@ case BAR_UnitType_armsfig:
     .metal_cost = (uint32_t)(90 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5500),
+    .max_velocity = 10.36,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_armsehak:
   return {
@@ -2210,6 +2467,8 @@ case BAR_UnitType_armsehak:
     .metal_cost = (uint32_t)(125 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(7000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9050),
+    .max_velocity = 11.27,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_armaca:
   return {
@@ -2257,6 +2516,8 @@ case BAR_UnitType_armaca:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 6.4,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armbrawl:
   return {
@@ -2264,6 +2525,8 @@ case BAR_UnitType_armbrawl:
     .metal_cost = (uint32_t)(310 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(13500),
+    .max_velocity = 5.36,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armpnix:
   return {
@@ -2271,6 +2534,8 @@ case BAR_UnitType_armpnix:
     .metal_cost = (uint32_t)(230 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(12500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(21000),
+    .max_velocity = 8.6,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armlance:
   return {
@@ -2278,6 +2543,8 @@ case BAR_UnitType_armlance:
     .metal_cost = (uint32_t)(400 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(8000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(15100),
+    .max_velocity = 9.5,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armhawk:
   return {
@@ -2285,6 +2552,8 @@ case BAR_UnitType_armhawk:
     .metal_cost = (uint32_t)(120 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4900 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7680),
+    .max_velocity = 11.96,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armawac:
   return {
@@ -2292,6 +2561,8 @@ case BAR_UnitType_armawac:
     .metal_cost = (uint32_t)(175 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(8600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12800),
+    .max_velocity = 10.58,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armdfly:
   return {
@@ -2299,6 +2570,8 @@ case BAR_UnitType_armdfly:
     .metal_cost = (uint32_t)(320 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(16000),
+    .max_velocity = 8.05,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armblade:
   return {
@@ -2306,6 +2579,8 @@ case BAR_UnitType_armblade:
     .metal_cost = (uint32_t)(1250 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(22000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(24000),
+    .max_velocity = 6.8,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armstil:
   return {
@@ -2313,6 +2588,8 @@ case BAR_UnitType_armstil:
     .metal_cost = (uint32_t)(230 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(19000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(21500),
+    .max_velocity = 10,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armliche:
   return {
@@ -2321,6 +2598,8 @@ case BAR_UnitType_armliche:
     .energy_cost = (uint32_t)(46000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(57400),
     .energy_upkeep = (uint32_t)(40 * bar_game_resource_denominator/bar_game_tps),
+    .max_velocity = 9.83,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_armacsub:
   return {
@@ -2350,6 +2629,9 @@ case BAR_UnitType_armacsub:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 180,
+    .max_velocity = 2.4,
+    .min_water_depth = 20,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armmls:
   return {
@@ -2380,6 +2662,9 @@ case BAR_UnitType_armmls:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 250,
+    .max_velocity = 2.2,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armcrus:
   return {
@@ -2387,6 +2672,9 @@ case BAR_UnitType_armcrus:
     .metal_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(12000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(17000),
+    .max_velocity = 2.4,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armsubk:
   return {
@@ -2394,6 +2682,9 @@ case BAR_UnitType_armsubk:
     .metal_cost = (uint32_t)(950 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(17000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(22000),
+    .max_velocity = 2.7,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armserp:
   return {
@@ -2401,6 +2692,9 @@ case BAR_UnitType_armserp:
     .metal_cost = (uint32_t)(1800 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(27000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(22770),
+    .max_velocity = 1.5,
+    .min_water_depth = 20,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armaas:
   return {
@@ -2408,6 +2702,9 @@ case BAR_UnitType_armaas:
     .metal_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(12000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(15000),
+    .max_velocity = 2.1,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armsjam:
   return {
@@ -2416,6 +2713,9 @@ case BAR_UnitType_armsjam:
     .energy_cost = (uint32_t)(1600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6040),
     .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
+    .max_velocity = 2.2,
+    .min_water_depth = 6,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armcarry:
   return {
@@ -2429,6 +2729,9 @@ case BAR_UnitType_armcarry:
     .energy_upkeep = (uint32_t)(25 * bar_game_resource_denominator/bar_game_tps),
     .is_builder = 1,
     .can_assist = 0,
+    .max_velocity = 2.1,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armbats:
   return {
@@ -2436,6 +2739,9 @@ case BAR_UnitType_armbats:
     .metal_cost = (uint32_t)(3300 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(22000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(35000),
+    .max_velocity = 1.93,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armmship:
   return {
@@ -2443,6 +2749,9 @@ case BAR_UnitType_armmship:
     .metal_cost = (uint32_t)(2000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(10000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(15000),
+    .max_velocity = 2.1,
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armepoch:
   return {
@@ -2450,6 +2759,9 @@ case BAR_UnitType_armepoch:
     .metal_cost = (uint32_t)(17000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(158000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(169800),
+    .max_velocity = 1.795,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armfflak:
   return {
@@ -2457,6 +2769,8 @@ case BAR_UnitType_armfflak:
     .metal_cost = (uint32_t)(850 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(23000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(21900),
+    .min_water_depth = 5,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armfmine3:
   return {
@@ -2464,6 +2778,8 @@ case BAR_UnitType_armfmine3:
     .metal_cost = (uint32_t)(25 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(150),
+    .min_water_depth = 0,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armkraken:
   return {
@@ -2471,6 +2787,8 @@ case BAR_UnitType_armkraken:
     .metal_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(13000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(20000),
+    .min_water_depth = 2,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armuwfus:
   return {
@@ -2480,6 +2798,8 @@ case BAR_UnitType_armuwfus:
     .build_cost = (uint32_t)(99900),
     .energy_production = (uint32_t)(1200 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(2500 * bar_game_resource_denominator),
+    .min_water_depth = 25,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armuwmmm:
   return {
@@ -2489,6 +2809,8 @@ case BAR_UnitType_armuwmmm:
     .build_cost = (uint32_t)(38960),
     .energy_convert_capacity = (uint32_t)(650* bar_game_resource_denominator),
     .energy_convert_return = (uint32_t)(650*0.017241379310345* bar_game_resource_denominator),
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armuwmme:
   return {
@@ -2499,6 +2821,8 @@ case BAR_UnitType_armuwmme:
     .metal_capacity = (uint32_t)(600 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 4,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armason:
   return {
@@ -2506,6 +2830,8 @@ case BAR_UnitType_armason:
     .metal_cost = (uint32_t)(170 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6150),
+    .min_water_depth = 24,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armfatf:
   return {
@@ -2514,6 +2840,8 @@ case BAR_UnitType_armfatf:
     .energy_cost = (uint32_t)(7300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9880),
     .energy_upkeep = (uint32_t)(150 * bar_game_resource_denominator/bar_game_tps),
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armatl:
   return {
@@ -2521,6 +2849,8 @@ case BAR_UnitType_armatl:
     .metal_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(8500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9260),
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armshltxuw:
   return {
@@ -2538,6 +2868,8 @@ case BAR_UnitType_armshltxuw:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_armdecom:
   return {
@@ -2569,6 +2901,8 @@ case BAR_UnitType_armdecom:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 145,
+    .max_velocity = 1.25,
+    .max_water_depth = 35,
   };
 case BAR_UnitType_corcom:
   return {
@@ -2604,6 +2938,8 @@ case BAR_UnitType_corcom:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 145,
+    .max_velocity = 1.25,
+    .max_water_depth = 35,
   };
 case BAR_UnitType_corsolar:
   return {
@@ -2613,6 +2949,7 @@ case BAR_UnitType_corsolar:
     .build_cost = (uint32_t)(2800),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(-20 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corwin:
   return {
@@ -2621,6 +2958,8 @@ case BAR_UnitType_corwin:
     .energy_cost = (uint32_t)(175 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1680),
     .energy_capacity = (uint32_t)(0.5 * bar_game_resource_denominator),
+    .wind_generator = 25,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cormstor:
   return {
@@ -2629,6 +2968,7 @@ case BAR_UnitType_cormstor:
     .energy_cost = (uint32_t)(590 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2920),
     .metal_capacity = (uint32_t)(3000 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corestor:
   return {
@@ -2637,6 +2977,7 @@ case BAR_UnitType_corestor:
     .energy_cost = (uint32_t)(1800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4260),
     .energy_capacity = (uint32_t)(6000 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cormex:
   return {
@@ -2647,6 +2988,7 @@ case BAR_UnitType_cormex:
     .metal_capacity = (uint32_t)(50 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(3 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 1,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_cormakr:
   return {
@@ -2656,6 +2998,7 @@ case BAR_UnitType_cormakr:
     .build_cost = (uint32_t)(2680),
     .energy_convert_capacity = (uint32_t)(70* bar_game_resource_denominator),
     .energy_convert_return = (uint32_t)(70*0.014285714285714* bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corlab:
   return {
@@ -2676,6 +3019,7 @@ case BAR_UnitType_corlab:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corvp:
   return {
@@ -2700,6 +3044,7 @@ case BAR_UnitType_corvp:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corap:
   return {
@@ -2720,6 +3065,7 @@ case BAR_UnitType_corap:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_coreyes:
   return {
@@ -2728,6 +3074,7 @@ case BAR_UnitType_coreyes:
     .energy_cost = (uint32_t)(850 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(750),
     .energy_upkeep = (uint32_t)(5 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corrad:
   return {
@@ -2735,6 +3082,7 @@ case BAR_UnitType_corrad:
     .metal_cost = (uint32_t)(60 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(630 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1140),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cordrag:
   return {
@@ -2742,6 +3090,7 @@ case BAR_UnitType_cordrag:
     .metal_cost = (uint32_t)(8 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(0 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(255),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corllt:
   return {
@@ -2749,6 +3098,7 @@ case BAR_UnitType_corllt:
     .metal_cost = (uint32_t)(90 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2720),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corrl:
   return {
@@ -2756,6 +3106,7 @@ case BAR_UnitType_corrl:
     .metal_cost = (uint32_t)(80 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(850 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1750),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cordl:
   return {
@@ -2763,6 +3114,7 @@ case BAR_UnitType_cordl:
     .metal_cost = (uint32_t)(250 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6800),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cortide:
   return {
@@ -2771,6 +3123,9 @@ case BAR_UnitType_cortide:
     .energy_cost = (uint32_t)(250 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2100),
     .energy_capacity = (uint32_t)(50 * bar_game_resource_denominator),
+    .tidal_generator = 1,
+    .min_water_depth = 20,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_coruwms:
   return {
@@ -2779,6 +3134,8 @@ case BAR_UnitType_coruwms:
     .energy_cost = (uint32_t)(1600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3870),
     .metal_capacity = (uint32_t)(3000 * bar_game_resource_denominator),
+    .min_water_depth = 40,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_coruwes:
   return {
@@ -2787,6 +3144,8 @@ case BAR_UnitType_coruwes:
     .energy_cost = (uint32_t)(2700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7250),
     .energy_capacity = (uint32_t)(6000 * bar_game_resource_denominator),
+    .min_water_depth = 31,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corck:
   return {
@@ -2833,6 +3192,8 @@ case BAR_UnitType_corck:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 130,
+    .max_velocity = 1.15,
+    .max_water_depth = 25,
   };
 case BAR_UnitType_corak:
   return {
@@ -2840,6 +3201,8 @@ case BAR_UnitType_corak:
     .metal_cost = (uint32_t)(36 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(880 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1280),
+    .max_velocity = 2.8,
+    .max_water_depth = 25,
   };
 case BAR_UnitType_cornecro:
   return {
@@ -2851,6 +3214,8 @@ case BAR_UnitType_cornecro:
     .is_builder = 1,
     .can_assist = 0,
     .build_distance = 96,
+    .max_velocity = 2.6,
+    .max_water_depth = 22,
   };
 case BAR_UnitType_corstorm:
   return {
@@ -2858,6 +3223,8 @@ case BAR_UnitType_corstorm:
     .metal_cost = (uint32_t)(110 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1150 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1950),
+    .max_velocity = 1.59,
+    .max_water_depth = 21,
   };
 case BAR_UnitType_corthud:
   return {
@@ -2865,6 +3232,8 @@ case BAR_UnitType_corthud:
     .metal_cost = (uint32_t)(140 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1150 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1970),
+    .max_velocity = 1.5,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corcrash:
   return {
@@ -2872,6 +3241,8 @@ case BAR_UnitType_corcrash:
     .metal_cost = (uint32_t)(125 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1900),
+    .max_velocity = 1.783,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corcv:
   return {
@@ -2918,6 +3289,8 @@ case BAR_UnitType_corcv:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 130,
+    .max_velocity = 1.7,
+    .max_water_depth = 19,
   };
 case BAR_UnitType_cormuskrat:
   return {
@@ -2976,6 +3349,8 @@ case BAR_UnitType_cormuskrat:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 110,
+    .max_velocity = 1.35,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_cormlv:
   return {
@@ -2994,6 +3369,8 @@ case BAR_UnitType_cormlv:
     .is_builder = 1,
     .can_assist = 0,
     .build_distance = 96,
+    .max_velocity = 2.3,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corfav:
   return {
@@ -3001,6 +3378,8 @@ case BAR_UnitType_corfav:
     .metal_cost = (uint32_t)(26 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(270 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1150),
+    .max_velocity = 5.1,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corgator:
   return {
@@ -3008,6 +3387,8 @@ case BAR_UnitType_corgator:
     .metal_cost = (uint32_t)(118 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1042 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1761),
+    .max_velocity = 2.85,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corgarp:
   return {
@@ -3015,6 +3396,8 @@ case BAR_UnitType_corgarp:
     .metal_cost = (uint32_t)(220 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3100),
+    .max_velocity = 1.95,
+    .max_water_depth = 200,
   };
 case BAR_UnitType_corraid:
   return {
@@ -3022,6 +3405,8 @@ case BAR_UnitType_corraid:
     .metal_cost = (uint32_t)(235 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3310),
+    .max_velocity = 2.43,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corlevlr:
   return {
@@ -3029,6 +3414,8 @@ case BAR_UnitType_corlevlr:
     .metal_cost = (uint32_t)(220 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3000),
+    .max_velocity = 1.35,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corwolv:
   return {
@@ -3036,6 +3423,8 @@ case BAR_UnitType_corwolv:
     .metal_cost = (uint32_t)(170 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3550),
+    .max_velocity = 1.6,
+    .max_water_depth = 8,
   };
 case BAR_UnitType_cormist:
   return {
@@ -3043,6 +3432,8 @@ case BAR_UnitType_cormist:
     .metal_cost = (uint32_t)(155 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3440),
+    .max_velocity = 1.4,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corca:
   return {
@@ -3090,6 +3481,8 @@ case BAR_UnitType_corca:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 6.7,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corfink:
   return {
@@ -3097,6 +3490,8 @@ case BAR_UnitType_corfink:
     .metal_cost = (uint32_t)(51 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1450 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2400),
+    .max_velocity = 12,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corveng:
   return {
@@ -3104,6 +3499,8 @@ case BAR_UnitType_corveng:
     .metal_cost = (uint32_t)(73 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3330),
+    .max_velocity = 9.92,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corshad:
   return {
@@ -3111,6 +3508,8 @@ case BAR_UnitType_corshad:
     .metal_cost = (uint32_t)(150 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5050),
+    .max_velocity = 7.8,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corvalk:
   return {
@@ -3118,6 +3517,8 @@ case BAR_UnitType_corvalk:
     .metal_cost = (uint32_t)(74 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1450 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4120),
+    .max_velocity = 6.6,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corbw:
   return {
@@ -3125,6 +3526,8 @@ case BAR_UnitType_corbw:
     .metal_cost = (uint32_t)(58 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2070),
+    .max_velocity = 9.35,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_coradvsol:
   return {
@@ -3134,6 +3537,7 @@ case BAR_UnitType_coradvsol:
     .build_cost = (uint32_t)(8150),
     .energy_production = (uint32_t)(75 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(100 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corgeo:
   return {
@@ -3144,6 +3548,7 @@ case BAR_UnitType_corgeo:
     .energy_production = (uint32_t)(300 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(1000 * bar_game_resource_denominator),
     .geothermal = 1,
+    .max_water_depth = 99999,
   };
 case BAR_UnitType_corexp:
   return {
@@ -3154,6 +3559,7 @@ case BAR_UnitType_corexp:
     .metal_capacity = (uint32_t)(75 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(3 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 1,
+    .max_water_depth = 20,
   };
 case BAR_UnitType_coralab:
   return {
@@ -3185,6 +3591,7 @@ case BAR_UnitType_coralab:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corhp:
   return {
@@ -3205,6 +3612,7 @@ case BAR_UnitType_corhp:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cornanotc:
   return {
@@ -3217,6 +3625,7 @@ case BAR_UnitType_cornanotc:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 400,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cormaw:
   return {
@@ -3224,6 +3633,7 @@ case BAR_UnitType_cormaw:
     .metal_cost = (uint32_t)(290 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1550 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4420),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corhllt:
   return {
@@ -3231,6 +3641,7 @@ case BAR_UnitType_corhllt:
     .metal_cost = (uint32_t)(195 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1750 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5440),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corhlt:
   return {
@@ -3239,6 +3650,7 @@ case BAR_UnitType_corhlt:
     .energy_cost = (uint32_t)(4700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12650),
     .energy_capacity = (uint32_t)(200 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corpun:
   return {
@@ -3246,6 +3658,7 @@ case BAR_UnitType_corpun:
     .metal_cost = (uint32_t)(1300 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(13500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(19300),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cormadsam:
   return {
@@ -3254,6 +3667,7 @@ case BAR_UnitType_cormadsam:
     .energy_cost = (uint32_t)(6100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5240),
     .energy_upkeep = (uint32_t)(5 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corerad:
   return {
@@ -3261,6 +3675,7 @@ case BAR_UnitType_corerad:
     .metal_cost = (uint32_t)(800 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(7900 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corjamt:
   return {
@@ -3269,6 +3684,7 @@ case BAR_UnitType_corjamt:
     .energy_cost = (uint32_t)(5200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4570),
     .energy_upkeep = (uint32_t)(25 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corjuno:
   return {
@@ -3276,6 +3692,7 @@ case BAR_UnitType_corjuno:
     .metal_cost = (uint32_t)(660 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(16000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(27700),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corsy:
   return {
@@ -3297,6 +3714,8 @@ case BAR_UnitType_corsy:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_coravp:
   return {
@@ -3324,6 +3743,7 @@ case BAR_UnitType_coravp:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cornanotcplat:
   return {
@@ -3336,6 +3756,8 @@ case BAR_UnitType_cornanotcplat:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 400,
+    .min_water_depth = 12,
+    .max_water_depth = 50000000,
   };
 case BAR_UnitType_corfhp:
   return {
@@ -3356,6 +3778,8 @@ case BAR_UnitType_corfhp:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 5,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_coramsub:
   return {
@@ -3376,6 +3800,8 @@ case BAR_UnitType_coramsub:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 25,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corplat:
   return {
@@ -3395,6 +3821,8 @@ case BAR_UnitType_corplat:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corfdrag:
   return {
@@ -3402,6 +3830,8 @@ case BAR_UnitType_corfdrag:
     .metal_cost = (uint32_t)(15 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(0 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(400),
+    .min_water_depth = 1,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corfrad:
   return {
@@ -3409,6 +3839,8 @@ case BAR_UnitType_corfrad:
     .metal_cost = (uint32_t)(130 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1800),
+    .min_water_depth = 5,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corfhlt:
   return {
@@ -3416,6 +3848,8 @@ case BAR_UnitType_corfhlt:
     .metal_cost = (uint32_t)(480 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(11400),
+    .min_water_depth = 5,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corfrt:
   return {
@@ -3424,6 +3858,8 @@ case BAR_UnitType_corfrt:
     .energy_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2200),
     .energy_upkeep = (uint32_t)(0.1 * bar_game_resource_denominator/bar_game_tps),
+    .min_water_depth = 2,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corptl:
   return {
@@ -3431,6 +3867,8 @@ case BAR_UnitType_corptl:
     .metal_cost = (uint32_t)(170 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3750),
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corfmkr:
   return {
@@ -3440,6 +3878,8 @@ case BAR_UnitType_corfmkr:
     .build_cost = (uint32_t)(2680),
     .energy_convert_capacity = (uint32_t)(70* bar_game_resource_denominator),
     .energy_convert_return = (uint32_t)(70*0.015625* bar_game_resource_denominator),
+    .min_water_depth = 11,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_cormine1:
   return {
@@ -3447,6 +3887,7 @@ case BAR_UnitType_cormine1:
     .metal_cost = (uint32_t)(5 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(270 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(50),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cormine2:
   return {
@@ -3454,6 +3895,7 @@ case BAR_UnitType_cormine2:
     .metal_cost = (uint32_t)(16 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1050 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(100),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cormine3:
   return {
@@ -3461,6 +3903,7 @@ case BAR_UnitType_cormine3:
     .metal_cost = (uint32_t)(21 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1350 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(125),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corasp:
   return {
@@ -3472,6 +3915,7 @@ case BAR_UnitType_corasp:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_water_depth = 1,
   };
 case BAR_UnitType_coraap:
   return {
@@ -3494,6 +3938,7 @@ case BAR_UnitType_coraap:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corack:
   return {
@@ -3539,6 +3984,8 @@ case BAR_UnitType_corack:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 1.1,
+    .max_water_depth = 25,
   };
 case BAR_UnitType_corfast:
   return {
@@ -3577,6 +4024,8 @@ case BAR_UnitType_corfast:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 3,
+    .max_water_depth = 22,
   };
 case BAR_UnitType_corpyro:
   return {
@@ -3584,6 +4033,8 @@ case BAR_UnitType_corpyro:
     .metal_cost = (uint32_t)(200 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(3000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5030),
+    .max_velocity = 2.75,
+    .max_water_depth = 25,
   };
 case BAR_UnitType_coramph:
   return {
@@ -3591,6 +4042,8 @@ case BAR_UnitType_coramph:
     .metal_cost = (uint32_t)(330 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(9500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9650),
+    .max_velocity = 1.85,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corcan:
   return {
@@ -3598,6 +4051,8 @@ case BAR_UnitType_corcan:
     .metal_cost = (uint32_t)(560 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(9300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(11700),
+    .max_velocity = 1.25,
+    .max_water_depth = 21,
   };
 case BAR_UnitType_corsumo:
   return {
@@ -3605,6 +4060,8 @@ case BAR_UnitType_corsumo:
     .metal_cost = (uint32_t)(2200 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(35000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(51000),
+    .max_velocity = 0.75,
+    .max_water_depth = 23,
   };
 case BAR_UnitType_cortermite:
   return {
@@ -3612,6 +4069,8 @@ case BAR_UnitType_cortermite:
     .metal_cost = (uint32_t)(700 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(12000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(18800),
+    .max_velocity = 1.61,
+    .max_water_depth = 30,
   };
 case BAR_UnitType_cormort:
   return {
@@ -3619,6 +4078,8 @@ case BAR_UnitType_cormort:
     .metal_cost = (uint32_t)(410 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5140),
+    .max_velocity = 1.68,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corhrk:
   return {
@@ -3626,6 +4087,8 @@ case BAR_UnitType_corhrk:
     .metal_cost = (uint32_t)(600 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(5800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6600),
+    .max_velocity = 1.8,
+    .max_water_depth = 21,
   };
 case BAR_UnitType_coraak:
   return {
@@ -3633,6 +4096,8 @@ case BAR_UnitType_coraak:
     .metal_cost = (uint32_t)(650 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7600),
+    .max_velocity = 1.15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corroach:
   return {
@@ -3640,6 +4105,8 @@ case BAR_UnitType_corroach:
     .metal_cost = (uint32_t)(69 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(5800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7900),
+    .max_velocity = 2.7,
+    .max_water_depth = 112,
   };
 case BAR_UnitType_corsktl:
   return {
@@ -3647,6 +4114,8 @@ case BAR_UnitType_corsktl:
     .metal_cost = (uint32_t)(540 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(26000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(17000),
+    .max_velocity = 2.8,
+    .max_water_depth = 30,
   };
 case BAR_UnitType_cordecom:
   return {
@@ -3678,6 +4147,8 @@ case BAR_UnitType_cordecom:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 145,
+    .max_velocity = 1.25,
+    .max_water_depth = 35,
   };
 case BAR_UnitType_corvoyr:
   return {
@@ -3685,6 +4156,8 @@ case BAR_UnitType_corvoyr:
     .metal_cost = (uint32_t)(99 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1350 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3950),
+    .max_velocity = 1.5,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corspy:
   return {
@@ -3696,6 +4169,8 @@ case BAR_UnitType_corspy:
     .is_builder = 1,
     .can_assist = 0,
     .build_distance = 136,
+    .max_velocity = 2.07,
+    .max_water_depth = 112,
   };
 case BAR_UnitType_corspec:
   return {
@@ -3704,6 +4179,8 @@ case BAR_UnitType_corspec:
     .energy_cost = (uint32_t)(1550 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5440),
     .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
+    .max_velocity = 1.3,
+    .max_water_depth = 112,
   };
 case BAR_UnitType_cormando:
   return {
@@ -3726,6 +4203,8 @@ case BAR_UnitType_cormando:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 275,
+    .max_velocity = 2.5,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corch:
   return {
@@ -3776,6 +4255,8 @@ case BAR_UnitType_corch:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 150,
+    .max_velocity = 2.03,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corsh:
   return {
@@ -3783,6 +4264,8 @@ case BAR_UnitType_corsh:
     .metal_cost = (uint32_t)(75 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1500),
+    .max_velocity = 3.65,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corsnap:
   return {
@@ -3790,6 +4273,8 @@ case BAR_UnitType_corsnap:
     .metal_cost = (uint32_t)(320 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(3300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3800),
+    .max_velocity = 2.233,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corah:
   return {
@@ -3797,6 +4282,8 @@ case BAR_UnitType_corah:
     .metal_cost = (uint32_t)(250 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3650),
+    .max_velocity = 2.95,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cormh:
   return {
@@ -3804,6 +4291,8 @@ case BAR_UnitType_cormh:
     .metal_cost = (uint32_t)(200 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(3300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3500),
+    .max_velocity = 2.13,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corhal:
   return {
@@ -3811,6 +4300,8 @@ case BAR_UnitType_corhal:
     .metal_cost = (uint32_t)(640 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(13000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12900),
+    .max_velocity = 1.51,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corcs:
   return {
@@ -3851,6 +4342,9 @@ case BAR_UnitType_corcs:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 200,
+    .max_velocity = 2,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_correcl:
   return {
@@ -3862,6 +4356,9 @@ case BAR_UnitType_correcl:
     .is_builder = 1,
     .can_assist = 0,
     .build_distance = 140,
+    .max_velocity = 2.23,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_coresupp:
   return {
@@ -3869,6 +4366,9 @@ case BAR_UnitType_coresupp:
     .metal_cost = (uint32_t)(100 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1400),
+    .max_velocity = 3.66,
+    .min_water_depth = 4,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corpt:
   return {
@@ -3876,6 +4376,9 @@ case BAR_UnitType_corpt:
     .metal_cost = (uint32_t)(210 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(2500),
+    .max_velocity = 2.3,
+    .min_water_depth = 6,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corpship:
   return {
@@ -3883,6 +4386,9 @@ case BAR_UnitType_corpship:
     .metal_cost = (uint32_t)(410 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4450),
+    .max_velocity = 2.75,
+    .min_water_depth = 6,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corroy:
   return {
@@ -3890,6 +4396,9 @@ case BAR_UnitType_corroy:
     .metal_cost = (uint32_t)(960 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(7200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(10600),
+    .max_velocity = 2.08,
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corsub:
   return {
@@ -3897,6 +4406,9 @@ case BAR_UnitType_corsub:
     .metal_cost = (uint32_t)(580 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7200),
+    .max_velocity = 2,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_coracv:
   return {
@@ -3942,6 +4454,8 @@ case BAR_UnitType_coracv:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 1.65,
+    .max_water_depth = 18,
   };
 case BAR_UnitType_corseal:
   return {
@@ -3949,6 +4463,8 @@ case BAR_UnitType_corseal:
     .metal_cost = (uint32_t)(480 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(9100 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12050),
+    .max_velocity = 2.4,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_correap:
   return {
@@ -3956,6 +4472,8 @@ case BAR_UnitType_correap:
     .metal_cost = (uint32_t)(665 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(10000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(11500),
+    .max_velocity = 2.35,
+    .max_water_depth = 100,
   };
 case BAR_UnitType_corparrow:
   return {
@@ -3963,6 +4481,8 @@ case BAR_UnitType_corparrow:
     .metal_cost = (uint32_t)(1050 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(29000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(22200),
+    .max_velocity = 1.7,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_corgol:
   return {
@@ -3970,6 +4490,8 @@ case BAR_UnitType_corgol:
     .metal_cost = (uint32_t)(1650 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(22000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(26100),
+    .max_velocity = 1.35,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corban:
   return {
@@ -3977,6 +4499,8 @@ case BAR_UnitType_corban:
     .metal_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(23000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(23100),
+    .max_velocity = 1.8,
+    .max_water_depth = 20,
   };
 case BAR_UnitType_cormart:
   return {
@@ -3984,6 +4508,8 @@ case BAR_UnitType_cormart:
     .metal_cost = (uint32_t)(280 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(3300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4270),
+    .max_velocity = 1.8,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corvroc:
   return {
@@ -3991,6 +4517,8 @@ case BAR_UnitType_corvroc:
     .metal_cost = (uint32_t)(880 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(15000),
+    .max_velocity = 1.1,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_cortrem:
   return {
@@ -3998,6 +4526,8 @@ case BAR_UnitType_cortrem:
     .metal_cost = (uint32_t)(1850 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(49000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(31100),
+    .max_velocity = 1.35,
+    .max_water_depth = 15,
   };
 case BAR_UnitType_corsent:
   return {
@@ -4005,6 +4535,8 @@ case BAR_UnitType_corsent:
     .metal_cost = (uint32_t)(470 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(10500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12000),
+    .max_velocity = 2.3,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_cormabm:
   return {
@@ -4012,6 +4544,8 @@ case BAR_UnitType_cormabm:
     .metal_cost = (uint32_t)(1250 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(32000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(42000),
+    .max_velocity = 1.7,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_coreter:
   return {
@@ -4020,6 +4554,8 @@ case BAR_UnitType_coreter:
     .energy_cost = (uint32_t)(1900 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6400),
     .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
+    .max_velocity = 1.38,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corvrad:
   return {
@@ -4027,6 +4563,8 @@ case BAR_UnitType_corvrad:
     .metal_cost = (uint32_t)(92 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(4220),
+    .max_velocity = 1.2,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corcsa:
   return {
@@ -4077,6 +4615,8 @@ case BAR_UnitType_corcsa:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 7.25,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_corcut:
   return {
@@ -4084,6 +4624,8 @@ case BAR_UnitType_corcut:
     .metal_cost = (uint32_t)(230 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(5400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9470),
+    .max_velocity = 5.08,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_corsb:
   return {
@@ -4091,6 +4633,8 @@ case BAR_UnitType_corsb:
     .metal_cost = (uint32_t)(200 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(8200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(7000),
+    .max_velocity = 8,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_corseap:
   return {
@@ -4098,6 +4642,8 @@ case BAR_UnitType_corseap:
     .metal_cost = (uint32_t)(230 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(5500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(10700),
+    .max_velocity = 8.87,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_corsfig:
   return {
@@ -4105,6 +4651,8 @@ case BAR_UnitType_corsfig:
     .metal_cost = (uint32_t)(90 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(4600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(5200),
+    .max_velocity = 10.52,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_corhunt:
   return {
@@ -4112,6 +4660,8 @@ case BAR_UnitType_corhunt:
     .metal_cost = (uint32_t)(130 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6900 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9500),
+    .max_velocity = 10.81,
+    .max_water_depth = 255,
   };
 case BAR_UnitType_coraca:
   return {
@@ -4158,6 +4708,8 @@ case BAR_UnitType_coraca:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 136,
+    .max_velocity = 6.05,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corape:
   return {
@@ -4165,6 +4717,8 @@ case BAR_UnitType_corape:
     .metal_cost = (uint32_t)(370 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(14500),
+    .max_velocity = 5.3,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corhurc:
   return {
@@ -4172,6 +4726,8 @@ case BAR_UnitType_corhurc:
     .metal_cost = (uint32_t)(310 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(18500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(31000),
+    .max_velocity = 8.28,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cortitan:
   return {
@@ -4179,6 +4735,8 @@ case BAR_UnitType_cortitan:
     .metal_cost = (uint32_t)(410 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(8200 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(14700),
+    .max_velocity = 9.3,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corvamp:
   return {
@@ -4186,6 +4744,8 @@ case BAR_UnitType_corvamp:
     .metal_cost = (uint32_t)(105 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(3700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6550),
+    .max_velocity = 12.65,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corawac:
   return {
@@ -4193,6 +4753,8 @@ case BAR_UnitType_corawac:
     .metal_cost = (uint32_t)(180 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(8300 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(13300),
+    .max_velocity = 10.7,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corseah:
   return {
@@ -4200,6 +4762,8 @@ case BAR_UnitType_corseah:
     .metal_cost = (uint32_t)(370 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(6400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(15300),
+    .max_velocity = 7,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corcrw:
   return {
@@ -4207,6 +4771,8 @@ case BAR_UnitType_corcrw:
     .metal_cost = (uint32_t)(5100 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(72000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(84200),
+    .max_velocity = 3.83,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corfus:
   return {
@@ -4216,6 +4782,7 @@ case BAR_UnitType_corfus:
     .build_cost = (uint32_t)(75400),
     .energy_production = (uint32_t)(1100 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(2500 * bar_game_resource_denominator),
+    .max_water_depth = 1,
   };
 case BAR_UnitType_corafus:
   return {
@@ -4225,6 +4792,7 @@ case BAR_UnitType_corafus:
     .build_cost = (uint32_t)(329200),
     .energy_production = (uint32_t)(3000 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(9000 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corgant:
   return {
@@ -4245,6 +4813,7 @@ case BAR_UnitType_corgant:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corageo:
   return {
@@ -4255,6 +4824,7 @@ case BAR_UnitType_corageo:
     .energy_production = (uint32_t)(1250 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(12000 * bar_game_resource_denominator),
     .geothermal = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corbhmth:
   return {
@@ -4265,6 +4835,7 @@ case BAR_UnitType_corbhmth:
     .energy_production = (uint32_t)(450 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(500 * bar_game_resource_denominator),
     .geothermal = 1,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cormoho:
   return {
@@ -4275,6 +4846,7 @@ case BAR_UnitType_cormoho:
     .metal_capacity = (uint32_t)(600 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 4,
+    .max_water_depth = 20,
   };
 case BAR_UnitType_cormexp:
   return {
@@ -4285,6 +4857,7 @@ case BAR_UnitType_cormexp:
     .metal_capacity = (uint32_t)(600 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 4,
+    .max_water_depth = 20,
   };
 case BAR_UnitType_cormmkr:
   return {
@@ -4294,6 +4867,7 @@ case BAR_UnitType_cormmkr:
     .build_cost = (uint32_t)(31300),
     .energy_convert_capacity = (uint32_t)(600* bar_game_resource_denominator),
     .energy_convert_return = (uint32_t)(600*0.017241379310345* bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_coruwadves:
   return {
@@ -4302,6 +4876,7 @@ case BAR_UnitType_coruwadves:
     .energy_cost = (uint32_t)(11000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(20400),
     .energy_capacity = (uint32_t)(40000 * bar_game_resource_denominator),
+    .max_water_depth = 9999,
   };
 case BAR_UnitType_coruwadvms:
   return {
@@ -4310,6 +4885,7 @@ case BAR_UnitType_coruwadvms:
     .energy_cost = (uint32_t)(11000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(20500),
     .metal_capacity = (uint32_t)(10000 * bar_game_resource_denominator),
+    .max_water_depth = 9999,
   };
 case BAR_UnitType_corarad:
   return {
@@ -4317,6 +4893,7 @@ case BAR_UnitType_corarad:
     .metal_cost = (uint32_t)(560 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(19000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corshroud:
   return {
@@ -4325,6 +4902,7 @@ case BAR_UnitType_corshroud:
     .energy_cost = (uint32_t)(20000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(9400),
     .energy_upkeep = (uint32_t)(125 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corfort:
   return {
@@ -4332,6 +4910,7 @@ case BAR_UnitType_corfort:
     .metal_cost = (uint32_t)(40 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(900),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cortarg:
   return {
@@ -4340,6 +4919,7 @@ case BAR_UnitType_cortarg:
     .energy_cost = (uint32_t)(7500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(10900),
     .energy_upkeep = (uint32_t)(100 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corsd:
   return {
@@ -4348,6 +4928,7 @@ case BAR_UnitType_corsd:
     .energy_cost = (uint32_t)(6700 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(12000),
     .energy_upkeep = (uint32_t)(125 * bar_game_resource_denominator/bar_game_tps),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corgate:
   return {
@@ -4356,6 +4937,7 @@ case BAR_UnitType_corgate:
     .energy_cost = (uint32_t)(55000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(55000),
     .energy_capacity = (uint32_t)(1000 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cortoast:
   return {
@@ -4363,6 +4945,7 @@ case BAR_UnitType_cortoast:
     .metal_cost = (uint32_t)(2500 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(17000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(25700),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corvipe:
   return {
@@ -4370,6 +4953,7 @@ case BAR_UnitType_corvipe:
     .metal_cost = (uint32_t)(730 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(14000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(15000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cordoom:
   return {
@@ -4378,6 +4962,7 @@ case BAR_UnitType_cordoom:
     .energy_cost = (uint32_t)(37000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(55200),
     .energy_capacity = (uint32_t)(1000 * bar_game_resource_denominator),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corflak:
   return {
@@ -4385,6 +4970,7 @@ case BAR_UnitType_corflak:
     .metal_cost = (uint32_t)(850 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(14000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(20100),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corscreamer:
   return {
@@ -4392,6 +4978,7 @@ case BAR_UnitType_corscreamer:
     .metal_cost = (uint32_t)(1650 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(32000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(28000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_cortron:
   return {
@@ -4399,6 +4986,7 @@ case BAR_UnitType_cortron:
     .metal_cost = (uint32_t)(1200 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(14000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(59000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corfmd:
   return {
@@ -4406,6 +4994,7 @@ case BAR_UnitType_corfmd:
     .metal_cost = (uint32_t)(1500 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(40000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(60000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corsilo:
   return {
@@ -4413,6 +5002,7 @@ case BAR_UnitType_corsilo:
     .metal_cost = (uint32_t)(7700 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(82000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(181000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corint:
   return {
@@ -4420,6 +5010,7 @@ case BAR_UnitType_corint:
     .metal_cost = (uint32_t)(4600 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(67000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(93300),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corbuzz:
   return {
@@ -4427,6 +5018,7 @@ case BAR_UnitType_corbuzz:
     .metal_cost = (uint32_t)(61000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(718000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(1400000),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corasy:
   return {
@@ -4452,6 +5044,8 @@ case BAR_UnitType_corasy:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_cortl:
   return {
@@ -4459,6 +5053,8 @@ case BAR_UnitType_cortl:
     .metal_cost = (uint32_t)(170 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(3750),
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_cormine4:
   return {
@@ -4466,6 +5062,7 @@ case BAR_UnitType_cormine4:
     .metal_cost = (uint32_t)(16 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1050 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(200),
+    .max_water_depth = 0,
   };
 case BAR_UnitType_corkorg:
   return {
@@ -4473,6 +5070,8 @@ case BAR_UnitType_corkorg:
     .metal_cost = (uint32_t)(29000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(615000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(555000),
+    .max_velocity = 1.12,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corkarg:
   return {
@@ -4480,6 +5079,8 @@ case BAR_UnitType_corkarg:
     .metal_cost = (uint32_t)(2500 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(57000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(76000),
+    .max_velocity = 1.5,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corjugg:
   return {
@@ -4487,6 +5088,8 @@ case BAR_UnitType_corjugg:
     .metal_cost = (uint32_t)(20000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(513000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(630000),
+    .max_velocity = 0.55,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corshiva:
   return {
@@ -4494,6 +5097,8 @@ case BAR_UnitType_corshiva:
     .metal_cost = (uint32_t)(1550 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(23000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(30600),
+    .max_velocity = 1.61,
+    .max_water_depth = 32,
   };
 case BAR_UnitType_corcat:
   return {
@@ -4501,6 +5106,8 @@ case BAR_UnitType_corcat:
     .metal_cost = (uint32_t)(4900 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(80000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(127000),
+    .max_velocity = 1.6,
+    .max_water_depth = 12,
   };
 case BAR_UnitType_corsok:
   return {
@@ -4510,6 +5117,8 @@ case BAR_UnitType_corsok:
     .build_cost = (uint32_t)(27000),
     .is_builder = 0,
     .can_assist = 1,
+    .max_velocity = 1.51,
+    .max_water_depth = 0,
   };
 case BAR_UnitType_coracsub:
   return {
@@ -4539,6 +5148,9 @@ case BAR_UnitType_coracsub:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 180,
+    .max_velocity = 2.16,
+    .min_water_depth = 20,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_cormls:
   return {
@@ -4568,6 +5180,9 @@ case BAR_UnitType_cormls:
     .is_builder = 1,
     .can_assist = 1,
     .build_distance = 250,
+    .max_velocity = 1.925,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corcrus:
   return {
@@ -4575,6 +5190,9 @@ case BAR_UnitType_corcrus:
     .metal_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(12000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(17000),
+    .max_velocity = 2.19,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corshark:
   return {
@@ -4582,6 +5200,9 @@ case BAR_UnitType_corshark:
     .metal_cost = (uint32_t)(730 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(14000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(18000),
+    .max_velocity = 2.8,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corssub:
   return {
@@ -4589,6 +5210,9 @@ case BAR_UnitType_corssub:
     .metal_cost = (uint32_t)(1900 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(29000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(24750),
+    .max_velocity = 1.3,
+    .min_water_depth = 20,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corarch:
   return {
@@ -4596,6 +5220,9 @@ case BAR_UnitType_corarch:
     .metal_cost = (uint32_t)(1000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(12000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(15000),
+    .max_velocity = 2.016,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corsjam:
   return {
@@ -4604,6 +5231,9 @@ case BAR_UnitType_corsjam:
     .energy_cost = (uint32_t)(1800 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6320),
     .energy_upkeep = (uint32_t)(80 * bar_game_resource_denominator/bar_game_tps),
+    .max_velocity = 2.043,
+    .min_water_depth = 6,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corcarry:
   return {
@@ -4617,6 +5247,9 @@ case BAR_UnitType_corcarry:
     .energy_upkeep = (uint32_t)(25 * bar_game_resource_denominator/bar_game_tps),
     .is_builder = 1,
     .can_assist = 0,
+    .max_velocity = 2.008,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corbats:
   return {
@@ -4624,6 +5257,9 @@ case BAR_UnitType_corbats:
     .metal_cost = (uint32_t)(3400 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(23000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(36000),
+    .max_velocity = 1.77,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_cormship:
   return {
@@ -4631,6 +5267,9 @@ case BAR_UnitType_cormship:
     .metal_cost = (uint32_t)(2000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(10000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(15000),
+    .max_velocity = 2.048,
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corblackhy:
   return {
@@ -4638,6 +5277,9 @@ case BAR_UnitType_corblackhy:
     .metal_cost = (uint32_t)(18000 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(158000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(175300),
+    .max_velocity = 1.65,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_coruwfus:
   return {
@@ -4647,6 +5289,8 @@ case BAR_UnitType_coruwfus:
     .build_cost = (uint32_t)(105000),
     .energy_production = (uint32_t)(1220 * bar_game_resource_denominator / bar_game_tps),
     .energy_capacity = (uint32_t)(2500 * bar_game_resource_denominator),
+    .min_water_depth = 25,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_coruwmmm:
   return {
@@ -4656,6 +5300,8 @@ case BAR_UnitType_coruwmmm:
     .build_cost = (uint32_t)(38600),
     .energy_convert_capacity = (uint32_t)(650* bar_game_resource_denominator),
     .energy_convert_return = (uint32_t)(650*0.017241379310345* bar_game_resource_denominator),
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_coruwmme:
   return {
@@ -4666,6 +5312,8 @@ case BAR_UnitType_coruwmme:
     .metal_capacity = (uint32_t)(600 * bar_game_resource_denominator),
     .energy_upkeep = (uint32_t)(20 * bar_game_resource_denominator/bar_game_tps),
     .metal_extractor = 4,
+    .min_water_depth = 15,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corason:
   return {
@@ -4673,6 +5321,8 @@ case BAR_UnitType_corason:
     .metal_cost = (uint32_t)(160 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(2400 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(6100),
+    .min_water_depth = 24,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corfatf:
   return {
@@ -4681,6 +5331,8 @@ case BAR_UnitType_corfatf:
     .energy_cost = (uint32_t)(7500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(10300),
     .energy_upkeep = (uint32_t)(150 * bar_game_resource_denominator/bar_game_tps),
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_coratl:
   return {
@@ -4688,6 +5340,8 @@ case BAR_UnitType_coratl:
     .metal_cost = (uint32_t)(1050 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(8500 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(10900),
+    .min_water_depth = 12,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corenaa:
   return {
@@ -4696,6 +5350,8 @@ case BAR_UnitType_corenaa:
     .energy_cost = (uint32_t)(25000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(23100),
     .energy_upkeep = (uint32_t)(0.1 * bar_game_resource_denominator/bar_game_tps),
+    .min_water_depth = 2,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corfdoom:
   return {
@@ -4704,6 +5360,8 @@ case BAR_UnitType_corfdoom:
     .energy_cost = (uint32_t)(15000 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(24000),
     .energy_capacity = (uint32_t)(1000 * bar_game_resource_denominator),
+    .min_water_depth = 5,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corgantuw:
   return {
@@ -4722,6 +5380,8 @@ case BAR_UnitType_corgantuw:
     },
     .is_builder = 1,
     .can_assist = 1,
+    .min_water_depth = 30,
+    .max_water_depth = 1000,
   };
 case BAR_UnitType_corfmine3:
   return {
@@ -4729,6 +5389,8 @@ case BAR_UnitType_corfmine3:
     .metal_cost = (uint32_t)(25 * bar_game_resource_denominator),
     .energy_cost = (uint32_t)(1600 * bar_game_resource_denominator),
     .build_cost = (uint32_t)(150),
+    .min_water_depth = 0,
+    .max_water_depth = 1000,
   };
 }
 }

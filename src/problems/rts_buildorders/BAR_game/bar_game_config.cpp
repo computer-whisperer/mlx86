@@ -31,9 +31,9 @@ bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, 
         // Find unit to reclaim
         for (uint32_t i = 0; i < player->furthest_allocated_unit[unit_type]; i++)
         {
-          if (player->units[unit_type][i].is_allocated && player->units[unit_type][i].data.is_alive)
+          if (player->units_by_type[unit_type][i].is_allocated && player->units_by_type[unit_type][i].data.is_alive)
           {
-            player->data.currently_building_unit = &player->units[unit_type][i];
+            player->data.currently_building_unit = &player->units_by_type[unit_type][i];
             break;
           }
         }
@@ -82,6 +82,22 @@ bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, 
         }
         player->data.currently_building_unit = nullptr;
 
+        // Check if the unit passes water requirements
+        if (unit_metadata.max_water_depth < bar_game_min_water_depth)
+        {
+          // Invalid
+          advance_instruction = true;
+          player->invalid_command_count++;
+          break;
+        }
+        if (unit_metadata.min_water_depth > bar_game_max_water_depth)
+        {
+          // Invalid
+          advance_instruction = true;
+          player->invalid_command_count++;
+          break;
+        }
+
         // Check if we have a builder that can build this
         if (player->data.builder_for_unit_type_cache[unit_type] == BAR_UnitType_None)
         {
@@ -99,33 +115,14 @@ bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, 
           player->invalid_command_count++;
           break;
         }
-        // Check for an available spot
-        if (unit_metadata.geothermal)
-        {
-          if (!player->data.geothermal_slots_total)
-          {
-            advance_instruction = true;
-            player->invalid_command_count++;
-            break;
-          }
-        }
-        if (unit_metadata.metal_extractor)
-        {
-          if (!player->data.metal_slots_total)
-          {
-            advance_instruction = true;
-            player->invalid_command_count++;
-            break;
-          }
-        }
 
         // Find builder
         Game<BAR_game_config>::Unit* builder = nullptr;
         for (uint32_t i = 0; i < player->furthest_allocated_unit[builder_type]; i++)
         {
-          if (player->units[builder_type][i].is_allocated && player->units[builder_type][i].data.is_alive)
+          if (player->units_by_type[builder_type][i].is_allocated && player->units_by_type[builder_type][i].data.is_alive)
           {
-            builder = &player->units[builder_type][i];
+            builder = &player->units_by_type[builder_type][i];
             break;
           }
         }
@@ -137,6 +134,79 @@ bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, 
           break;
         }
 
+        int32_t dest_position_x = builder->position_x;
+        int32_t dest_position_z = builder->position_z;
+
+        // Find metal slot
+        if (unit_metadata.metal_extractor)
+        {
+          // Find an unoccupied spot on the map
+          uint32_t closest_good_spot = bar_game_map_num_metal_positions;
+          int32_t closest_good_spot_distance_squared = 0xFFFFFFF;
+          for (int i = 0; i < bar_game_map_num_metal_positions; i++) {
+            if (!player->data.metal_positions_allowed[i])
+            {
+              continue;
+            }
+            if (player->game->data.metal_positions[i].unit_type != unit_type) {
+              int32_t x_delta = bar_game_map_metal_positions[i].x - builder->position_x;
+              int32_t z_delta = bar_game_map_metal_positions[i].z - builder->position_z;
+              int32_t distance_squared = x_delta * x_delta + z_delta * z_delta;
+              if (distance_squared < closest_good_spot_distance_squared) {
+                closest_good_spot = i;
+                closest_good_spot_distance_squared = distance_squared;
+              }
+            }
+          }
+
+          if (closest_good_spot >= bar_game_map_num_metal_positions)
+          {
+            // No available mines
+            advance_instruction = true;
+            player->invalid_command_count++;
+            break;
+          }
+          else
+          {
+            dest_position_x = bar_game_map_metal_positions[closest_good_spot].x;
+            dest_position_z = bar_game_map_metal_positions[closest_good_spot].z;
+          }
+        }
+
+        if (unit_metadata.geothermal)
+        {
+          // Find an unoccupied spot on the map
+          uint32_t closest_good_spot = bar_game_map_num_geothermal_positions;
+          int32_t closest_good_spot_distance_squared = 0xFFFFFFF;
+          for (int i = 0; i < bar_game_map_num_geothermal_positions; i++) {
+            if (!player->data.geothermal_positions_allowed[i])
+            {
+              continue;
+            }
+            if (player->game->data.geothermal_positions[i].unit_type != unit_type) {
+              int32_t x_delta = bar_game_map_geo_vent_positions[i].x - builder->position_x;
+              int32_t z_delta = bar_game_map_geo_vent_positions[i].z - builder->position_z;
+              int32_t distance_squared = x_delta * x_delta + z_delta * z_delta;
+              if (distance_squared < closest_good_spot_distance_squared) {
+                closest_good_spot = i;
+                closest_good_spot_distance_squared = distance_squared;
+              }
+            }
+          }
+          if (closest_good_spot == bar_game_map_num_geothermal_positions)
+          {
+            // No available mines
+            advance_instruction = true;
+            player->invalid_command_count++;
+            break;
+          }
+          else
+          {
+            dest_position_x = bar_game_map_geo_vent_positions[closest_good_spot].x;
+            dest_position_z = bar_game_map_geo_vent_positions[closest_good_spot].z;
+          }
+        }
+
         // Do it
         player->data.currently_building_unit = player->allocate_unit(unit_type);
         if (!player->data.currently_building_unit)
@@ -146,6 +216,8 @@ bool BAR_game_config::follow_instruction(Game<BAR_game_config>::Player* player, 
           player->invalid_command_count++;
           break;
         }
+        static_cast<Game<BAR_game_config>::Unit *>(player->data.currently_building_unit)->position_x = dest_position_x;
+        static_cast<Game<BAR_game_config>::Unit *>(player->data.currently_building_unit)->position_z = dest_position_z;
         command_unit_to_build_inner(
                 builder,
                 builder_type,
@@ -180,7 +252,7 @@ uint32_t bar_game_get_num_of_unit_type(Game<BAR_game_config>::Player *player, BA
   uint32_t count = 0;
   for (uint32_t i = 0; i < player->furthest_allocated_unit[unit_type]; i++)
   {
-    if (player->units[unit_type][i].is_allocated && player->units[unit_type][i].data.is_alive)
+    if (player->units_by_type[unit_type][i].is_allocated && player->units_by_type[unit_type][i].data.is_alive)
     {
       count++;
     }
@@ -190,28 +262,28 @@ uint32_t bar_game_get_num_of_unit_type(Game<BAR_game_config>::Player *player, BA
 
 template<uint32_t unit_type=0> static inline uint32_t upkeep_iterator(Game<BAR_game_config>::Player *player, BAR_ResourceType resource_type)
 {
-  uint32_t total_upkeep = 0;
-  for (uint32_t j = 0; j < player->furthest_allocated_unit[unit_type]; j++)
+  if constexpr (unit_type < BAR_UnitType_MAX)
   {
-    if (player->units[unit_type][j].is_allocated && player->units[unit_type][j].data.is_alive)
+    uint32_t total_upkeep = 0;
+    for (uint32_t j = 0; j < player->furthest_allocated_unit[unit_type]; j++)
     {
-      if (resource_type == BAR_ResourceType_Energy)
+      if (player->units_by_type[unit_type][j].is_allocated && player->units_by_type[unit_type][j].data.is_alive)
       {
-        total_upkeep += bar_game_get_unit_type_metadata<static_cast<BAR_UnitType>(unit_type)>().energy_upkeep;
-      }
-      if (resource_type == BAR_ResourceType_Metal)
-      {
-        total_upkeep += bar_game_get_unit_type_metadata<static_cast<BAR_UnitType>(unit_type)>().metal_upkeep;
+        if (resource_type == BAR_ResourceType_Energy)
+        {
+          total_upkeep += bar_game_get_unit_type_metadata<static_cast<BAR_UnitType>(unit_type)>().energy_upkeep;
+        }
+        if (resource_type == BAR_ResourceType_Metal)
+        {
+          total_upkeep += bar_game_get_unit_type_metadata<static_cast<BAR_UnitType>(unit_type)>().metal_upkeep;
+        }
       }
     }
-  }
-  if constexpr (unit_type == BAR_UnitType_MAX)
-  {
-    return total_upkeep;
+    return total_upkeep + upkeep_iterator<unit_type+1>(player, resource_type);
   }
   else
   {
-    return total_upkeep + upkeep_iterator<unit_type+1>(player, resource_type);
+    return 0;
   }
 }
 

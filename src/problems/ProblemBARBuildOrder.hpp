@@ -32,6 +32,7 @@ public:
   double scalarTrialTickSpam(uint8_t *data) const;
   double scalarTrialGauntletRush(uint8_t *data) const;
   double scalarTrialEconomyRush(uint8_t *data) const;
+  double scalarTrialCorsairFlood(uint8_t *data) const;
   double scalarTrialBomberRush(uint8_t *data) const;
   double scalarTrialGeneralRules(Game<BAR_game_config> *game, Game<BAR_game_config>::Instruction* instructions) const;
 

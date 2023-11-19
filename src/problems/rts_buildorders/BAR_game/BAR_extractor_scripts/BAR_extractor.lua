@@ -14,7 +14,7 @@ local jsonData = json.decode(content)["units"]
 local unitNames = jsonData["names"]
 local factions = jsonData["factions"]
 
-print("constexpr inline static struct BARUnitTypeMetadata_T bar_game_get_unit_type_metadata_generated(const BAR_UnitType unit_type) {\
+print("template <const BAR_UnitType unit_type> constexpr inline static struct BARUnitTypeMetadata_T bar_game_get_unit_type_metadata_generated() {\
     switch (unit_type) {\
         default:\
           return {.name = \"Invalid\"};")
@@ -89,6 +89,14 @@ for _, unit in ipairs(units) do
       print("    .metal_extractor = ".. data["customparams"]["metal_extractor"] ..",")
     end
 
+    if data["tidalgenerator"] ~= nil then
+        print("    .tidal_generator = ".. data["tidalgenerator"] .. ",")
+    end
+
+    if data["windgenerator"] ~= nil then
+        print("    .wind_generator = ".. data["windgenerator"] .. ",")
+    end
+
     if data["builder"] ~= nil then
         print("    .is_builder = " .. (data["builder"] and 1 or 0) .. ",")
         if data["canassist"] ~= nil then
@@ -105,8 +113,16 @@ for _, unit in ipairs(units) do
         end
     end
 
-    if data["max_velocity"] ~= nil then
+    if data["maxvelocity"] ~= nil then
         print("    .max_velocity = ".. data["maxvelocity"] .. ",")
+    end
+
+    if data["minwaterdepth"] ~= nil then
+        print("    .min_water_depth = ".. data["minwaterdepth"] .. ",")
+    end
+
+    if data["maxwaterdepth"] ~= nil then
+        print("    .max_water_depth = ".. data["maxwaterdepth"] .. ",")
     end
 
     print("  };")

@@ -13,7 +13,8 @@ spring_map_conv_ng_path = "../../../../../SpringMapConvNG/mapdecompile"
 def main():
     #map_file = "~/.local/state/Beyond All Reason/maps/altair_crossing_v4.1.sd7"
     #map_file = "~/.local/state/Beyond All Reason/maps/BYAR-maps/all_that_glitters_v2.1.sd7"
-    map_file = "~/.local/state/Beyond All Reason/maps/BYAR-maps/center_command_bar_v1.0.sd7"
+    #map_file = "~/.local/state/Beyond All Reason/maps/BYAR-maps/center_command_bar_v1.0.sd7"
+    map_file = "~/.local/state/Beyond All Reason/maps/BYAR-maps/serene_caldera_v1.3.sd7"
     with tempfile.TemporaryDirectory() as map_extract_dir:
         pyunpack.Archive(map_file).extractall(map_extract_dir)
         mapinfo_lua = ""
@@ -55,6 +56,9 @@ def main():
         out_file.write("constexpr float bar_game_map_max_wind_speed = {};\n".format(mapinfo_data["atmosphere"]["maxwind"]))
         out_file.write("constexpr float bar_game_map_min_wind_speed = {};\n".format(mapinfo_data["atmosphere"]["minwind"]))
         out_file.write("constexpr float bar_game_map_tidal_strength = {};\n".format(mapinfo_data["tidalstrength"]))
+        out_file.write("constexpr uint32_t bar_game_map_num_metal_positions = {};\n".format(len(mine_positions)))
+        out_file.write("constexpr uint32_t bar_game_map_num_geothermal_positions = {};\n".format(len(geo_vent_positions)))
+        out_file.write("constexpr uint32_t bar_game_map_num_starting_positions = {};\n".format(len(mapinfo_data["teams"])))
         out_file.write("constexpr BARMetalMineMetadata bar_game_map_metal_positions[] = {\n")
 
         for mine in mine_positions:

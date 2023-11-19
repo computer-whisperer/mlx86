@@ -6,7 +6,7 @@
 #include "christian_utils.h"
 
 double ProblemBARBuildOrder::scalarTrial(uint8_t *data) {
-  return scalarTrialGauntletRush(data);
+  return scalarTrialCorsairFlood(data);
 }
 
 double ProblemBARBuildOrder::scalarTrialTickSpam(uint8_t *data) const {
@@ -82,9 +82,17 @@ double ProblemBARBuildOrder::scalarTrialBomberRush(uint8_t *data) const {
   }
   score /= sim_time_ticks;
 
+  score += player->resource_production_rate_cache[BAR_ResourceType_Metal] / 1000;
+  score += player->resource_production_rate_cache[BAR_ResourceType_Energy] / 100000;
+
   if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armaap))
   {
-    score += 0.1;
+    score += 1;
+  }
+
+  if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armap))
+  {
+    score += 1;
   }
 
   score += scalarTrialGeneralRules(&game, instructions);
@@ -103,7 +111,7 @@ double ProblemBARBuildOrder::scalarTrialNukeRush(uint8_t *data) const {
   for (uint32_t i = 0; i < sim_time_ticks; i++)
   {
     game.do_tick();
-    /*
+
     if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armck))
     {
       score += 0.1;
@@ -116,16 +124,17 @@ double ProblemBARBuildOrder::scalarTrialNukeRush(uint8_t *data) const {
     if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armack))
     {
       score += 0.1;
-    }*/
-    float nuke_energy_count = (float)(player->resource_production_rate_cache[BAR_ResourceType_Energy] - bar_game_get_full_upkeep(player, BAR_ResourceType_Energy)) / (float)((1111 * bar_game_resource_denominator) / bar_game_tps);
-    armageddon_count = (float)(bar_game_get_num_of_unit_type(player, BAR_UnitType_armsilo) + bar_game_get_num_of_unit_type(player, BAR_UnitType_corsilo));
-    if (nuke_energy_count < armageddon_count)
-    {
-      armageddon_count = nuke_energy_count;
     }
-    score += armageddon_count * 3;
+
   }
   score /= sim_time_ticks;
+
+  float nuke_energy_count = (float)(player->resource_production_rate_cache[BAR_ResourceType_Energy] - bar_game_get_full_upkeep(player, BAR_ResourceType_Energy)) / (float)((1111 * bar_game_resource_denominator) / bar_game_tps);
+  armageddon_count = (float)(bar_game_get_num_of_unit_type(player, BAR_UnitType_armsilo) + bar_game_get_num_of_unit_type(player, BAR_UnitType_corsilo));
+  if (nuke_energy_count < armageddon_count)
+  {
+    armageddon_count = nuke_energy_count;
+  }
 
   score += armageddon_count * 3;
 
@@ -189,6 +198,38 @@ double ProblemBARBuildOrder::scalarTrialEconomyRush(uint8_t *data) const {
 
   score += (float)player->resource_production_rate_cache[BAR_ResourceType_Metal] /   1000000;
   score += (float)player->resource_production_rate_cache[BAR_ResourceType_Energy] / 10000000;
+
+  score += scalarTrialGeneralRules(&game, instructions);
+  return score;
+}
+
+double ProblemBARBuildOrder::scalarTrialCorsairFlood(uint8_t *data) const {
+  auto instructions = (Game<BAR_game_config>::Instruction*)data;
+  Game<BAR_game_config> game;
+  auto player = game.add_player(faction);
+  player->instructions = instructions;
+  player->num_instructions = num_instructions;
+
+  double score = 0;
+  for (uint32_t i = 0; i < sim_time_ticks; i++)
+  {
+    game.do_tick();
+  }
+  score /= sim_time_ticks;
+
+
+  // Ship yard bonus
+  if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armsy)||
+          bar_game_get_num_of_unit_type(player, BAR_UnitType_corsy))
+  {
+    score += 0.2;
+  }
+
+  score += (float)player->resource_production_rate_cache[BAR_ResourceType_Metal] /   10000;
+  score += (float)player->resource_production_rate_cache[BAR_ResourceType_Energy] / 100000;
+
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armroy) / 100;
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corroy) / 100;
 
   score += scalarTrialGeneralRules(&game, instructions);
   return score;
@@ -569,5 +610,7 @@ void ProblemBARBuildOrder::scrambler(U8 *data) {
     instructions[last_output_idx].iterations = 0;
   }
 }
+
+
 
 

@@ -13,14 +13,14 @@ constexpr uint32_t bar_game_max_num_build_options = 44;
 constexpr uint32_t bar_game_max_num_units_of_type = 256;
 
 struct BARMetalMineMetadata {
-  uint32_t x = 0;
-  uint32_t y = 0;
+  int32_t x = 0;
+  int32_t z = 0;
   uint32_t value = 0;
 };
 
 struct BARCoordinate {
-  uint32_t x = 0;
-  uint32_t z = 0;
+  int32_t x = 0;
+  int32_t z = 0;
 };
 
 struct BARUnitTypeMetadata_T {
@@ -43,10 +43,14 @@ struct BARUnitTypeMetadata_T {
   uint32_t energy_convert_return = 0;
   uint8_t geothermal = 0;
   uint8_t metal_extractor = 0;
+  uint8_t wind_generator = 0;
+  uint8_t tidal_generator = 0;
   uint8_t is_builder = 0;
   uint8_t can_assist = 0;
   uint32_t build_distance = 0;
   float max_velocity = 0.0;
+  uint32_t min_water_depth = 0;
+  uint32_t max_water_depth = 1000;
 };
 
 #endif //MLX86_BAR_GAME_TYPES_HPP
