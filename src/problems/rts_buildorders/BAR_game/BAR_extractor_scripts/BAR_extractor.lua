@@ -70,7 +70,7 @@ for _, unit in ipairs(units) do
 
     if data["buildoptions"] then
         print("    .build_options = {")
-        for _, option in ipairs(data["buildoptions"]) do
+        for _, option in pairs(data["buildoptions"]) do
             print("      BAR_UnitType_" .. option .. ",")
         end
         print("    },")

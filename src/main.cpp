@@ -54,9 +54,9 @@ int main(int argc, char * argv[])
 	//auto problem = new ProblemX86StringMatch("I am a creature of mystery", 800);
 	//auto problem = new ProblemHelloWorld();
 
-	//auto solver = new SolverParallelTempering();
+	auto solver = new SolverParallelTempering();
 	//auto solver = new SolverParallelGreedy();
-	auto solver = new SolverSimulatedAnnealing();
+	//auto solver = new SolverSimulatedAnnealing();
 	//auto solver = new SolverSimpleGreedy();
 	//auto solver = new SolverTabuSearch();
 /*
@@ -78,16 +78,16 @@ int main(int argc, char * argv[])
 	struct SolverResults_T results{};
 
 	init_reporter_process(reporter_mem, (Problem*)problem);
-	solver->run((Problem*)problem, reporter_mem, 10, 500*60*30, &results);
+	solver->run((Problem*)problem, reporter_mem, 100, 1000*60*1, &results);
 	deinit_reporter_process(reporter_mem);
 
   uint8_t first_pass_data[problem->data_len];
   memcpy(first_pass_data, results.data, problem->data_len);
 
-  //auto final_solver = new SolverSimpleGreedy();
-  //init_reporter_process(reporter_mem, (Problem*)problem);
-  //final_solver->run((Problem*)problem, reporter_mem, 10, 10000, &results, first_pass_data);
-  //deinit_reporter_process(reporter_mem);
+  auto final_solver = new SolverSimpleGreedy();
+  init_reporter_process(reporter_mem, (Problem*)problem);
+  final_solver->run((Problem*)problem, reporter_mem, 100, 10000, &results, first_pass_data);
+  deinit_reporter_process(reporter_mem);
 
 	{
 	    std::vector<double> scores;

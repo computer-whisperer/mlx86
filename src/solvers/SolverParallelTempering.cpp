@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define NUM_PROCESSES 12
+#define NUM_PROCESSES 8
 
 struct reporting_mem_t {
     std::atomic<U64> tests_run;
@@ -23,6 +23,8 @@ struct sync_mem_t {
     std::mutex mtx;
     float score;
     U8 data[MAX_DATA_LEN];
+    float best_score;
+    U8 best_data[MAX_DATA_LEN];
 };
 
 /*
@@ -128,6 +130,14 @@ void SolverParallelTempering::tempering_process(Problem *problem_in, struct sync
                 our_sync->mtx.lock();
                 our_sync->score = current_score;
                 memcpy(our_sync->data, data, problem->data_len);
+                our_sync->mtx.unlock();
+            }
+
+            if (current_score > our_sync->best_score) {
+                // Save ours to the sync
+                our_sync->mtx.lock();
+                our_sync->best_score = current_score;
+                memcpy(our_sync->best_data, data, problem->data_len);
                 our_sync->mtx.unlock();
             }
 
@@ -265,10 +275,19 @@ SolverParallelTempering::run(Problem *problem, struct REPORTER_MEM_T *reporter_m
         it.join();
     }
 
+    double best_score = -100000;
+    uint8_t best_data[problem->data_len];
+    for (auto & sync_mem : shared_data->sync_mems) {
+      if (sync_mem.best_score > best_score) {
+        best_score = sync_mem.best_score;
+        memcpy(best_data, sync_mem.best_data, problem->data_len);
+      }
+    }
+
     if (results_out) {
         results_out->data = static_cast<U8 *>(malloc(problem->data_len));
-        results_out->score = shared_data->sync_mems[0].score;
+        results_out->score = best_score;
         results_out->trial_count = shared_data->reporting_mem.tests_run;
-        memcpy(results_out->data, shared_data->sync_mems[0].data, problem->data_len);
+        memcpy(results_out->data, best_data, problem->data_len);
     }
 }

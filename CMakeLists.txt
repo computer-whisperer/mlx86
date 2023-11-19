@@ -25,11 +25,14 @@ include_directories(
         src/executors
         src/problems
         src/problems/rts_buildorders
+        src/problems/rts_buildorders/BAR_game
+        src/problems/rts_buildorders/BAR_game/BAR_extractor_scripts
         src/problems/darwin2021
         src/problems/x86
         src/reporters
         src/solvers
         src/tests
+        ${CMAKE_CURRENT_BUILD_DIR}
      #   src/starcraft2
      #   src/starcraft2/proto
      #   src/starcraft2/proto/s2clientprotocol
@@ -62,11 +65,22 @@ set(SOURCES
         #src/problems/starcraft2_supplymax.cpp
      #   src/problems/x86/calculator.cpp
         src/problems/x86/X86Common.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/BAR_extractor_scripts/bar_game_config_metadata.hpp
+        ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/bar_game_map_data.hpp
      #   src/problems/x86/simple_meta.cpp
       #  src/problems/x86/hybrid_x86_hyperparameters.cpp
        # ${SC2_SRC_FILES}
         )
 
+add_custom_command(OUTPUT ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/BAR_extractor_scripts/bar_game_config_metadata.hpp
+                    COMMAND ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/BAR_extractor_scripts/create_c_header.sh > ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/BAR_extractor_scripts/bar_game_config_metadata.hpp
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/BAR_extractor_scripts/
+                    DEPENDS ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/BAR_extractor_scripts/create_c_header.sh ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/BAR_extractor_scripts/BAR_extractor.lua)
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/bar_game_map_data.hpp
+                    COMMAND python3 ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/map_extractor.py
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/
+                    DEPENDS ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders/BAR_game/map_extractor.py)
 
 add_executable(mlx86 src/main.cpp ${SOURCES})
 add_executable(solver_benchmark_test src/tests/solver_benchmark_test.c ${SOURCES})

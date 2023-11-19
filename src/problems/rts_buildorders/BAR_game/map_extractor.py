@@ -12,9 +12,9 @@ spring_map_conv_ng_path = "../../../../../SpringMapConvNG/mapdecompile"
 
 def main():
     #map_file = "~/.local/state/Beyond All Reason/maps/altair_crossing_v4.1.sd7"
-    #map_file = "~/.local/state/Beyond All Reason/maps/BYAR-maps/all_that_glitters_v2.1.sd7"
+    map_file = "~/.local/state/Beyond All Reason/maps/BYAR-maps/all_that_glitters_v2.1.sd7"
     #map_file = "~/.local/state/Beyond All Reason/maps/BYAR-maps/center_command_bar_v1.0.sd7"
-    map_file = "~/.local/state/Beyond All Reason/maps/BYAR-maps/serene_caldera_v1.3.sd7"
+    #map_file = "~/.local/state/Beyond All Reason/maps/BYAR-maps/serene_caldera_v1.3.sd7"
     with tempfile.TemporaryDirectory() as map_extract_dir:
         pyunpack.Archive(map_file).extractall(map_extract_dir)
         mapinfo_lua = ""

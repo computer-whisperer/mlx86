@@ -6,7 +6,50 @@
 #include "christian_utils.h"
 
 double ProblemBARBuildOrder::scalarTrial(uint8_t *data) {
-  return scalarTrialCorsairFlood(data);
+  return scalarTrialMediumTankRush(data);
+}
+
+double ProblemBARBuildOrder::scalarTrialFastTankRush(uint8_t *data) const {
+  auto instructions = (Game<BAR_game_config>::Instruction*)data;
+  Game<BAR_game_config> game;
+  auto player = game.add_player(faction);
+  player->instructions = instructions;
+  player->num_instructions = num_instructions;
+
+  double score = 0;
+  for (uint32_t i = 0; i < sim_time_ticks; i++)
+  {
+    game.do_tick();
+  }
+  score /= sim_time_ticks;
+
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armflash) / 5;
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corgator) / 5;
+
+  score += scalarTrialGeneralRules(&game, player, instructions);
+  return score;
+}
+
+
+double ProblemBARBuildOrder::scalarTrialMediumTankRush(uint8_t *data) const {
+  auto instructions = (Game<BAR_game_config>::Instruction*)data;
+  Game<BAR_game_config> game;
+  auto player = game.add_player(faction);
+  player->instructions = instructions;
+  player->num_instructions = num_instructions;
+
+  double score = 0;
+  for (uint32_t i = 0; i < sim_time_ticks; i++)
+  {
+    game.do_tick();
+  }
+  score /= sim_time_ticks;
+
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armstump) / 5;
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corraid) / 5;
+
+  score += scalarTrialGeneralRules(&game, player, instructions);
+  return score;
 }
 
 double ProblemBARBuildOrder::scalarTrialTickSpam(uint8_t *data) const {
@@ -26,7 +69,7 @@ double ProblemBARBuildOrder::scalarTrialTickSpam(uint8_t *data) const {
   score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armflea) / 100;
   score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corak) / 100;
 
-  score += scalarTrialGeneralRules(&game, instructions);
+  score += scalarTrialGeneralRules(&game, player, instructions);
   return score;
 }
 
@@ -54,7 +97,7 @@ double ProblemBARBuildOrder::scalarTrialGauntletRush(uint8_t *data) const {
   score /= sim_time_ticks;
 
 
-  score += scalarTrialGeneralRules(&game, instructions);
+  score += scalarTrialGeneralRules(&game, player, instructions);
   return score;
 }
 
@@ -95,7 +138,7 @@ double ProblemBARBuildOrder::scalarTrialBomberRush(uint8_t *data) const {
     score += 1;
   }
 
-  score += scalarTrialGeneralRules(&game, instructions);
+  score += scalarTrialGeneralRules(&game, player, instructions);
   return score;
 }
 
@@ -112,36 +155,22 @@ double ProblemBARBuildOrder::scalarTrialNukeRush(uint8_t *data) const {
   {
     game.do_tick();
 
-    if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armck))
-    {
-      score += 0.1;
-    }
-    if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armalab))
-    {
-      score += 0.1;
-    }
 
-    if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armack))
+    float nuke_energy_count = (float)(player->resource_production_rate_cache[BAR_ResourceType_Energy] - bar_game_get_full_upkeep(player, BAR_ResourceType_Energy)) / (float)((1111 * bar_game_resource_denominator) / bar_game_tps);
+    armageddon_count = (float)(bar_game_get_num_of_unit_type(player, BAR_UnitType_armsilo) + bar_game_get_num_of_unit_type(player, BAR_UnitType_corsilo));
+    if (nuke_energy_count < armageddon_count)
     {
-      score += 0.1;
+      armageddon_count = nuke_energy_count;
     }
-
+    score += armageddon_count/2;
   }
   score /= sim_time_ticks;
 
-  float nuke_energy_count = (float)(player->resource_production_rate_cache[BAR_ResourceType_Energy] - bar_game_get_full_upkeep(player, BAR_ResourceType_Energy)) / (float)((1111 * bar_game_resource_denominator) / bar_game_tps);
-  armageddon_count = (float)(bar_game_get_num_of_unit_type(player, BAR_UnitType_armsilo) + bar_game_get_num_of_unit_type(player, BAR_UnitType_corsilo));
-  if (nuke_energy_count < armageddon_count)
-  {
-    armageddon_count = nuke_energy_count;
-  }
-
   score += armageddon_count * 3;
 
-  score += player->resource_production_rate_cache[BAR_ResourceType_Metal] / 100000;
-  score += player->resource_production_rate_cache[BAR_ResourceType_Energy] / 1000000;
+  player->update_cached_resource_rates();
 
-  score += scalarTrialGeneralRules(&game, instructions);
+  score += scalarTrialGeneralRules(&game, player, instructions);
   return score;
 }
 
@@ -173,10 +202,7 @@ double ProblemBARBuildOrder::scalarTrialDragonRush(uint8_t *data) const {
   }
   score /= sim_time_ticks;
 
-  score += player->resource_production_rate_cache[BAR_ResourceType_Metal] / 100000;
-  score += player->resource_production_rate_cache[BAR_ResourceType_Energy] / 1000000;
-
-  score += scalarTrialGeneralRules(&game, instructions);
+  score += scalarTrialGeneralRules(&game, player, instructions);
   return score;
 }
 
@@ -191,15 +217,10 @@ double ProblemBARBuildOrder::scalarTrialEconomyRush(uint8_t *data) const {
   for (uint32_t i = 0; i < sim_time_ticks; i++)
   {
     game.do_tick();
-    score += (float)player->resource_production_rate_cache[BAR_ResourceType_Metal] /   1000000;
-    score += (float)player->resource_production_rate_cache[BAR_ResourceType_Energy] / 10000000;
   }
   score /= sim_time_ticks;
 
-  score += (float)player->resource_production_rate_cache[BAR_ResourceType_Metal] /   1000000;
-  score += (float)player->resource_production_rate_cache[BAR_ResourceType_Energy] / 10000000;
-
-  score += scalarTrialGeneralRules(&game, instructions);
+  score += scalarTrialGeneralRules(&game, player, instructions);
   return score;
 }
 
@@ -217,7 +238,6 @@ double ProblemBARBuildOrder::scalarTrialCorsairFlood(uint8_t *data) const {
   }
   score /= sim_time_ticks;
 
-
   // Ship yard bonus
   if (bar_game_get_num_of_unit_type(player, BAR_UnitType_armsy)||
           bar_game_get_num_of_unit_type(player, BAR_UnitType_corsy))
@@ -225,55 +245,74 @@ double ProblemBARBuildOrder::scalarTrialCorsairFlood(uint8_t *data) const {
     score += 0.2;
   }
 
-  score += (float)player->resource_production_rate_cache[BAR_ResourceType_Metal] /   10000;
-  score += (float)player->resource_production_rate_cache[BAR_ResourceType_Energy] / 100000;
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armroy) / 30;
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corroy) / 30;
 
-  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armroy) / 100;
-  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corroy) / 100;
-
-  score += scalarTrialGeneralRules(&game, instructions);
+  score += scalarTrialGeneralRules(&game, player, instructions);
   return score;
 }
 
 
 
-double ProblemBARBuildOrder::scalarTrialGeneralRules(Game<BAR_game_config> *game, Game<BAR_game_config>::Instruction* instructions) const {
+double ProblemBARBuildOrder::scalarTrialGeneralRules(Game<BAR_game_config> *game, Game<BAR_game_config>::Player *player, Game<BAR_game_config>::Instruction* instructions) const {
 
   double score = 0;
 
-  // T2 Incentive
+  uint32_t total_income = player->resource_production_rate_cache[BAR_ResourceType_Metal]*70 + player->resource_production_rate_cache[BAR_ResourceType_Energy];
+
+  score += (float)((total_income*bar_game_tps)/bar_game_resource_denominator)/10000;
+
+  // T2 Factory Incentive
+  uint32_t num_t2_factories = 0;
+  num_t2_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_armalab);
+  num_t2_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_coralab);
+  num_t2_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_armavp);
+  num_t2_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_coravp);
+  num_t2_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_armaap);
+  num_t2_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_coraap);
+  num_t2_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_armasy);
+  num_t2_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_corasy);
+  if (num_t2_factories > 0)
+  {
+    score += 0.2;
+  }
+
+  // T2 Constructor Incentive
   uint32_t num_t2_builders = 0;
-  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_armack);
-  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_corack);
-  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_armacv);
-  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_coracv);
-  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_armaca);
-  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_coraca);
-  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_armacsub);
-  num_t2_builders += bar_game_get_num_of_unit_type(&game->players[0], BAR_UnitType_coracsub);
+  num_t2_builders += bar_game_get_num_of_unit_type(player, BAR_UnitType_armack);
+  num_t2_builders += bar_game_get_num_of_unit_type(player, BAR_UnitType_corack);
+  num_t2_builders += bar_game_get_num_of_unit_type(player, BAR_UnitType_armacv);
+  num_t2_builders += bar_game_get_num_of_unit_type(player, BAR_UnitType_coracv);
+  num_t2_builders += bar_game_get_num_of_unit_type(player, BAR_UnitType_armaca);
+  num_t2_builders += bar_game_get_num_of_unit_type(player, BAR_UnitType_coraca);
+  num_t2_builders += bar_game_get_num_of_unit_type(player, BAR_UnitType_armacsub);
+  num_t2_builders += bar_game_get_num_of_unit_type(player, BAR_UnitType_coracsub);
   if (num_t2_builders > 0)
   {
-    score += 0.1;
+    score += 0.3;
   }
 
   // Prefer build orders that end by the end
-  if (game->players[0].current_instruction == num_instructions)
+  if (player->current_instruction == num_instructions)
   {
     score += 0.001;
   }
 
   // Prefer short build orders
   uint32_t num_valid_instructions = 0;
+  uint32_t num_total_iterations = 0;
   for (uint32_t i = 0; i < num_instructions; i++)
   {
     if (instructions[i].type)
     {
       num_valid_instructions++;
+      num_total_iterations += instructions[i].iterations;
     }
   }
   score -= ((float)num_valid_instructions)/5000;
+  score -= ((float)num_total_iterations)/10000;
 
-  score -= (float)game->players[0].invalid_command_count/100;
+  score -= (float)player->invalid_command_count/100;
   return score;
 }
 
@@ -609,6 +648,27 @@ void ProblemBARBuildOrder::scrambler(U8 *data) {
     instructions[last_output_idx].data = 0;
     instructions[last_output_idx].iterations = 0;
   }
+}
+
+double ProblemBARBuildOrder::scalarTrialGunshipRush(uint8_t *data) const {
+  auto instructions = (Game<BAR_game_config>::Instruction*)data;
+  Game<BAR_game_config> game;
+  auto player = game.add_player(faction);
+  player->instructions = instructions;
+  player->num_instructions = num_instructions;
+
+  double score = 0;
+  for (uint32_t i = 0; i < sim_time_ticks; i++)
+  {
+    game.do_tick();
+  }
+  score /= sim_time_ticks;
+
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armkam) / 5;
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corbw) / 5;
+
+  score += scalarTrialGeneralRules(&game, player, instructions);
+  return score;
 }
 
 

@@ -51,6 +51,7 @@ struct BARUnitTypeMetadata_T {
   float max_velocity = 0.0;
   uint32_t min_water_depth = 0;
   uint32_t max_water_depth = 1000;
+  uint32_t build_shuffle_delay = 0;
 };
 
 #endif //MLX86_BAR_GAME_TYPES_HPP

@@ -16,8 +16,9 @@ enum BAR_ResourceType {
   BAR_ResourceType_MAX
 };
 
-constexpr uint32_t bar_game_min_water_depth = 100;
-constexpr uint32_t bar_game_max_water_depth = 100;
+constexpr uint32_t bar_game_min_water_depth = 0;
+constexpr uint32_t bar_game_max_water_depth = 0;
+constexpr uint32_t bar_game_resource_mask_radius = 1500;
 constexpr float wind_speed = (bar_game_map_max_wind_speed + bar_game_map_min_wind_speed)/2;
 
 template<BAR_UnitType unit_type> constexpr inline static struct BARUnitTypeMetadata_T bar_game_get_unit_type_metadata_shim() {
@@ -26,6 +27,7 @@ template<BAR_UnitType unit_type> constexpr inline static struct BARUnitTypeMetad
   // Patch generated metadata
   if (metadata.is_builder)
   {
+    metadata.build_shuffle_delay = 2*bar_game_tps;
     if (metadata.build_distance == 0)
     {
       metadata.can_assist = 0;
@@ -58,6 +60,16 @@ template<BAR_UnitType unit_type> constexpr inline static struct BARUnitTypeMetad
       metadata.build_distance = 0;
       metadata.can_assist = 0;
       metadata.build_power = 0;
+      break;
+    case BAR_UnitType_armca:
+    case BAR_UnitType_corca:
+    case BAR_UnitType_armaca:
+    case BAR_UnitType_coraca:
+    case BAR_UnitType_armcom:
+    case BAR_UnitType_corcom:
+    case BAR_UnitType_armnanotc:
+    case BAR_UnitType_cornanotc:
+      metadata.build_shuffle_delay = 5;
       break;
   }
 
@@ -141,6 +153,7 @@ public:
     int32_t current_build_resources_per_tick[BAR_ResourceType_MAX] = {0};
     uint32_t currently_reclaiming_unit_type = BAR_UnitType_None;
     uint32_t mine_metal_production = 0;
+    uint32_t build_shuffle_time = 0;
   };
 
   static constexpr const char * get_unit_type_name(uint32_t unit)
@@ -269,7 +282,7 @@ public:
       i = BAR_UnitType_None;
     }
 
-    uint32_t allowed_radius_squared = 1000*1000;
+    uint32_t allowed_radius_squared = bar_game_resource_mask_radius*bar_game_resource_mask_radius;
     for (uint32_t i = 0; i < bar_game_map_num_metal_positions; i++)
     {
       int32_t x_delta = commander->position_x - bar_game_map_metal_positions[i].x;
@@ -399,6 +412,7 @@ public:
       {
         unit->data.currently_building_unit_type = BAR_UnitType_None;
         unit->data.currently_building_unit = nullptr;
+        unit->data.build_shuffle_time = 0;
       }
     }
 
@@ -419,18 +433,22 @@ public:
       }
       else
       {
-        bool can_build_this_tick = true;
-        for (uint32_t i = 0; i < BAR_ResourceType_MAX; i++)
+        unit->data.build_shuffle_time++;
+        if (unit->data.build_shuffle_time >= metadata.build_shuffle_delay)
         {
-          can_build_this_tick &= (player->resources[i] >= unit->data.current_build_resources_per_tick[i]);
-        }
-
-        if (can_build_this_tick) {
-          buildee->data.allocated_build_points += metadata.build_power;
+          bool can_build_this_tick = true;
           for (uint32_t i = 0; i < BAR_ResourceType_MAX; i++)
           {
-            buildee->data.allocated_resources[i] += unit->data.current_build_resources_per_tick[i];
-            player->resources[i] -= unit->data.current_build_resources_per_tick[i];
+            can_build_this_tick &= (player->resources[i] >= unit->data.current_build_resources_per_tick[i]);
+          }
+
+          if (can_build_this_tick) {
+            buildee->data.allocated_build_points += metadata.build_power;
+            for (uint32_t i = 0; i < BAR_ResourceType_MAX; i++)
+            {
+              buildee->data.allocated_resources[i] += unit->data.current_build_resources_per_tick[i];
+              player->resources[i] -= unit->data.current_build_resources_per_tick[i];
+            }
           }
         }
       }
