@@ -4,10 +4,89 @@
 
 #include "ProblemBARBuildOrder.hpp"
 #include "christian_utils.h"
+#include <opencv2/opencv.hpp>
 
 double ProblemBARBuildOrder::scalarTrial(uint8_t *data) {
-  return scalarTrialMediumTankRush(data);
+  return scalarTrialHeavyTankRush(data);
 }
+
+static double scalarTrialPawnDefence(Game<BAR_game_config>::Player* player, uint32_t tick)
+{
+  float num_turrets = 0;
+  num_turrets += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armpw);
+  num_turrets += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corak);
+  float expected_num_turrets = floor((((float)tick/(float)BAR_game_config::game_tps)/60)*5);
+  float score = (num_turrets - expected_num_turrets)/3;
+  if (score > 0)
+  {
+    score = 0;
+  }
+  return score;
+}
+
+static double scalarTrialTurretDefence(Game<BAR_game_config>::Player* player, uint32_t tick)
+{
+  float num_turrets = 0;
+  num_turrets += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armllt);
+  num_turrets += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corllt);
+  float num_mines = 0;
+  num_mines += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armmex);
+  num_mines += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_cormex);
+  num_mines += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armmoho);
+  num_mines += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_cormoho);
+  num_mines += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armamex);
+  num_mines += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corexp);
+  float expected_num_turrets = floor((((float)tick/(float)BAR_game_config::game_tps)/60)*num_mines*0.2);
+  float score = (num_turrets - expected_num_turrets)/3;
+  if (score > 0)
+  {
+    score = 0;
+  }
+  return score;
+}
+
+double ProblemBARBuildOrder::scalarTrialHeavyTankRush(uint8_t *data) const {
+  auto instructions = (Game<BAR_game_config>::Instruction*)data;
+  Game<BAR_game_config> game;
+  auto player = game.add_player(faction);
+  player->instructions = instructions;
+  player->num_instructions = num_instructions;
+
+  double score = 0;
+  for (uint32_t i = 0; i < sim_time_ticks; i++)
+  {
+    game.do_tick();
+    score += scalarTrialTurretDefence(player, i);
+  }
+  score /= sim_time_ticks;
+
+  // T1 Lab Incentive
+  uint32_t num_t1_factories = 0;
+  num_t1_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_armvp);
+  num_t1_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_corvp);
+  if (num_t1_factories > 0)
+  {
+    score += 0.3;
+  }
+
+  // T2 Factory Incentive
+  uint32_t num_t2_factories = 0;
+  num_t2_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_armavp);
+  num_t2_factories += bar_game_get_num_of_unit_type(player, BAR_UnitType_coravp);
+  if (num_t2_factories > 0)
+  {
+    score += 0.2;
+  }
+
+
+
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armbull)*2;
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_correap)*2;
+
+  score += scalarTrialGeneralRules(&game, player, instructions);
+  return score;
+}
+
 
 double ProblemBARBuildOrder::scalarTrialFastTankRush(uint8_t *data) const {
   auto instructions = (Game<BAR_game_config>::Instruction*)data;
@@ -245,8 +324,8 @@ double ProblemBARBuildOrder::scalarTrialCorsairFlood(uint8_t *data) const {
     score += 0.2;
   }
 
-  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armroy) / 30;
-  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corroy) / 30;
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armroy) / 4;
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corroy) / 4;
 
   score += scalarTrialGeneralRules(&game, player, instructions);
   return score;
@@ -318,12 +397,15 @@ double ProblemBARBuildOrder::scalarTrialGeneralRules(Game<BAR_game_config> *game
 
 
 void ProblemBARBuildOrder::prettyPrintData(uint8_t *data) {
+  uint32_t time_mins = (sim_time_ticks) / (60 * BAR_game_config::game_tps);
+  uint32_t time_secs = (sim_time_ticks - (time_mins * 60 * BAR_game_config::game_tps)) / BAR_game_config::game_tps;
+  printf("(%d:%02d %s)\n", time_mins, time_secs, bar_game_map_name);
   auto instructions = (Game<BAR_game_config>::Instruction*)data;
   Game<BAR_game_config> game;
   auto player = game.add_player(faction);
   player->instructions = instructions;
   player->num_instructions = num_instructions;
-  player->print_instructions("");
+  player->play_by_play = true;
   for (uint32_t i = 0; i < sim_time_ticks; i++)
   {
     game.do_tick();
@@ -669,6 +751,69 @@ double ProblemBARBuildOrder::scalarTrialGunshipRush(uint8_t *data) const {
 
   score += scalarTrialGeneralRules(&game, player, instructions);
   return score;
+}
+
+double ProblemBARBuildOrder::scalarTrialPawnRush(uint8_t *data) const {
+  auto instructions = (Game<BAR_game_config>::Instruction*)data;
+  Game<BAR_game_config> game;
+  auto player = game.add_player(faction);
+  player->instructions = instructions;
+  player->num_instructions = num_instructions;
+
+  double score = 0;
+  for (uint32_t i = 0; i < sim_time_ticks; i++)
+  {
+    game.do_tick();
+  }
+  score /= sim_time_ticks;
+
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_armpw) / 5;
+  score += (float)bar_game_get_num_of_unit_type(player, BAR_UnitType_corak) / 5;
+
+  score += scalarTrialGeneralRules(&game, player, instructions);
+  return score;
+}
+
+using namespace cv;
+void ProblemBARBuildOrder::presentSolution(uint8_t *data) {
+  auto instructions = (Game<BAR_game_config>::Instruction*)data;
+  Game<BAR_game_config> game;
+  auto player = game.add_player(faction);
+  player->instructions = instructions;
+  player->num_instructions = num_instructions;
+
+  Mat img = imread("../src/problems/rts_buildorders/BAR_game/map_texture.png");
+  Mat img_resized;
+  uint32_t scaling_factor = 4;
+  resize(img, img_resized, Size(img.cols/scaling_factor, img.rows/scaling_factor), INTER_LINEAR);
+  namedWindow("mlx86", WINDOW_NORMAL);
+  resizeWindow("mlx86", 1024, 1024);
+  imshow("mlx86", img_resized);
+  for (uint32_t i = 0; i < sim_time_ticks; i++)
+  {
+    Mat img_frame = img_resized.clone();
+    game.do_tick();
+    for (uint32_t unit_type = 0; unit_type < BAR_game_config::num_unit_types; unit_type++)
+    {
+      for (uint32_t j = 0; j < player->furthest_allocated_unit[unit_type]; j++)
+      {
+        uint32_t x_pos = player->units_by_type[unit_type][j].position_x/scaling_factor;
+        uint32_t y_pos = img_resized.rows - player->units_by_type[unit_type][j].position_z/scaling_factor;
+        uint32_t half_width = bar_game_unit_type_metadata_table.values[unit_type].footprint_x/2;
+        uint32_t half_height = bar_game_unit_type_metadata_table.values[unit_type].footprint_z/2;
+        rectangle(img_frame,
+               Point(x_pos-half_width, y_pos-half_height),
+               Point(x_pos+half_width, y_pos+half_height),
+               Scalar(bar_game_unit_type_metadata_table.values[unit_type].color_r,
+                      bar_game_unit_type_metadata_table.values[unit_type].color_g,
+                      bar_game_unit_type_metadata_table.values[unit_type].color_b),
+               2);
+      }
+    }
+    imshow("mlx86", img_frame);
+    waitKey(5);
+  }
+  waitKey(0);
 }
 
 

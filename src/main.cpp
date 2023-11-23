@@ -70,15 +70,19 @@ int main(int argc, char * argv[])
         print_mean_and_stddev(scores);
 	}
 */
-	//U8 buffer[0x1000];
-	//FILE * fp = fopen("tsp_hybrid_x86", "rb");
-	//size_t len = fread(buffer, sizeof(U8), sizeof(buffer), fp);
-	//fclose(fp);
+	U8 buffer[problem->data_len];
+	FILE * fpi = fopen("best_data", "rb");
+	size_t len = fread(buffer, sizeof(U8), sizeof(buffer), fpi);
+	fclose(fpi);
+  problem->presentSolution(buffer);
 
-	struct SolverResults_T results{};
+
+  struct SolverResults_T results{};
+
+  //problem->presentSolution(results.data);
 
 	init_reporter_process(reporter_mem, (Problem*)problem);
-	solver->run((Problem*)problem, reporter_mem, 100, 1000*60*1, &results);
+	solver->run((Problem*)problem, reporter_mem, 100, 1000*60*5, &results);
 	deinit_reporter_process(reporter_mem);
 
   uint8_t first_pass_data[problem->data_len];
@@ -101,9 +105,9 @@ int main(int argc, char * argv[])
   problem->prettyPrintData(results.data);
 
 
-	//FILE * fp = fopen("best_data", "wb");
-	//fwrite(results.data, sizeof(U8), ((Problem*)problem)->data_len, fp);
-	//fclose(fp);
+	FILE * fp = fopen("best_data", "wb");
+	fwrite(results.data, sizeof(U8), ((Problem*)problem)->data_len, fp);
+	fclose(fp);
 
 	//((problem_audio_regen*)problem)->export_wav("test.wav", results.data);
 

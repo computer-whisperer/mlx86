@@ -90,7 +90,10 @@ add_executable(bar_buildorder_test src/tests/bar_buildorder_test.cpp ${SOURCES})
 add_executable(bar_scrambler_test src/tests/bar_scrambler_test.cpp ${SOURCES})
 add_executable(bar_performance_test src/tests/bar_performance_test.cpp ${SOURCES})
 
-set(LIBS_TO_LINK kfr_dft kfr_capi kfr_io m pthread protobuf-c rt Zydis)
+find_package( OpenCV REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+
+set(LIBS_TO_LINK kfr_dft kfr_capi kfr_io m pthread protobuf-c rt Zydis ${OpenCV_LIBS})
 
 target_link_libraries(mlx86 ${LIBS_TO_LINK})
 target_link_libraries(solver_benchmark_test ${LIBS_TO_LINK})

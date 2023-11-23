@@ -52,6 +52,13 @@ struct BARUnitTypeMetadata_T {
   uint32_t min_water_depth = 0;
   uint32_t max_water_depth = 1000;
   uint32_t build_shuffle_delay = 0;
+  bool show_in_inline_summary = false;
+  const char* summary_name = "";
+  float footprint_x = 0;
+  float footprint_z = 0;
+  uint8_t color_r = 0;
+  uint8_t color_g = 255;
+  uint8_t color_b = 0;
 };
 
 #endif //MLX86_BAR_GAME_TYPES_HPP

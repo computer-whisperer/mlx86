@@ -125,6 +125,14 @@ for _, unit in ipairs(units) do
         print("    .max_water_depth = ".. data["maxwaterdepth"] .. ",")
     end
 
+    if data["footprintx"] ~= nil then
+        print("    .footprint_x = ".. data["footprintx"] .. ",")
+    end
+
+    if data["footprintz"] ~= nil then
+        print("    .footprint_z = ".. data["footprintz"] .. ",")
+    end
+
     print("  };")
 end
 print("}\n}")

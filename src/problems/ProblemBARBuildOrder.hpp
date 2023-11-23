@@ -14,7 +14,7 @@ class ProblemBARBuildOrder: public Problem {
 public:
   uint32_t num_instructions;
 
-  uint32_t sim_time_ticks = bar_game_tps*60*6;
+  uint32_t sim_time_ticks = bar_game_tps*60*12;
   BAR_Faction faction = BAR_Faction_Armada;
 
   explicit ProblemBARBuildOrder(uint32_t n_instructions=128): num_instructions(n_instructions), Problem(sizeof(Game<BAR_game_config>::Instruction) * n_instructions){};
@@ -27,6 +27,8 @@ public:
   }
 
   double scalarTrial(uint8_t *data) override;
+  double scalarTrialPawnRush(uint8_t *data) const;
+  double scalarTrialHeavyTankRush(uint8_t *data) const;
   double scalarTrialGunshipRush(uint8_t *data) const;
   double scalarTrialFastTankRush(uint8_t *data) const;
   double scalarTrialMediumTankRush(uint8_t *data) const;
@@ -38,6 +40,8 @@ public:
   double scalarTrialCorsairFlood(uint8_t *data) const;
   double scalarTrialBomberRush(uint8_t *data) const;
   double scalarTrialGeneralRules(Game<BAR_game_config> *game, Game<BAR_game_config>::Player *player, Game<BAR_game_config>::Instruction* instructions) const;
+
+  void presentSolution(uint8_t* data);
 
   void prettyPrintData(uint8_t *data) override;
 

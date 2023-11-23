@@ -18,7 +18,7 @@ enum BAR_ResourceType {
 
 constexpr uint32_t bar_game_min_water_depth = 0;
 constexpr uint32_t bar_game_max_water_depth = 0;
-constexpr uint32_t bar_game_resource_mask_radius = 1500;
+constexpr uint32_t bar_game_resource_mask_radius = 2000;
 constexpr float wind_speed = (bar_game_map_max_wind_speed + bar_game_map_min_wind_speed)/2;
 
 template<BAR_UnitType unit_type> constexpr inline static struct BARUnitTypeMetadata_T bar_game_get_unit_type_metadata_shim() {
@@ -70,6 +70,52 @@ template<BAR_UnitType unit_type> constexpr inline static struct BARUnitTypeMetad
     case BAR_UnitType_armnanotc:
     case BAR_UnitType_cornanotc:
       metadata.build_shuffle_delay = 5;
+      break;
+  }
+
+  metadata.show_in_inline_summary = true;
+  metadata.summary_name = metadata.name;
+  switch (unit_type) {
+    case BAR_UnitType_corcom:
+    case BAR_UnitType_armcom:
+      metadata.show_in_inline_summary = false;
+      break;
+    case BAR_UnitType_armmex:
+    case BAR_UnitType_cormex:
+      metadata.summary_name = "MEX";
+      break;
+    case BAR_UnitType_armwin:
+    case BAR_UnitType_corwin:
+      metadata.summary_name = "WIN";
+      break;
+    case BAR_UnitType_armllt:
+    case BAR_UnitType_corllt:
+      metadata.summary_name = "LLT";
+      break;
+  }
+
+  switch (unit_type) {
+    case BAR_UnitType_corcom:
+    case BAR_UnitType_armcom:
+      metadata.color_r = 255;
+      metadata.color_g = 0;
+      metadata.color_b = 0;
+      break;
+    case BAR_UnitType_armmex:
+    case BAR_UnitType_cormex:
+    case BAR_UnitType_armmoho:
+    case BAR_UnitType_cormoho:
+    case BAR_UnitType_armamex:
+    case BAR_UnitType_corexp:
+      metadata.color_r = 0;
+      metadata.color_g = 0;
+      metadata.color_b = 255;
+      break;
+    case BAR_UnitType_armwin:
+    case BAR_UnitType_corwin:
+      metadata.color_r = 255;
+      metadata.color_g = 0;
+      metadata.color_b = 255;
       break;
   }
 
@@ -706,8 +752,6 @@ public:
     }
   }
 
-
-
   static inline void print_detailed_unit_info(Game<BAR_game_config>::Player* player, Game<BAR_game_config>::Unit* unit, uint32_t unit_type, std::string indent)
   {
     printf("%s%s:", indent.c_str(), get_unit_type_name(unit_type));
@@ -751,6 +795,21 @@ public:
       player->deallocate_unit(unit, unit_type);
     }
     return unit != nullptr;
+  }
+
+  static inline void print_inline_summary(Game<BAR_game_config>::Player *player)
+  {
+    for (uint32_t i = 0; i < BAR_game_config::num_unit_types; i++)
+    {
+      if (!bar_game_unit_type_metadata_table.values[i].show_in_inline_summary)
+      {
+        continue;
+      }
+      if (player->furthest_allocated_unit[i] > 0)
+      {
+        printf("%s: %d, ", bar_game_unit_type_metadata_table.values[i].summary_name, player->furthest_allocated_unit[i]);
+      }
+    }
   }
 
   static bool follow_instruction(Game<BAR_game_config>::Player* player, Game<BAR_game_config>::Instruction* instruction, bool first_tick);

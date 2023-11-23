@@ -47,6 +47,7 @@ public:
 
   class Player {
   public:
+    bool play_by_play = false;
     bool is_allocated = false; // If this player is used
     uint32_t num_instructions = 0;
     Instruction* instructions = nullptr;
@@ -375,6 +376,18 @@ void Game<GameConfig>::do_tick() {
 
 template<typename GameConfig>
 void Game<GameConfig>::Player::tick() {
+  if (play_by_play)
+  {
+    if ((game->tick % (GameConfig::game_tps*60) == 0) && (game->tick > 0))
+    {
+      uint32_t time_mins = (game->tick) / (60 * GameConfig::game_tps);
+      uint32_t time_secs = (game->tick - (time_mins * 60 * GameConfig::game_tps)) / GameConfig::game_tps;
+      printf("(%d:%02d) ", time_mins, time_secs);
+      GameConfig::print_inline_summary(this);
+      printf("\n");
+    }
+  }
+
   if (resource_production_rate_cache_dirty)
   {
     update_cached_resource_rates();
@@ -407,6 +420,10 @@ void Game<GameConfig>::Player::tick() {
       if (current_iteration >= instruction.iterations) {
         current_instruction++;
         current_iteration = 0;
+        if (play_by_play)
+        {
+          GameConfig::pretty_print_instruction("   ", (void*)(&instructions[current_instruction]));
+        }
       }
     }
   }
