@@ -453,15 +453,18 @@ void ProblemBARBuildOrder::scrambler(U8 *data) {
     }
   }
 
-
   Game<BAR_game_config> game;
   auto player = game.add_player(faction);
+  player->instructions = instructions;
+  player->num_instructions = num_instructions;
+
   // Run simplified up to this point to see what we can build/reclaim
-  for (uint32_t i = 0; i <= random_instruction_idx; i++)
+  for (uint32_t i = 0; i <= sim_time_ticks; i++)
   {
-    if (instructions[i].type == BAR_Instruction_Build)
+    game.do_tick();
+    if (player->current_instruction == random_instruction_idx)
     {
-      BAR_game_config::free_unit_build(player, (BAR_UnitType)instructions[i].data);
+      break;
     }
   }
 
@@ -510,6 +513,32 @@ void ProblemBARBuildOrder::scrambler(U8 *data) {
     for (random_unit_type_for_reclaim = 0; random_unit_type_for_reclaim < BAR_UnitType_MAX; random_unit_type_for_reclaim++)
     {
       if (player->furthest_allocated_unit[random_unit_type_for_reclaim])
+      {
+        if (i == 0)
+        {
+          break;
+        }
+        i--;
+      }
+    }
+  }
+
+  uint32_t num_available_metal_positions = 0;
+  for (uint32_t i = 0; i < bar_game_map_num_metal_positions; i++)
+  {
+    if (player->data.metal_positions_allowed[i] && (player->game->data.metal_positions[i].unit_type != random_unit_type_for_build))
+    {
+      num_available_metal_positions++;
+    }
+  }
+
+  int32_t random_metal_position = 0;
+  if (num_available_metal_positions)
+  {
+    uint32_t i = fast_rand() % num_available_metal_positions;
+    for (random_metal_position = 0; random_metal_position < bar_game_map_num_metal_positions; random_metal_position++)
+    {
+      if (player->data.metal_positions_allowed[random_metal_position] && (player->game->data.metal_positions[random_metal_position].unit_type != instructions[random_instruction_idx].data))
       {
         if (i == 0)
         {
@@ -645,20 +674,91 @@ void ProblemBARBuildOrder::scrambler(U8 *data) {
   }
   else if (op_chooser < 6 && (populated_instruction_count > 0))
   {
-    // Modify
-    if (random_instruction_idx < num_instructions)
+    // Find a different unit
+    if (fast_rand()%3 == 0)
     {
-      if ((fast_rand()%2 == 0) || (instructions[random_instruction_idx].iterations <= 1))
+      if (instructions[random_instruction_idx].type == BAR_Instruction_Build)
       {
-        // Increment quantity
-        instructions[random_instruction_idx].iterations++;
-      }
-      else
-      {
-        // Decrement quantity
-        instructions[random_instruction_idx].iterations--;
+        uint32_t num_valid_builders = 0;
+        for (uint32_t i = 0; i < player->num_allocated_units; i++)
+        {
+          for (uint32_t j = 0; j < bar_game_max_num_build_options; j++)
+          {
+            uint32_t unit_type = player->allocated_unit_types[i];
+            if (bar_game_unit_type_metadata_table.values[unit_type].build_options[j] == instructions[random_instruction_idx].data)
+            {
+              num_valid_builders++;
+              break;
+            }
+            if (bar_game_unit_type_metadata_table.values[unit_type].build_options[j] == BAR_UnitType_None)
+            {
+              break;
+            }
+          }
+        }
+        if (num_valid_builders)
+        {
+          uint32_t i = fast_rand()%num_valid_builders;
+          uint32_t unit_idx_picked;
+          for (unit_idx_picked = 0; unit_idx_picked < player->num_allocated_units; unit_idx_picked++)
+          {
+            bool can_build = false;
+            for (uint32_t j = 0; j < bar_game_max_num_build_options; j++)
+            {
+              uint32_t unit_type = player->allocated_unit_types[unit_idx_picked];
+              if (bar_game_unit_type_metadata_table.values[unit_type].build_options[j] == instructions[random_instruction_idx].data)
+              {
+                can_build = true;
+                break;
+              }
+              if (bar_game_unit_type_metadata_table.values[unit_type].build_options[j] == BAR_UnitType_None)
+              {
+                break;
+              }
+            }
+            if (can_build)
+            {
+              if (i == 0)
+              {
+                break;
+              }
+              i--;
+            }
+          }
+          if (unit_idx_picked >= player->num_allocated_units)
+          {
+            instructions[random_instruction_idx].operating_unit_index = -1;
+          }
+          else
+          {
+            instructions[random_instruction_idx].operating_unit_index = (int32_t)unit_idx_picked;
+          }
+        }
       }
     }
+
+    // Modify
+    if (bar_game_unit_type_metadata_table.values[instructions[random_instruction_idx].data].metal_extractor)
+    {
+      instructions[random_instruction_idx].resource_index = random_metal_position;
+    }
+    else
+    {
+      if (random_instruction_idx < num_instructions)
+      {
+        if ((fast_rand()%2 == 0) || (instructions[random_instruction_idx].iterations <= 1))
+        {
+          // Increment quantity
+          instructions[random_instruction_idx].iterations++;
+        }
+        else
+        {
+          // Decrement quantity
+          instructions[random_instruction_idx].iterations--;
+        }
+      }
+    }
+
   }
   else {
     // Insert new instruction
@@ -671,6 +771,8 @@ void ProblemBARBuildOrder::scrambler(U8 *data) {
       to_insert.type = BAR_Instruction_Reclaim;
       to_insert.data = random_unit_type_for_reclaim;
       to_insert.iterations = 1;
+      to_insert.resource_index = -1;
+      to_insert.operating_unit_index = -1;
     }
     else
     {
@@ -678,6 +780,8 @@ void ProblemBARBuildOrder::scrambler(U8 *data) {
       to_insert.type = BAR_Instruction_Build;
       to_insert.data = random_unit_type_for_build;
       to_insert.iterations = 1;
+      to_insert.resource_index = -1;
+      to_insert.operating_unit_index = -1;
     }
 
     // Sometimes insert after
@@ -712,7 +816,8 @@ void ProblemBARBuildOrder::scrambler(U8 *data) {
       }
       else if (
               (instructions[j].type == instructions[last_output_idx].type) &&
-              (instructions[j].data == instructions[last_output_idx].data) )
+              (instructions[j].data == instructions[last_output_idx].data) &&
+              (instructions[j].resource_index == instructions[last_output_idx].resource_index))
       {
         instructions[last_output_idx].iterations += instructions[j].iterations;
       }

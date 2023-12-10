@@ -40,10 +40,23 @@ double ProblemX86StringMatch::scalarTrial(U8 *data)
 }
 
 void ProblemX86StringMatch::scrambler(U8 *data) {
-    x86_basic_scramble(data, data_len);
+    //x86_basic_scramble(data, data_len);
+    pureRandomScramble(data);
 }
 
 void ProblemX86StringMatch::prettyPrintData(U8 *data) {
+    U8 * program_mem = executor->program_memory;
+    U8 * io_mem = executor->io_memory;
+
+    memset(io_mem, 0, goal.length());
+    memcpy(program_mem, data, data_len);
+    int did_hang = executor->run();
+    for (uint32_t i = 0; i < goal.length(); i++) {
+        printf("%02x ", io_mem[i]);
+    }
+    printf("\n");
+    io_mem[goal.length()] = 0;
+    printf("%s\n", (char*)io_mem);
     x86_pretty_print(data, data_len);
 }
 

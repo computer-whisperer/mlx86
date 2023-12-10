@@ -85,7 +85,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_LIST_DIR}/src/problems/rts_buildorders
 add_executable(mlx86 src/main.cpp ${SOURCES})
 add_executable(solver_benchmark_test src/tests/solver_benchmark_test.c ${SOURCES})
 add_executable(testing_test src/tests/testing_test.c ${SOURCES})
-add_executable(executor_test src/tests/executor_test.c ${SOURCES})
+add_executable(executor_test src/tests/executor_test.cpp ${SOURCES})
 add_executable(bar_buildorder_test src/tests/bar_buildorder_test.cpp ${SOURCES})
 add_executable(bar_scrambler_test src/tests/bar_scrambler_test.cpp ${SOURCES})
 add_executable(bar_performance_test src/tests/bar_performance_test.cpp ${SOURCES})

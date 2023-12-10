@@ -10,6 +10,8 @@
 #include "types.h"
 #include "SolverHybridX86.h"
 
+#include <ProblemHelloWorld.h>
+
 #define MAX_SUB_PROBLEM_DATA 0x1000
 #define SCRATCH_MEM_LEN 0x1000
 
@@ -37,14 +39,10 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 
 	struct io_memory_map_t
 	{
-		U32 do_revert_offset;
-		U32 do_scramble_offset;
-		U32 score_offset;
-		U32 data_offset;
-		U32 scratch_mem_offset;
-		U32 do_revert;
-		U32 do_scramble;
-		F64 score;
+		uint32_t do_revert;
+		uint32_t do_scramble;
+		int32_t old_score;
+		int32_t new_score;
 		U8 data[MAX_SUB_PROBLEM_DATA];
 		U8 scratch_mem[SCRATCH_MEM_LEN];
 	};
@@ -74,6 +72,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 
 	U64 total_tests = 0;
 	F64 current_score;
+	F64 prev_score = 0;
 	while (true)
 	{
 		// Grab copy for possible future revert
@@ -87,18 +86,15 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 		total_tests++;
 
 		// Setup io memory and run program
-		io_memory->do_revert_offset = offsetof(struct io_memory_map_t, do_revert);
-		io_memory->do_scramble_offset = offsetof(struct io_memory_map_t, do_revert);
-		io_memory->score_offset = offsetof(struct io_memory_map_t, score);
-		io_memory->data_offset = offsetof(struct io_memory_map_t, data);
-		io_memory->scratch_mem_offset = offsetof(struct io_memory_map_t, scratch_mem);
-		io_memory->score = current_score;
+		io_memory->old_score = (int32_t)(prev_score*4000);
+		io_memory->new_score = (int32_t)(current_score*4000);
 
 		// Run program
 		int did_hang = executor->run();
 
 		if (did_hang)
 		{
+			current_score = -10;
 			// Abort!
 			break;
 		}
@@ -154,11 +150,21 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 
 double SolverHybridX86::scalarTrial(U8 *data) {
     code = data;
-    return ProblemTravellingSalesman::SolverTest(this);
+		struct SolverResults_T results{};
+		double score = 0;
+		for (int i = 0; i < 4; i++)
+		{
+			Problem* training_problem = new ProblemHelloWorld();
+			run(training_problem, nullptr, 1, 500, &results);
+			free(results.data);
+			score += results.score;
+		}
+		return score/(double)4;
 }
 
 void SolverHybridX86::scrambler(U8 *data) {
-    x86_basic_scramble(data, data_len);
+    //pureRandomScramble(data);
+	x86_basic_scramble(data, data_len);
 }
 
 void SolverHybridX86::prettyPrintData(U8 *data) {

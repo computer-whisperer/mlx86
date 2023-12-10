@@ -11,7 +11,7 @@ double ProblemHelloWorld::scalarTrial(U8 * data)
 {
   float score = 0;
 
-  const char * goal = "I am mlx86!!!12345678910abcdefghijklmnopqrstuvwxyz";
+  const char * goal = "I am mlx86!!!";
 
   U32 l = data_len;
   if (l > strlen(goal))

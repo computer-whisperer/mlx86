@@ -8,7 +8,7 @@
 #include <string>
 #include "KVMExecutor.h"
 
-class SolverHybridX86 : public Solver, Problem
+class SolverHybridX86 : public Solver, public Problem
 {
     KVMExecutor* executor;
 public:

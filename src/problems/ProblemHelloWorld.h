@@ -14,6 +14,11 @@ public:
 
     ProblemHelloWorld(const ProblemHelloWorld& problem) = default;
 
+    ProblemHelloWorld * Clone() override
+    {
+        return new ProblemHelloWorld(*this);
+    }
+
     double scalarTrial(U8 *data) override;
 
     void prettyPrintData(U8 *data) override;

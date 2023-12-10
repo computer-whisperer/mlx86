@@ -47,11 +47,11 @@ int main(int argc, char * argv[])
 
 	struct REPORTER_MEM_T * reporter_mem = reporter_mem_init();
 
-  auto problem = new ProblemBARBuildOrder();
+  //auto problem = new ProblemBARBuildOrder();
 	//auto problem = new ProblemTravellingSalesman(1000, 10);
 	//auto problem = new problem_audio_regen("../audio/582986__queenoyster__low-battery.wav");
-	//auto problem = new SolverHybridX86(800);
-	//auto problem = new ProblemX86StringMatch("I am a creature of mystery", 800);
+	auto problem = new SolverHybridX86(800);
+	//auto problem = new ProblemX86StringMatch("Hello World!", 500);
 	//auto problem = new ProblemHelloWorld();
 
 	auto solver = new SolverParallelTempering();
@@ -70,29 +70,28 @@ int main(int argc, char * argv[])
         print_mean_and_stddev(scores);
 	}
 */
+/*
 	U8 buffer[problem->data_len];
 	FILE * fpi = fopen("best_data", "rb");
 	size_t len = fread(buffer, sizeof(U8), sizeof(buffer), fpi);
 	fclose(fpi);
-  problem->presentSolution(buffer);
+  problem->presentSolution(buffer);*/
 
 
   struct SolverResults_T results{};
 
-  //problem->presentSolution(results.data);
-
 	init_reporter_process(reporter_mem, (Problem*)problem);
-	solver->run((Problem*)problem, reporter_mem, 100, 1000*60*5, &results);
+	solver->run((Problem*)problem, reporter_mem, 100, 400*3600*8, &results);
 	deinit_reporter_process(reporter_mem);
 
   uint8_t first_pass_data[problem->data_len];
   memcpy(first_pass_data, results.data, problem->data_len);
-
+/*
   auto final_solver = new SolverSimpleGreedy();
   init_reporter_process(reporter_mem, (Problem*)problem);
-  final_solver->run((Problem*)problem, reporter_mem, 100, 10000, &results, first_pass_data);
+  final_solver->run((Problem*)problem, reporter_mem, 100, 100000, &results, first_pass_data);
   deinit_reporter_process(reporter_mem);
-
+*/
 	{
 	    std::vector<double> scores;
 	    for (uint32_t i = 0; i < 100; i++)

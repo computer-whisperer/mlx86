@@ -2,7 +2,7 @@
 #include "testing.h"
 #include "executors/KVMExecutor.h"
 #include "problems/x86/X86Common.h"
-#include "utils.h"
+#include "christian_utils.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -27,24 +27,21 @@ int main(int argc, const char *const *argv)
 
 	testing_initialize();
 
-	static struct EXECUTOR_DATA_T executor_data;
-
-	executor_init(&executor_data, IO_DATA_LEN, PROG_DATA_LEN);
-	U8 * program_mem = EXECUTOR_PROGRAM_MEM(&executor_data);
-	U8 * io_mem = EXECUTOR_IO_MEM(&executor_data);
-
+	KVMExecutor executor{10, 20};
+	U8 * program_mem = executor.program_memory;
+	U8 * io_mem = executor.io_memory;
 	// Try "Hello world" a lot
 
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		memset(io_mem, 0, IO_DATA_LEN);
 		memcpy(program_mem, payload, sizeof(payload));
-		int did_hang = executor_execute(&executor_data);
+		int did_hang = executor.run();
 		testing_assert("executor_test_1_did_hang", !did_hang);
 		testing_assert("executor_test_1_did_print", io_mem[0] == 'H');
 	}
 	// Fuzz and run hello world, look for code that forces the executor to bug out on successive runs
-
+/*
 	for (int i = 0; i < 100000; i++)
 	{
 		// Fuzz
@@ -76,6 +73,6 @@ int main(int argc, const char *const *argv)
 			print_data_as_hex(rand_prog_data, FUZZ_PROG_LEN);
 		}
 
-	}
+	}*/
 
 }

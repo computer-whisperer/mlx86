@@ -35,6 +35,8 @@ public:
     uint32_t type = 0;
     uint32_t data = 0;
     uint32_t iterations = 0;
+    int32_t resource_index = 0;
+    int32_t operating_unit_index = 0;
   };
 
   class Unit {
@@ -298,7 +300,7 @@ public:
       }
     }
 
-    void append_instruction(uint32_t instruction_type, uint32_t instruction_data, uint32_t iterations=1)
+    void append_instruction(uint32_t instruction_type, uint32_t instruction_data, uint32_t iterations=1, int32_t resource_index=-1, int32_t operating_unit_index=-1)
     {
       if (instructions == nullptr)
       {
@@ -311,6 +313,8 @@ public:
           instructions[i].type = instruction_type;
           instructions[i].data = instruction_data;
           instructions[i].iterations = iterations;
+          instructions[i].resource_index = resource_index;
+          instructions[i].operating_unit_index = operating_unit_index;
           return;
         }
       }
