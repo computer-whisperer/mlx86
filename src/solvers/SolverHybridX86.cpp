@@ -163,11 +163,11 @@ double SolverHybridX86::scalarTrial(U8 *data) {
     code = data;
 		struct SolverResults_T results{};
 		double score = 0;
-	  uint32_t tries = 1;
+	  uint32_t tries = 2;
 		for (int i = 0; i < tries; i++)
 		{
-			Problem* training_problem = new ProblemHelloWorld();
-			run(training_problem, nullptr, 1, 400, &results);
+			Problem* training_problem = new ProblemHelloWorld("Hello there Obi-wan Kenobi!");
+			run(training_problem, nullptr, 1, 600, &results);
 			free(results.data);
 			score += results.score;
 		}

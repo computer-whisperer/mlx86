@@ -59,7 +59,7 @@ int main(int argc, char * argv[])
 	//auto problem = new problem_audio_regen("../audio/582986__queenoyster__low-battery.wav");
 	auto problem = new SolverHybridX86(256);
 	//auto problem = new ProblemX86StringMatch("Hello!", 200);
-	//auto problem = new ProblemHelloWorld();
+	//auto problem = new ProblemHelloWorld("Does this work?");
 
 	auto solver = new SolverParallelTempering();
 	//auto solver = new SolverParallelGreedy();

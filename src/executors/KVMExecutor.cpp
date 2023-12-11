@@ -395,7 +395,7 @@ void KVMExecutor::StartWatchdogThread() {
             {
                 counter++;
 
-                if (counter > 2)
+                if (counter > 8)
                 {
                     pthread_kill(target_thread, SIGALRM);
                 }

@@ -31,7 +31,6 @@ int main(int argc, char * argv[])
 	Solver * solvers[] = {
 		new SolverSimpleGreedy(),
 		new SolverSimulatedAnnealing(),
-		new SolverTabuSearch(),
 		hybrid_x86
 	};
 
@@ -41,11 +40,13 @@ int main(int argc, char * argv[])
 	//	problems[p] = new ProblemTravellingSalesman(100, p);
 	//}
 	Problem * problems[] = {
-		new ProblemHelloWorld()
+		new ProblemHelloWorld(),
+		new ProblemHelloWorld("Fuck!"),
+		new ProblemHelloWorld("Inception!")
 	};
 
 
-	for (U32 i = 100; i < 1000000; i*=1.2)
+	for (U32 i = 10; i < 100000; i+= 100)
 	{
 		printf("%d, ", i);
 		for (U32 s = 0; s < std::size(solvers); s++)
