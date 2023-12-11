@@ -28,6 +28,9 @@ public:
     void prettyPrintData(U8 *data) override;
 
     void dataInit(U8 *data) override;
+
+    uint32_t inner_rng_seed = 123;
+    uint32_t inner_rng();
 };
 
 #endif //MLX86_SOLVERHYBRIDX86_H

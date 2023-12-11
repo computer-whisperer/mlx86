@@ -38,7 +38,7 @@ SolverHybridX86 * SolverHybridX86::Clone()
 
 void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out, uint8_t* starting_data)
 {
-
+	inner_rng_seed = 123;
 	struct io_memory_map_t
 	{
 		uint32_t random_seed;
@@ -74,7 +74,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 	while (true)
 	{
 
-		if (fast_rand()%10 == 0) {
+		if (false && inner_rng()%10 == 0) {
 			// Use random value
 			problem->scrambler(io_memory->data);
 		}
@@ -82,7 +82,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 			// Use x86 kernel for mutation
 
 			// Setup io memory and run program
-			io_memory->random_seed = fast_rand();
+			io_memory->random_seed = inner_rng();
 
 			// Run program
 			int did_hang = executor->run();
@@ -184,4 +184,9 @@ void SolverHybridX86::prettyPrintData(U8 *data) {
 
 void SolverHybridX86::dataInit(U8 *data) {
     x86_data_init(data, data_len);
+}
+
+uint32_t SolverHybridX86::inner_rng() {
+	inner_rng_seed = (214013*inner_rng_seed+2531011);
+	return (inner_rng_seed>>16)&0x7FFF;
 }

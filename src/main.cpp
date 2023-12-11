@@ -47,6 +47,13 @@ int main(int argc, char * argv[])
 
 	struct REPORTER_MEM_T * reporter_mem = reporter_mem_init();
 
+	U8 buffer[0x1000];
+	FILE * fp = fopen("../best_data", "rb");
+	size_t len = fread(buffer, sizeof(U8), sizeof(buffer), fp);
+	fclose(fp);
+	auto hybrid_x86 = new SolverHybridX86(len);
+	hybrid_x86->code = buffer;
+
   //auto problem = new ProblemBARBuildOrder();
 	//auto problem = new ProblemTravellingSalesman(1000, 10);
 	//auto problem = new problem_audio_regen("../audio/582986__queenoyster__low-battery.wav");
@@ -54,11 +61,12 @@ int main(int argc, char * argv[])
 	//auto problem = new ProblemX86StringMatch("Hello!", 200);
 	//auto problem = new ProblemHelloWorld();
 
-	//auto solver = new SolverParallelTempering();
+	auto solver = new SolverParallelTempering();
 	//auto solver = new SolverParallelGreedy();
-	auto solver = new SolverSimulatedAnnealing();
+	//auto solver = new SolverSimulatedAnnealing();
 	//auto solver = new SolverSimpleGreedy();
 	//auto solver = new SolverTabuSearch();
+	//auto solver = hybrid_x86;
 /*
 	{
 	    std::cout << "Solver score:" << std::endl;
@@ -104,7 +112,7 @@ int main(int argc, char * argv[])
   problem->prettyPrintData(results.data);
 
 
-	FILE * fp = fopen("best_data", "wb");
+	fp = fopen("best_data", "wb");
 	fwrite(results.data, sizeof(U8), ((Problem*)problem)->data_len, fp);
 	fclose(fp);
 

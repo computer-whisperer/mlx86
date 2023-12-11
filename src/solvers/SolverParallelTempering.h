@@ -24,7 +24,7 @@ class SolverParallelTempering : public Solver
             neighbor_poll_rate(500),
             neighbor_poll_chance(10),
             score_diff_neighbor_multiplier(10000.0),
-            num_neighbors(4)
+            num_neighbors(10)
             {};
 
             void tempering_process(Problem *problem, struct sync_mem_t * our_sync, sync_mem_t **neighbor_syncs, U8* should_exit, struct reporting_mem_t * reporting_mem);

@@ -2,7 +2,10 @@
 
 #include <string.h>
 #include <math.h>
+#include <ProblemHelloWorld.h>
 #include <ProblemTravellingSalesman.h>
+#include <ProblemX86StringMatch.h>
+#include <SolverHybridX86.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,37 +15,48 @@
 #include "SolverSimulatedAnnealing.h"
 #include "SolverTabuSearch.h"
 
-#define NUM_PROBLEMS_PER_POINT 10
+#define NUM_PROBLEMS_PER_POINT 3
 
 int main(int argc, char * argv[])
 {
 	testing_initialize();
 
+	U8 buffer[0x1000];
+	FILE * fp = fopen("../best_data", "rb");
+	size_t len = fread(buffer, sizeof(U8), sizeof(buffer), fp);
+	fclose(fp);
+	auto hybrid_x86 = new SolverHybridX86(len);
+	hybrid_x86->code = buffer;
+
 	Solver * solvers[] = {
 		new SolverSimpleGreedy(),
 		new SolverSimulatedAnnealing(),
-		new SolverTabuSearch()
+		new SolverTabuSearch(),
+		hybrid_x86
 	};
 
-	Problem * problems[NUM_PROBLEMS_PER_POINT];
-	for (U32 p = 0; p < NUM_PROBLEMS_PER_POINT; p++)
-	{
-		problems[p] = new ProblemTravellingSalesman(100, p);
-	}
+	//Problem * problems[NUM_PROBLEMS_PER_POINT];
+	//for (U32 p = 0; p < NUM_PROBLEMS_PER_POINT; p++)
+	//{
+	//	problems[p] = new ProblemTravellingSalesman(100, p);
+	//}
+	Problem * problems[] = {
+		new ProblemHelloWorld()
+	};
 
 
 	for (U32 i = 100; i < 1000000; i*=1.2)
 	{
 		printf("%d, ", i);
-		for (U32 s = 0; s < (sizeof(solvers)/sizeof(solvers[0])); s++)
+		for (U32 s = 0; s < std::size(solvers); s++)
 		{
 			F64 score = 0;
-			for (U32 p = 0; p < NUM_PROBLEMS_PER_POINT; p++)
+			for (U32 p = 0; p < std::size(problems); p++)
 			{
 				struct SolverResults_T results;
 				seed_fast_rand(10);
 				solvers[s]->run(problems[p], NULL, 100, i, &results, nullptr);
-				score += results.score/(F64)NUM_PROBLEMS_PER_POINT;
+				score += results.score/(F64)std::size(problems);
 				free(results.data);
 			}
 			printf("%g, ", score);

@@ -6,11 +6,13 @@
 #define MLX86_HELLO_WORLD_H
 
 #include "problem.h"
+#include <cstring>
 
 class ProblemHelloWorld: public Problem {
-
+    const char * goal = "I am mlx86!!!";
 public:
     ProblemHelloWorld(): Problem(10){};
+    explicit ProblemHelloWorld(const char* goal_in): Problem(strlen(goal_in)), goal(goal_in){};
 
     ProblemHelloWorld(const ProblemHelloWorld& problem) = default;
 
