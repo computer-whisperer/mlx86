@@ -76,7 +76,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 	while (true)
 	{
 
-		if (inner_rng()%30 == 0) {
+		if (false && inner_rng()%30 == 0) {
 			// Use random value
 			problem->scrambler(io_memory->data);
 		}
@@ -173,7 +173,7 @@ double SolverHybridX86::scalarTrial(U8 *data) {
 		for (int i = 0; i < std::size(problems); i++)
 		{
 			Problem* training_problem = problems[i];
-			run(training_problem, nullptr, 1, 800, &results);
+			run(training_problem, nullptr, 100, 2000, &results);
 			free(results.data);
 			score += results.score;
 		}
