@@ -10,6 +10,8 @@
 #include "types.h"
 #include "SolverHybridX86.h"
 
+#include <christian_utils.h>
+#include <cmath>
 #include <ProblemHelloWorld.h>
 
 #define MAX_SUB_PROBLEM_DATA 0x1000
@@ -39,10 +41,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 
 	struct io_memory_map_t
 	{
-		uint32_t do_revert;
-		uint32_t do_scramble;
-		int32_t old_score;
-		int32_t new_score;
+		uint32_t random_seed;
 		U8 data[MAX_SUB_PROBLEM_DATA];
 		U8 scratch_mem[SCRATCH_MEM_LEN];
 	};
@@ -61,7 +60,6 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 	problem->dataInit(io_memory->data);
 
 	U8 * prev_data = static_cast<U8 *>(malloc(problem->data_len));
-	U8 * prev_prev_data = static_cast<U8 *>(malloc(problem->data_len));
 
 	if (reporter_mem)
 	{
@@ -71,44 +69,57 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 	}
 
 	U64 total_tests = 0;
-	F64 current_score;
+	F64 current_score = -1000;
 	F64 prev_score = 0;
 	while (true)
 	{
-		// Grab copy for possible future revert
-		U8 * c = prev_prev_data;
-		prev_prev_data = prev_data;
-		prev_data = c;
-		memcpy(prev_data, io_memory->data, problem->data_len);
+
+		if (fast_rand()%10 == 0) {
+			// Use random value
+			problem->scrambler(io_memory->data);
+		}
+		else {
+			// Use x86 kernel for mutation
+
+			// Setup io memory and run program
+			io_memory->random_seed = fast_rand();
+
+			// Run program
+			int did_hang = executor->run();
+
+			if (did_hang)
+			{
+				current_score = -10;
+				// Abort!
+				break;
+			}
+		}
+
+		// Get new score
+		current_score = problem->scalarTrial(io_memory->data);
 
 		// Get current score
-		current_score = problem->scalarTrial(io_memory->data);
 		total_tests++;
 
-		// Setup io memory and run program
-		io_memory->old_score = (int32_t)(prev_score*4000);
-		io_memory->new_score = (int32_t)(current_score*4000);
-
-		// Run program
-		int did_hang = executor->run();
-
-		if (did_hang)
+		// Simulated annealing to determine if this passes
+		int does_pass;
+		if (current_score >= prev_score)
 		{
-			current_score = -10;
-			// Abort!
-			break;
+			does_pass = 1;
 		}
-
-		if (io_memory->do_revert)
-		{
-			// Revert to prev prev data if requested
-			memcpy(io_memory->data, prev_prev_data, problem->data_len);
+		else {
+			double t = (double)trial_limit/(double)(total_tests);
+			double p = exp(((current_score - prev_score)*10000.0)/(t));
+			does_pass = fast_rand() < (32767.0 * p);
 		}
-
-		if (io_memory->do_scramble)
-		{
-			// Revert to prev prev data if requested
-			problem->scrambler(io_memory->data);
+		if (!does_pass) {
+			// Revert to old values
+			memcpy(io_memory->data, prev_data, problem->data_len);
+		}
+		else {
+			// Save as prev values
+			memcpy(prev_data, io_memory->data, problem->data_len);
+			prev_score = current_score;
 		}
 
 	    if (reporter_mem)
@@ -145,26 +156,26 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 	}
 
 	free(prev_data);
-	free(prev_prev_data);
 }
 
 double SolverHybridX86::scalarTrial(U8 *data) {
     code = data;
 		struct SolverResults_T results{};
 		double score = 0;
-		for (int i = 0; i < 4; i++)
+	  uint32_t tries = 1;
+		for (int i = 0; i < tries; i++)
 		{
 			Problem* training_problem = new ProblemHelloWorld();
-			run(training_problem, nullptr, 1, 500, &results);
+			run(training_problem, nullptr, 1, 400, &results);
 			free(results.data);
 			score += results.score;
 		}
-		return score/(double)4;
+		return score/(double)tries;
 }
 
 void SolverHybridX86::scrambler(U8 *data) {
-    //pureRandomScramble(data);
-	x86_basic_scramble(data, data_len);
+   // pureRandomScramble(data);
+	 x86_basic_scramble(data, data_len);
 }
 
 void SolverHybridX86::prettyPrintData(U8 *data) {

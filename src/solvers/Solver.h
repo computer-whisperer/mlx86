@@ -15,7 +15,9 @@ struct SolverResults_T
 class Solver
 {
 public:
-	virtual void run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out, uint8_t* starting_data = nullptr) {
+	virtual ~Solver() = default;
+
+	virtual void run(Problem *problem, struct REPORTER_MEM_T * reporter_mem, double score_limit, U32 trial_limit, struct SolverResults_T * results_out, uint8_t* starting_data) {
 
     }
 };

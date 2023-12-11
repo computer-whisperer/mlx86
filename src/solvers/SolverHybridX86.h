@@ -12,7 +12,7 @@ class SolverHybridX86 : public Solver, public Problem
 {
     KVMExecutor* executor;
 public:
-    static constexpr size_t max_code_len = 1000;
+    static constexpr size_t max_code_len = 200;
     uint8_t * code;
     explicit SolverHybridX86(size_t code_len_in);
     SolverHybridX86(const SolverHybridX86 &other);

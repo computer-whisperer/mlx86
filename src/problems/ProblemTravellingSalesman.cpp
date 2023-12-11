@@ -128,7 +128,7 @@ double ProblemTravellingSalesman::SolverTest(Solver *solver, int node_count, int
     for (int i = 0; i < problem_iterations; i++)
     {
         auto training_problem = new ProblemTravellingSalesman(node_count, i);
-        solver->run(training_problem, nullptr, 1, solver_iterations, &results);
+        solver->run(training_problem, nullptr, 1, solver_iterations, &results, nullptr);
         free(results.data);
         score += results.score;
     }
