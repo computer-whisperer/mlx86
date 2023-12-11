@@ -75,7 +75,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 	while (true)
 	{
 
-		if (false && inner_rng()%10 == 0) {
+		if (inner_rng()%30 == 0) {
 			// Use random value
 			problem->scrambler(io_memory->data);
 		}
@@ -90,7 +90,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 
 			if (did_hang)
 			{
-				current_score = -10;
+				current_score = -100;
 				// Abort!
 				break;
 			}
@@ -163,15 +163,20 @@ double SolverHybridX86::scalarTrial(U8 *data) {
     code = data;
 		struct SolverResults_T results{};
 		double score = 0;
-	  uint32_t tries = 2;
-		for (int i = 0; i < tries; i++)
+		Problem * problems[] = {
+			new ProblemHelloWorld("Hello there Obi-Wan Kenobi!!!"),
+			new ProblemHelloWorld("I am mlx86!!!"),
+			new ProblemHelloWorld("Hello World!!!")
+		};
+
+		for (int i = 0; i < std::size(problems); i++)
 		{
-			Problem* training_problem = new ProblemHelloWorld("Hello there Obi-wan Kenobi!");
-			run(training_problem, nullptr, 1, 600, &results);
+			Problem* training_problem = problems[i];
+			run(training_problem, nullptr, 1, 800, &results);
 			free(results.data);
 			score += results.score;
 		}
-		return score/(double)tries;
+		return score/(double)std::size(problems);
 }
 
 void SolverHybridX86::scrambler(U8 *data) {
