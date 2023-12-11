@@ -41,7 +41,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 	inner_rng_seed = 123;
 	struct io_memory_map_t
 	{
-		uint32_t random_seed;
+		uint32_t data_length;
 		U8 data[MAX_SUB_PROBLEM_DATA];
 		U8 scratch_mem[SCRATCH_MEM_LEN];
 	};
@@ -57,6 +57,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 
 	// Setup initial IO memory
 	auto * io_memory = (struct io_memory_map_t *)executor->io_memory;
+	memset(io_memory, 0, sizeof(struct io_memory_map_t));
 	problem->dataInit(io_memory->data);
 
 	U8 * prev_data = static_cast<U8 *>(malloc(problem->data_len));
@@ -83,7 +84,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 			// Use x86 kernel for mutation
 
 			// Setup io memory and run program
-			io_memory->random_seed = inner_rng();
+			io_memory->data_length = problem->data_len;
 
 			// Run program
 			int did_hang = executor->run();
