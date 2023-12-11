@@ -60,6 +60,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 	problem->dataInit(io_memory->data);
 
 	U8 * prev_data = static_cast<U8 *>(malloc(problem->data_len));
+	memcpy(prev_data, io_memory->data, problem->data_len);
 
 	if (reporter_mem)
 	{
