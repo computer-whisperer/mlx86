@@ -6,17 +6,22 @@
 #define MLX86_SOLVERHYBRIDX86_H
 #include "Solver.h"
 #include <string>
+#include <vector>
+
 #include "KVMExecutor.h"
 
 class SolverHybridX86 : public Solver, public Problem
 {
     KVMExecutor* executor;
 public:
-    static constexpr size_t max_code_len = 200;
+    static constexpr size_t max_code_len = 512;
     uint8_t * code;
     explicit SolverHybridX86(size_t code_len_in);
+    explicit SolverHybridX86(std::string fname);
     SolverHybridX86(const SolverHybridX86 &other);
     ~SolverHybridX86() override;
+
+    std::vector<Problem*> problems;
 
     SolverHybridX86 * Clone() override;
 

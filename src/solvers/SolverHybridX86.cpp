@@ -13,6 +13,7 @@
 #include <christian_utils.h>
 #include <cmath>
 #include <ProblemHelloWorld.h>
+#include <ProblemX86StringMatch.h>
 
 #define MAX_SUB_PROBLEM_DATA 0x1000
 #define SCRATCH_MEM_LEN 0x1000
@@ -23,6 +24,14 @@ Problem((code_len_in < max_code_len)?code_len_in:max_code_len),
 code(nullptr),
 executor(nullptr)
 {}
+
+SolverHybridX86::SolverHybridX86(std::string fname) : Problem(max_code_len) {
+	code = (uint8_t*)malloc(max_code_len);
+	FILE * fp = fopen(fname.c_str(), "rb");
+	size_t len = fread(code, sizeof(U8), max_code_len, fp);
+	fclose(fp);
+	data_len = len;
+}
 
 SolverHybridX86::SolverHybridX86(const SolverHybridX86 &other)
 : Problem(other.data_len), executor(nullptr), code(nullptr) {}
@@ -50,6 +59,7 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 	{
 	    executor = new KVMExecutor(sizeof(struct io_memory_map_t), data_len);
 	}
+	executor->sanitize();
 
 	// Copy program into vm memory
 	U8 * program_memory = executor->program_memory;
@@ -57,7 +67,6 @@ void SolverHybridX86::run(Problem *problem, struct REPORTER_MEM_T * reporter_mem
 
 	// Setup initial IO memory
 	auto * io_memory = (struct io_memory_map_t *)executor->io_memory;
-	memset(io_memory, 0, sizeof(struct io_memory_map_t));
 	problem->dataInit(io_memory->data);
 
 	U8 * prev_data = static_cast<U8 *>(malloc(problem->data_len));
@@ -164,16 +173,24 @@ double SolverHybridX86::scalarTrial(U8 *data) {
     code = data;
 		struct SolverResults_T results{};
 		double score = 0;
+	/*
 		Problem * problems[] = {
 			new ProblemHelloWorld("Hello there Obi-Wan Kenobi!!!"),
 			new ProblemHelloWorld("I am mlx86!!!"),
 			new ProblemHelloWorld("Hello World!!!")
-		};
+		};*/
 
+		if (problems.empty()) {
+			problems.push_back(new ProblemX86StringMatch("Hello there Obi-Wan Kenobi!!!", 200));
+			problems.push_back(new ProblemX86StringMatch("I am mlx86!!!", 200));
+			problems.push_back(new ProblemX86StringMatch("Hello World!!!", 200));
+		}
 		for (int i = 0; i < std::size(problems); i++)
 		{
 			Problem* training_problem = problems[i];
-			run(training_problem, nullptr, 100, 2000, &results);
+			uint32_t trial_limit = 6000;
+			run(training_problem, nullptr, 1, trial_limit, &results);
+			score += static_cast<double>(trial_limit - results.trial_count)/trial_limit;
 			free(results.data);
 			score += results.score;
 		}

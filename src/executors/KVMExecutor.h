@@ -34,6 +34,8 @@ public:
     KVMExecutor(size_t io_memory_size, size_t program_memory_size);
     ~KVMExecutor();
 
+    void sanitize();
+
     bool run();
 };
 

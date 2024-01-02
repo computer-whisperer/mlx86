@@ -17,6 +17,7 @@ double ProblemX86StringMatch::scalarTrial(U8 *data)
     {
         executor = new KVMExecutor(goal.length(), data_len);
     }
+    executor->sanitize();
     U8 * program_mem = executor->program_memory;
     U8 * io_mem = executor->io_memory;
 
@@ -26,17 +27,26 @@ double ProblemX86StringMatch::scalarTrial(U8 *data)
 
     double score = 0;
 
-    for (int i = 0; i < goal.length(); i++)
+    U32 l = goal.length();
+
+    for (int i = 0; i < l; i++)
     {
         int error = goal[i] - io_mem[i];
         if (error < 0)
             error = -error;
-        if (error > 10)
-            error = 10;
-        score += 1.0-(((double)error)/10.0);
+        if (error > 20)
+            error = 20;
+        if (error == 0) {
+            score += 2;
+        }
+        score += 1.0f-(static_cast<float>(error)/20.0f);
     }
 
-    return score/((double)goal.length()) - 0.3*did_hang;
+    if (did_hang) {
+        return -100;
+    }
+
+    return (score/3)/((double)l);
 }
 
 void ProblemX86StringMatch::scrambler(U8 *data) {

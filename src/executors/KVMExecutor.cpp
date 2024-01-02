@@ -160,6 +160,11 @@ KVMExecutor::~KVMExecutor() {
     munmap(io_memory, io_mem_real_size);
 }
 
+void KVMExecutor::sanitize() {
+    memset(program_memory, 0x90, program_memory_real_size);
+    memset(io_memory, 0x00, io_mem_real_size);
+}
+
 bool KVMExecutor::run() {
 
     struct kvm_sregs sregs{};
@@ -382,6 +387,7 @@ bool KVMExecutor::run() {
 
     return did_alarm;
 }
+
 
 void KVMExecutor::StartWatchdogThread() {
     auto target_thread = pthread_self();

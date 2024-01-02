@@ -25,12 +25,12 @@ double ProblemHelloWorld::scalarTrial(U8 * data)
     if (error > 20)
       error = 20;
     if (error == 0) {
-      score += 1;
+      score += 2;
     }
     score += 1.0f-(static_cast<float>(error)/20.0f);
   }
 
-  float out = (score/2)/((double)l);
+  float out = (score/3)/((double)l);
 
 	// Determinism test
     //TESTING_HASH_T input_hash = TESTING_STARTING_HASH;

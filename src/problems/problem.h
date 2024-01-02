@@ -15,7 +15,7 @@ public:
 
     virtual void prettyPrintData(U8* data);
 	virtual void dataInit(U8* data);
-	const size_t data_len;
+	size_t data_len;
 
 	void pureRandomScramble(U8 * data);
 	static void textPrettyPrint(U8 * data);

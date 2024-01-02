@@ -62,12 +62,12 @@ void SolverSimulatedAnnealing::run(Problem *problem, struct REPORTER_MEM_T * rep
 	    	if ((i%recheck_rate) == 0)
 	    	{
 
-				// Average prev score with new run
-				current_score_total += problem->scalarTrial(data);
-				current_score_count += 1;
-				score = current_score_total/current_score_count;
+					// Average prev score with new run
+					current_score_total += problem->scalarTrial(data);
+					current_score_count += 1;
+					score = current_score_total/current_score_count;
 
-				total_tests++;
+					total_tests++;
 	    	}
 
 			/* Make a random change and introduce a new agent */

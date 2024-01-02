@@ -21,17 +21,10 @@ int main(int argc, char * argv[])
 {
 	testing_initialize();
 
-	U8 buffer[0x1000];
-	FILE * fp = fopen("../best_data", "rb");
-	size_t len = fread(buffer, sizeof(U8), sizeof(buffer), fp);
-	fclose(fp);
-	auto hybrid_x86 = new SolverHybridX86(len);
-	hybrid_x86->code = buffer;
-
 	Solver * solvers[] = {
 		new SolverSimpleGreedy(),
 		new SolverSimulatedAnnealing(),
-		hybrid_x86
+		new SolverHybridX86("../best_data")
 	};
 
 	//Problem * problems[NUM_PROBLEMS_PER_POINT];
@@ -40,13 +33,13 @@ int main(int argc, char * argv[])
 	//	problems[p] = new ProblemTravellingSalesman(100, p);
 	//}
 	Problem * problems[] = {
-		new ProblemHelloWorld(),
-		new ProblemHelloWorld("Fuck!"),
-		new ProblemHelloWorld("Inception!")
+		new ProblemHelloWorld("Hello there Obi-Wan Kenobi!!!"),
+		new ProblemHelloWorld("I am mlx86!!!"),
+		new ProblemHelloWorld("Hello World!!!")
 	};
 
 
-	for (U32 i = 10; i < 100000; i+= 100)
+	for (U32 i = 10; i < 5000; i+= 10)
 	{
 		printf("%d, ", i);
 		for (U32 s = 0; s < std::size(solvers); s++)

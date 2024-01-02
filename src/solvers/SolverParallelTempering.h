@@ -17,7 +17,7 @@ class SolverParallelTempering : public Solver
     U32 num_neighbors;
         public:
             inline SolverParallelTempering() :
-            cycle_len(5000),
+            cycle_len(20000),
             recheck_rate(10),
             score_diff_multiplier(10000.0),
             neighbor_post_rate(10),
